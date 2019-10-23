@@ -1,0 +1,7 @@
+data/
+config*.txt
+*.srk
+serverlog.txt
+stats.txt
+*.exe
+*.dll
