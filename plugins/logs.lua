@@ -53,9 +53,7 @@ function log (format, ...)
 	logFile:close()
 end
 
-function plugin.hooks.HTTPResponse (name, res)
-	if name ~= 'logsDiscordEmbed' then return end
-
+local function onResponse (res)
 	if not res then
 		plugin:print('Webhook POST failed')
 	end
@@ -114,7 +112,7 @@ do
 				http.post(plugin.config.webhookHost, plugin.config.webhookPath, {}, json.encode({
 					content = '```accesslog\n' .. str .. '```',
 					username = server.name
-				}), 'application/json', 'logsDiscordEmbed')
+				}), 'application/json', onResponse)
 			end
 		end
 	end

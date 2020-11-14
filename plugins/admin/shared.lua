@@ -3,9 +3,7 @@ local module = {}
 
 local json = require 'main.json'
 
-function plugin.hooks.HTTPResponse (name, res)
-	if name ~= 'adminDiscordEmbed' then return end
-
+local function onResponse (res)
 	if not res then
 		plugin:print('Webhook POST failed')
 	end
@@ -26,7 +24,7 @@ function module.discordEmbed (embed)
 		{},
 		json.encode({ embeds = { embed } }),
 		'application/json',
-		'adminDiscordEmbed'
+		onResponse
 	)
 end
 

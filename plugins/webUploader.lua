@@ -38,9 +38,7 @@ function plugin.hooks.PostResetGame (reason)
 	if not ready then ready = true end
 end
 
-function plugin.hooks.HTTPResponse (name, res)
-	if name ~= 'webUploaderPost' then return end
-
+local function onResponse (res)
 	if not res then
 		plugin:print('Request failed')
 		return
@@ -98,5 +96,5 @@ function plugin.hooks.PostSendPacket ()
 
 	plugin:print('Ping!')
 
-	http.post(cfg.host, cfg.path, {}, postString, 'application/json', 'webUploaderPost')
+	http.post(cfg.host, cfg.path, {}, postString, 'application/json', onResponse)
 end

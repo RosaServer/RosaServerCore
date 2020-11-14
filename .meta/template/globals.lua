@@ -80,28 +80,26 @@ function RotMatrix(
 ---Library for sending HTTP(S) requests.
 http = {}
 
+---@class HTTPResponse
+---@field status integer The HTTP status code.
+---@field body string The response body.
+---@field headers table The response headers.
+
 ---Send an HTTP(S) GET request asynchronously.
----The response is sent to the HTTPResponse, with two arguments: the given identifier, and the response table or nil.
----Response tables are in the following format: {
----	status = integer,
----	body = string,
----	headers = table,
----}
 ---@param scheme string The hostname of the server to send the request to, with optional protocol and port. Ex. google.com, https://google.com, https://google.com:443
 ---@param path string The path to request from the server.
 ---@param headers table The table of request headers.
----@param identifier string The identifier to be repeated in the HTTPResponse hook.
-function http.get(scheme, path, headers, identifier) end
+---@param callback "function (response: HTTPResponse?) end" The function to be called when the response is received or there was an error.
+function http.get(scheme, path, headers, callback) end
 
 ---Send an HTTP(S) POST request asynchronously.
----@see http#get
 ---@param scheme string The hostname of the server to send the request to, with optional protocol and port. Ex. google.com, https://google.com, https://google.com:443
 ---@param path string The path to request from the server.
 ---@param headers table The table of request headers.
 ---@param body string The request body.
 ---@param contentType string The request body MIME type.
----@param identifier string The identifier to be repeated in the HTTPResponse hook.
-function http.post(scheme, path, headers, body, contentType, identifier) end
+---@param callback "function (response: HTTPResponse?) end" The function to be called when the response is received or there was an error.
+function http.post(scheme, path, headers, body, contentType, callback) end
 
 ---Library for creating networked events.
 event = {}
