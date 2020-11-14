@@ -1,0 +1,9 @@
+*
+!.gitignore
+!admin.lua
+!banMessages.lua
+!consoleCommands.lua
+!help.lua
+!logs.lua
+!titleInfo.lua
+!webUploader.lua
