@@ -1,7 +1,6 @@
-*
-!.gitignore
-!eliminator.lua
-!round.lua
-!versus.lua
-!world.lua
-!rawTest.lua
+*.lua
+!/eliminator.lua
+!/round.lua
+!/versus.lua
+!/world.lua
+!/rawTest.lua
