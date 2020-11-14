@@ -108,13 +108,20 @@ hook.add(
 		local name = table.remove(args, 1)
 		if not name then return end
 
-		-- Commands that don't start with / can only be invoked by the console
-		if hook.runCommand(name, hook.findCommand(name), args) then
-			return
-		end
+		if not name:startsWith('/') then
+			-- Commands that don't start with / can only be invoked by the console
+			if hook.runCommand(name, hook.findCommand(name), args) then
+				return
+			end
 
-		if hook.runCommand('/' .. name, hook.findCommand('/' .. name), consolePlayer, nil, args) then
-			return
+			-- Allow calling regular commands without a preceding slash
+			if hook.runCommand('/' .. name, hook.findCommand('/' .. name), consolePlayer, nil, args) then
+				return
+			end
+		else
+			if hook.runCommand(name, hook.findCommand(name), consolePlayer, nil, args) then
+				return
+			end
 		end
 
 		print('Command "'..name..'" not found!')
