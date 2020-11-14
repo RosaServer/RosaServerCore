@@ -109,8 +109,9 @@ plugin.commands['/fly'] = {
 	end
 }
 
-plugin.commands['/phys'] = {
+plugin.commands['/physics'] = {
 	info = 'Toggle physics.',
+	alias = {'/phys'},
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
 	---@param man Human?
@@ -121,8 +122,9 @@ plugin.commands['/phys'] = {
 	end
 }
 
-plugin.commands['/bul'] = {
+plugin.commands['/bullets'] = {
 	info = 'Toggle bullets.',
+	alias = {'/bul'},
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
 	---@param man Human?
