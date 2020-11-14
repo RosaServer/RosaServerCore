@@ -65,6 +65,10 @@ plugin.defaultConfig = {
 }
 ```
 
+## Shutdown
+
+Adds the /shutdown command.
+
 ## Title Info
 
 Adds useful information to the console window title.
