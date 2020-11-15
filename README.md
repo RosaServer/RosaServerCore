@@ -33,6 +33,54 @@ plugin.defaultConfig = {
 }
 ```
 
+### Most Notable Commands
+
+- `/resetlua` - Reset the Lua state and the game.
+- `/mode <mode>` - Change the enabled mode.
+
+#### Moderators
+
+- `/mod <phoneNumber/name>` - Add a moderator.
+- `/unmod <phoneNumber/name>` - Remove a moderator.
+
+#### Punishment
+
+- `/kick <phoneNumber/name> [reason]` - Kick a player.
+- `/punish <phoneNumber/name> [reason]` - Ban an account based on previous bans.
+- `/unpunish <phoneNumber/name> [reason]` - Remove a punishment from an account.
+- `/ban <phoneNumber/name> <minutes> [reason]` - Ban an account.
+- `/unban <phoneNumber/name> [reason]` - Unban an account.
+- `/kill <phoneNumber/name>` - Kill a player.
+
+#### Spawning
+
+- `/item <name/id>` - Spawn an item.
+- `/car [type] [color]` - Spawn a vehicle.
+- `/cash [amount]` - Give yourself money.
+- `/give <phoneNumber> <amount>` - Give a player money.
+- `/del` - Delete an object you're looking at.
+
+#### Teleportation
+
+- `/find <phoneNumber/name>` - Teleport to a player.
+- `/fetch <phoneNumber/name>` - Teleport a player to you.
+- `/hide` - Teleport to an inaccessible room.
+
+#### Utility
+
+- `/message <message>` - Announce a message.
+- `/say <message>` - Announce a message prepended by (Moderator).
+- `/name <name>` - Set the server name.
+- `/time <hour/hour:minute>` - Set the solar time.
+- `/pos` - Get your current position.
+- `/skip` - Skip the round timer.
+- `/who <name>` - Search players by name.
+
+#### Warnings
+
+- `/warn <phoneNumber/name> <reason>` - Warn a player.
+- `/warned` - Acknowledge a warning.
+
 ## Ban Messages
 
 Adds more useful ban messages.
@@ -48,9 +96,18 @@ plugin.defaultConfig = {
 
 Adds some useful console commands.
 
+### Most Notable Commands
+
+- `eval <code>` - Evaluate a Lua string.
+- `list` - List all current players.
+- `list` - List all plugins.
+- `enableplugin <plugin>` - Enable a plugin (persists after restart).
+- `disableplugin <plugin>` - Disable a plugin (persists after restart).
+- `listbans` - List all current bans.
+
 ## Help
 
-Adds the /help command.
+Adds the `/help` command.
 
 ## Logs
 
@@ -67,7 +124,7 @@ plugin.defaultConfig = {
 
 ## Shutdown
 
-Adds the /shutdown command.
+Adds the `/shutdown [minutes/"now"]` command.
 
 ## Title Info
 
@@ -78,6 +135,8 @@ plugin.defaultConfig = {
 	updateSeconds = 10
 }
 ```
+
+Also adds the `/tps` command.
 
 ## Web Uploader
 
