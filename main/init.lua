@@ -12,7 +12,7 @@ local function splitArguments (str)
 	local args = {}
 	local split = str:split(' ')
 
-	local inQuotes = nil
+	local inQuotes
 	for _, word in pairs(split) do
 		if word:startsWith('"') then
 			inQuotes = word
@@ -35,7 +35,7 @@ end
 
 local function handleChatCommandError (ply, commandName, command, result)
 	local errorString = tostring(result)
-	local startPos, endPos = errorString:find(': ')
+	local _, endPos = errorString:find(': ')
 	local stripped = errorString:sub(endPos + 1)
 
 	if stripped == 'usage' then
@@ -69,8 +69,6 @@ end
 
 hook.add(
 	'PlayerChat', 'main',
-	---@param ply Player
-	---@param message string
 	function (ply, message)
 		local now = os.clock()
 
@@ -93,7 +91,7 @@ local consolePlayer = {
 	isConsole = true,
 	name = 'Big Brother',
 	data = {},
-	sendMessage = function (self, ...)
+	sendMessage = function (_, ...)
 		printAppend('\27[31;1m')
 		print(...)
 		printAppend('\27[0m')
@@ -102,7 +100,6 @@ local consolePlayer = {
 
 hook.add(
 	'ConsoleInput', 'main',
-	---@param message string
 	function (message)
 		local args = splitArguments(message)
 		local name = table.remove(args, 1)
@@ -144,7 +141,6 @@ end
 
 hook.add(
 	'ConsoleAutoComplete', 'main',
-	---@param data table
 	function (data)
 		data.response = data.response:trim()
 

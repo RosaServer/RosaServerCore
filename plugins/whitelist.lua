@@ -63,10 +63,7 @@ function plugin.hooks.AccountTicketFound (acc)
 
 			hook.once(
 				'SendConnectResponse',
-				---@param address string
-				---@param port integer
-				---@param data table
-				function (address, port, data)
+				function (_, _, data)
 					if maxPublicSlots == 0 then
 						data.message = 'Whitelisted accounts only'
 					else
@@ -82,8 +79,7 @@ end
 
 plugin.commands['listwhitelist'] = {
 	info = 'List all whitelisted players.',
-	---@param args string[]
-	call = function (args)
+	call = function ()
 		print(table.concat(whitelistedPhoneNumbers, ', '))
 	end
 }
@@ -92,7 +88,9 @@ plugin.commands['/whitelist'] = {
 	info = 'Add a player to the whitelist.',
 	usage = '/whitelist <phoneNumber>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
-	call = function (ply, man, args)
+	---@param ply Player
+	---@param args string[]
+	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
 		local phoneNumber = undashPhoneNumber(args[1])
@@ -115,7 +113,9 @@ plugin.commands['/unwhitelist'] = {
 	info = 'Remove a player from the whitelist.',
 	usage = '/unwhitelist <phoneNumber>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
-	call = function (ply, man, args)
+	---@param ply Player
+	---@param args string[]
+	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
 		local phoneNumber = undashPhoneNumber(args[1])

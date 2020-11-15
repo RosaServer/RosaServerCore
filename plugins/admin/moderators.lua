@@ -1,3 +1,4 @@
+---@type Plugin
 local plugin = ...
 local module = {}
 
@@ -77,7 +78,7 @@ function plugin.hooks.WebUploadBody ()
 	end
 end
 
-function plugin.hooks.PostWebUploadBody (body)
+function plugin.hooks.PostWebUploadBody ()
 	for _, ply in pairs(hiddenPlayers) do
 		ply.isBot = false
 	end
@@ -112,7 +113,7 @@ do
 		end
 	end
 
-	function plugin.hooks.EventMessage (type, message, speakerID, distance)
+	function plugin.hooks.EventMessage (_, message)
 		if shouldIgnoreMessage then
 			shouldIgnoreMessage = nil
 			plugin:print('Silencing moderator status message: ' .. message)
@@ -132,9 +133,8 @@ plugin.commands['/mod'] = {
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
 		local acc = findOneAccount(table.remove(args, 1))
@@ -173,9 +173,8 @@ plugin.commands['/unmod'] = {
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
 		local acc = findOneAccount(table.remove(args, 1))
@@ -212,9 +211,7 @@ plugin.commands['/leave'] = {
 	info = 'Pretend to leave.',
 	canCall = isModeratorOrAdmin,
 	---@param ply Player
-	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply)
 		if not visibleModerators[ply.index] then
 			error('Already left')
 		end
@@ -233,9 +230,7 @@ plugin.commands['/join'] = {
 	info = 'Pretend to join.',
 	canCall = isModeratorOrAdmin,
 	---@param ply Player
-	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply)
 		if visibleModerators[ply.index] then
 			error('Already joined')
 		end

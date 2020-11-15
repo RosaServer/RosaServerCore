@@ -1,3 +1,4 @@
+---@type Plugin
 local plugin = ...
 plugin.name = 'Admin'
 plugin.author = 'jdb'
@@ -58,9 +59,7 @@ plugin.commands['/resetlua'] = {
 	info = 'Reset the Lua state and the game.',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
-	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply)
 		flagStateForReset(hook.persistentMode)
 		adminLog('%s reset the Lua state', ply.name)
 	end
@@ -80,18 +79,17 @@ plugin.commands['/mode'] = {
 		end
 	end,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
 		local foundPlugin = hook.getPluginByName(args[1], 'modes')
 		assert(foundPlugin, 'Invalid mode')
 
 		-- Disable all mode plugins
-		for _, plugin in pairs(hook.plugins) do
-			if plugin.nameSpace == 'modes' then
-				plugin:disable()
+		for _, plug in pairs(hook.plugins) do
+			if plug.nameSpace == 'modes' then
+				plug:disable()
 			end
 		end
 
@@ -112,9 +110,7 @@ plugin.commands['/resetgame'] = {
 	alias = {'/rg'},
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
-	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply)
 		-- If we reset in the middle of chat messages being parsed, things will break
 		hook.once('Logic', function ()
 			server:reset()

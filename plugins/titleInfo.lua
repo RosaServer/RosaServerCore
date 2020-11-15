@@ -85,9 +85,7 @@ end
 plugin.commands['/tps'] = {
 	info = "Check the server's TPS.",
 	---@param ply Player
-	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply)
 		ply:sendMessage(string.format('TPS from last 5s, 1m, 5m, 15m: %.2f, %.2f, %.2f, %.2f', recentFiveSec, recentOne, recentFive, recentFifteen))
 	end
 }

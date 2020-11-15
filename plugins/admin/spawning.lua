@@ -1,10 +1,10 @@
+---@type Plugin
 local plugin = ...
 
 local shared = plugin:require('shared')
 
 local function getItemType(input)
 	local itemID = tonumber(input)
-	local itemName = nil
 
 	if itemID == nil then
 		for _, type in pairs(itemTypes.getAll()) do
@@ -154,12 +154,12 @@ plugin.commands['/bot'] = {
 			bot.tieColor = 0
 			bot.model = 1
 			bot:update()
-			local man = humans.create(pos, RotMatrix(1, 0, 0, 0, 1, 0, 0, 0, 1), bot)
-			if not man then
+			local botMan = humans.create(pos, RotMatrix(1, 0, 0, 0, 1, 0, 0, 0, 1), bot)
+			if not botMan then
 				bot:remove()
 				error('Could not create bot')
 			end
-			man:arm(7, 3)
+			botMan:arm(7, 3)
 
 			adminLog('%s created a bot, team %i', ply.name, team)
 		end
@@ -171,9 +171,8 @@ plugin.commands['/cash'] = {
 	usage = '/cash [amount]',
 	canCall = function (ply) return ply.isAdmin end,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		local amount = math.floor(args[1] or 100000)
 		ply.money = ply.money + amount
 		ply:updateFinance()
@@ -188,9 +187,8 @@ plugin.commands['/give'] = {
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 2, 'usage')
 
 		local amount = math.floor(args[2])
@@ -216,13 +214,12 @@ plugin.commands['/botply'] = {
 	usage = '/botply [amount] [team]',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		local numBots = tonumber(args[1] or 1)
 		local team = tonumber(args[2] or 7)
 
-		for i = 1, numBots do
+		for _ = 1, numBots do
 			local bot = players.createBot()
 			if bot then
 				-- Everything else is already randomized
@@ -243,8 +240,7 @@ plugin.commands['/del'] = {
 	canCall = function (ply) return ply.isAdmin end,
 	---@param ply Player
 	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, man)
 		assert(man, 'Not spawned in')
 		local dist = 64
 

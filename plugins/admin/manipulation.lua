@@ -1,3 +1,4 @@
+---@type Plugin
 local plugin = ...
 local module = {}
 
@@ -87,8 +88,7 @@ plugin.commands['/fly'] = {
 	canCall = function (ply) return ply.isAdmin end,
 	---@param ply Player
 	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, man)
 		assert(man, 'Not spawned in')
 
 		if flyingMachines[man.index] then error('Already flying') end
@@ -114,9 +114,7 @@ plugin.commands['/physics'] = {
 	alias = {'/phys'},
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
-	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply)
 		disablePhys = not disablePhys
 		adminLog('%s turned physics %s', ply.name, disablePhys and 'off' or 'on')
 	end
@@ -127,9 +125,7 @@ plugin.commands['/bullets'] = {
 	alias = {'/bul'},
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
-	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply)
 		disableBul = not disableBul
 		adminLog('%s turned bullets %s', ply.name, disableBul and 'off' or 'on')
 	end

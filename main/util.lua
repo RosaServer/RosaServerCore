@@ -110,7 +110,7 @@ end
 ---@param val any The value to check against.
 ---@return boolean contains Whether the value was found in the table.
 function table.contains (tbl, val)
-	for i, v in ipairs(tbl) do
+	for _, v in ipairs(tbl) do
 		if v == val then return true end
 	end
 	return false
@@ -244,7 +244,8 @@ end
 ---@param sep string The separator character.
 ---@return string[] fields The split tokens.
 function string:split (sep)
-	local sep, fields = sep or ':', {}
+	sep = sep or ':'
+	local fields = {}
 	local pattern = string.format('([^%s]+)', sep)
 	self:gsub(pattern, function (c) fields[#fields + 1] = c end)
 	return fields
@@ -336,7 +337,7 @@ end
 ---@param str string The phone number which may or may not have a dash.
 ---@return integer phoneNumber The integer value of the phone number.
 function undashPhoneNumber (str)
-	local str = str:gsub('(%d%d%d)-(%d%d%d%d)', '%1%2')
+	str = str:gsub('(%d%d%d)-(%d%d%d%d)', '%1%2')
 	return tonumber(str)
 end
 

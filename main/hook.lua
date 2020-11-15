@@ -12,6 +12,7 @@ hook.continue = CONTINUE
 hook.override = OVERRIDE
 
 ---The currently loaded plugins.
+---@type table<string, Plugin>
 hook.plugins = {}
 
 ---Regenerate the cache of enabled hooks.

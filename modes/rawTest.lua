@@ -5,21 +5,21 @@ mode.description = 'An empty world where anything is possible.'
 
 local mapName
 
-mode.onEnable = function ()
+function mode.onEnable ()
 	mapName = 'versus2'
 	server:reset()
 end
 
-mode.onDisable = function ()
+function mode.onDisable ()
 	mapName = nil
 end
 
-mode.hooks.ResetGame = function (reason)
+function mode.hooks.ResetGame ()
 	server.type = 20
 	server.levelToLoad = mapName
 end
 
-mode.hooks.SendPacket = function ()
+function mode.hooks.SendPacket ()
 	for _, ply in ipairs(players.getNonBots()) do
 		if not ply.human then
 			ply.menuTab = 1
@@ -29,7 +29,7 @@ mode.hooks.SendPacket = function ()
 	end
 end
 
-mode.hooks.PostSendPacket = function ()
+function mode.hooks.PostSendPacket ()
 	for _, ply in ipairs(players.getNonBots()) do
 		ply.menuTab = 0
 	end
@@ -46,7 +46,7 @@ local function clickedEnterCity (ply)
 	end
 end
 
-mode.hooks.PlayerActions = function (ply)
+function mode.hooks.PlayerActions (ply)
 	if ply.numActions ~= ply.lastNumActions then
 		local action = ply:getAction(ply.lastNumActions)
 
@@ -61,10 +61,8 @@ mode.commands['/map'] = {
 	info = 'Change the map.',
 	usage = '/map <name',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
-	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (_, _, args)
 		assert(#args >= 1, 'usage')
 
 		mapName = args[1]

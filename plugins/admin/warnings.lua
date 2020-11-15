@@ -1,3 +1,4 @@
+---@type Plugin
 local plugin = ...
 local module = {}
 
@@ -55,9 +56,8 @@ plugin.commands['/warn'] = {
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 2, 'usage')
 
 		local acc = findOneAccount(table.remove(args, 1))
@@ -97,9 +97,7 @@ plugin.commands['/warned'] = {
 	info = 'Acknowledge a warning.',
 	canCall = function (ply) return not ply.isConsole end,
 	---@param ply Player
-	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply)
 		local phoneString = tostring(ply.phoneNumber)
 
 		local persistentData = persistence.get()

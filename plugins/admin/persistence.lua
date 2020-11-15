@@ -1,3 +1,4 @@
+---@type Plugin
 local plugin = ...
 local module = {}
 

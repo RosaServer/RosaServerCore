@@ -1,3 +1,4 @@
+---@type Plugin
 local plugin = ...
 
 local function moveItem(item, difference)
@@ -82,8 +83,7 @@ plugin.commands['/hide'] = {
 	canCall = function (ply) return ply.isAdmin end,
 	---@param ply Player
 	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, man)
 		assert(man, 'Not spawned in')
 
 		local level = server.loadedLevel

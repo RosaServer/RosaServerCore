@@ -15,10 +15,7 @@ function plugin.hooks.PostAccountTicket (acc)
 	if banTime > 0 then
 		hook.once(
 			'SendConnectResponse',
-			---@param address string
-			---@param port integer
-			---@param data table
-			function (address, port, data)
+			function (_, _, data)
 				-- 100 years
 				if banTime > 52596000 then
 					data.message = plugin.config.permaFormatString

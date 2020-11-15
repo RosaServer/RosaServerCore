@@ -34,7 +34,7 @@ function plugin.onDisable ()
 	lastPostString = nil
 end
 
-function plugin.hooks.PostResetGame (reason)
+function plugin.hooks.PostResetGame ()
 	if not ready then ready = true end
 end
 

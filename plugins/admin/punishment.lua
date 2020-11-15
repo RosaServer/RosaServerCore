@@ -1,3 +1,4 @@
+---@type Plugin
 local plugin = ...
 
 local shared = plugin:require('shared')
@@ -9,9 +10,8 @@ plugin.commands['/kick'] = {
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
 	autoComplete = shared.autoCompletePlayerFirstArg,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
 		local victim = findOnePlayer(table.remove(args, 1))
@@ -43,9 +43,8 @@ plugin.commands['/punish'] = {
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
 		local acc = findOneAccount(table.remove(args, 1))
@@ -94,9 +93,8 @@ plugin.commands['/unpunish'] = {
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
 		local acc = findOneAccount(table.remove(args, 1))
@@ -136,9 +134,8 @@ plugin.commands['/ban'] = {
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 2, 'usage')
 
 		local acc = findOneAccount(table.remove(args, 1))
@@ -172,9 +169,8 @@ plugin.commands['/unban'] = {
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
 		local acc = findOneAccount(table.remove(args, 1))
@@ -205,9 +201,8 @@ plugin.commands['/kill'] = {
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	autoComplete = shared.autoCompletePlayerFirstArg,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
 		local victim = findOnePlayer(table.remove(args, 1))

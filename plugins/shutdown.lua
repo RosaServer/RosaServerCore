@@ -22,8 +22,8 @@ end
 local function shutdown ()
 	accounts.save()
 
-	for _, plugin in pairs(hook.plugins) do
-		plugin:disable()
+	for _, plug in pairs(hook.plugins) do
+		plug:disable()
 	end
 
 	print('Goodbye!')
@@ -43,9 +43,8 @@ plugin.commands['/shutdown'] = {
 		end
 	end,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		if args[1]:lower() == 'now' then
 			if adminLog then
 				adminLog('%s initiated instant shutdown', ply.name)

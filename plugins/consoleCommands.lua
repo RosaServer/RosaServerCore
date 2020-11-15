@@ -5,8 +5,7 @@ plugin.description = 'Adds some useful console commands.'
 
 plugin.commands['clear'] = {
 	info = 'Clear the terminal window.',
-	---@param args string[]
-	call = function (args)
+	call = function ()
 		print('\x1bc')
 	end
 }
@@ -25,8 +24,7 @@ plugin.commands['eval'] = {
 
 plugin.commands['list'] = {
 	info = 'List all current players.',
-	---@param args string[]
-	call = function (args)
+	call = function ()
 		print('Phone', 'Name')
 		for _, ply in pairs(players.getNonBots()) do
 			print(ply.phoneNumber, ply.name)
@@ -36,8 +34,7 @@ plugin.commands['list'] = {
 
 plugin.commands['listplugins'] = {
 	info = 'List all plugins.',
-	---@param args string[]
-	call = function (args)
+	call = function ()
 		local reset = '\x1b[0m'
 		local red = '\x1b[31m'
 		local green = '\x1b[32m'
@@ -114,8 +111,7 @@ plugin.commands['disableplugin'] = {
 
 plugin.commands['listbans'] = {
 	info = 'List all current bans.',
-	---@param args string[]
-	call = function (args)
+	call = function ()
 		print('Phone', 'Time', 'Name')
 		for _, acc in pairs(accounts.getAll()) do
 			if acc.banTime ~= 0 then
@@ -127,8 +123,7 @@ plugin.commands['listbans'] = {
 
 plugin.commands['listitemtypes'] = {
 	info = 'List all item types.',
-	---@param args string[]
-	call = function (args)
+	call = function ()
 		print('Index', 'Hands', 'Price', 'Mass', 'Name')
 		for _, type in pairs(itemTypes.getAll()) do
 			print(type.index, type.numHands, type.price, type.mass, type.name)
@@ -138,8 +133,7 @@ plugin.commands['listitemtypes'] = {
 
 plugin.commands['listitems'] = {
 	info = 'List all items.',
-	---@param args string[]
-	call = function (args)
+	call = function ()
 		print('Index', 'Type')
 		for _, item in pairs(items.getAll()) do
 			print(item.index, itemTypes[item.type].name)

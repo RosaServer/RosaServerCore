@@ -1,3 +1,4 @@
+---@type Plugin
 local plugin = ...
 
 plugin.commands['/message'] = {
@@ -6,9 +7,8 @@ plugin.commands['/message'] = {
 	alias = {'/msg'},
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
 		local str = table.concat(args, ' ')
@@ -23,9 +23,8 @@ plugin.commands['/say'] = {
 	usage = '/say <message>',
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
 		local str = table.concat(args, ' ')
@@ -40,9 +39,8 @@ plugin.commands['/name'] = {
 	usage = '/name <name>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
 		local str = table.concat(args, ' ')
@@ -57,9 +55,8 @@ plugin.commands['/time'] = {
 	usage = '/time <hour/hour:minute>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
 		local split = args[1]:split(':')
@@ -81,10 +78,8 @@ plugin.commands['/time'] = {
 plugin.commands['/posa'] = {
 	info = 'Get cuboid lower coordinate.',
 	canCall = function (ply) return ply.isAdmin end,
-	---@param ply Player
 	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (_, man)
 		assert(man, 'Not spawned in')
 
 		local pos = man.pos
@@ -100,10 +95,8 @@ plugin.commands['/posa'] = {
 plugin.commands['/posb'] = {
 	info = 'Get cuboid upper coordinate.',
 	canCall = function (ply) return ply.isAdmin end,
-	---@param ply Player
 	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (_, man)
 		assert(man, 'Not spawned in')
 
 		local pos = man.pos
@@ -121,8 +114,7 @@ plugin.commands['/pos'] = {
 	canCall = function (ply) return not ply.isConsole end,
 	---@param ply Player
 	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, man)
 		assert(man, 'Not spawned in')
 
 		local pos = man.pos
@@ -139,9 +131,7 @@ plugin.commands['/skip'] = {
 	info = 'Skip the round timer.',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
-	---@param man Human?
-	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply)
 		if server.time <= server.TPS then error('Too early to skip') end
 
 		server.time = server.TPS
@@ -154,9 +144,8 @@ plugin.commands['/who'] = {
 	usage = '/who <name>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
-	---@param man Human?
 	---@param args string[]
-	call = function (ply, man, args)
+	call = function (ply, _, args)
 		local name = table.concat(args, ' '):lower()
 		local anyMatch = false
 
