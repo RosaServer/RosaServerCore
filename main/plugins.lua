@@ -42,12 +42,20 @@ local function saveDisabledPlugins ()
 	end
 end
 
+---@class Command
+---@field info string What the command does.
+---@field usage string? How to use the command.
+---@field alias string[]? Aliases of the command.
+---@field canCall (fun(player: Player): boolean)? Function which checks whether a player can call this command.
+---@field autoComplete (fun(args: string[]))? Function which manipulates arguments when pressing tab in the terminal.
+---@field call fun(player: Player, human: Human?, args: string[]) Calls the command.
+
 ---@class Plugin
 ---@field name string The name of the plugin.
 ---@field author string The author of the plugin.
 ---@field description string The description of the plugin.
----@field hooks table
----@field commands table
+---@field hooks table<string, function>
+---@field commands table<string, Command>
 ---@field defaultConfig table
 ---@field config table
 ---@field isEnabled boolean
