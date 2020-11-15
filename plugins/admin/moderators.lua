@@ -130,6 +130,7 @@ plugin.commands['/mod'] = {
 	info = 'Add a moderator.',
 	usage = '/mod <phoneNumber/name>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
+	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
 	---@param man Human?
 	---@param args string[]
@@ -170,6 +171,7 @@ plugin.commands['/unmod'] = {
 	info = 'Remove a moderator.',
 	usage = '/unmod <phoneNumber/name>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
+	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
 	---@param man Human?
 	---@param args string[]

@@ -128,4 +128,43 @@ hook.add(
 	end
 )
 
+local function serializeCommand (name, args)
+	local str = name .. ' '
+
+	for _, arg in ipairs(args) do
+		if arg:find(' ') then
+			str = str .. '"' .. arg .. '" '
+		else
+			str = str .. arg .. ' '
+		end
+	end
+
+	return str
+end
+
+hook.add(
+	'ConsoleAutoComplete', 'main',
+	---@param data table
+	function (data)
+		data.response = data.response:trim()
+
+		if #data.response == 0 then
+			return
+		end
+
+		local args = splitArguments(data.response)
+		local completedName, command = hook.autoCompleteCommand(table.remove(args, 1))
+
+		if not completedName then
+			return
+		end
+
+		if command.autoComplete then
+			command.autoComplete(args)
+		end
+
+		data.response = serializeCommand(completedName, args)
+	end
+)
+
 require('main.plugins')

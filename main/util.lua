@@ -409,3 +409,43 @@ function findOneAccount (input)
 
 	error('Account not found')
 end
+
+---Auto complete a matching account by a name or phone number.
+---@param input string The name or phone number to auto complete.
+---@return string? result The name or dashed phone number of the found account, if any.
+---@return Account? account The found account, if any.
+function autoCompleteAccount (input)
+	input = input:lower()
+
+	for _, acc in ipairs(accounts.getAll()) do
+		if tostring(acc.phoneNumber):find(input) then
+			return dashPhoneNumber(acc.phoneNumber), acc
+		end
+
+		if acc.name:lower():find(input) then
+			return acc.name, acc
+		end
+	end
+
+	return nil, nil
+end
+
+---Auto complete a matching player by a name or phone number.
+---@param input string The name or phone number to auto complete.
+---@return string? result The name or dashed phone number of the found player, if any.
+---@return Player? player The found player, if any.
+function autoCompletePlayer (input)
+	input = input:lower()
+
+	for _, ply in ipairs(players.getAll()) do
+		if tostring(ply.phoneNumber):find(input) then
+			return dashPhoneNumber(ply.phoneNumber), ply
+		end
+
+		if ply.name:lower():find(input) then
+			return ply.name, ply
+		end
+	end
+
+	return nil, nil
+end

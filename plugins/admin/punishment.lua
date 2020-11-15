@@ -7,6 +7,7 @@ plugin.commands['/kick'] = {
 	info = 'Kick a player.',
 	usage = '/kick <phoneNumber/name> [reason]',
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
+	autoComplete = shared.autoCompletePlayerFirstArg,
 	---@param ply Player
 	---@param man Human?
 	---@param args string[]
@@ -37,9 +38,10 @@ plugin.commands['/kick'] = {
 }
 
 plugin.commands['/punish'] = {
-	info = 'Ban a player based on previous bans.',
+	info = 'Ban an account based on previous bans.',
 	usage = '/punish <phoneNumber/name> [reason]',
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
+	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
 	---@param man Human?
 	---@param args string[]
@@ -87,9 +89,10 @@ plugin.commands['/punish'] = {
 }
 
 plugin.commands['/unpunish'] = {
-	info = 'Remove a punishment.',
+	info = 'Remove a punishment from an account.',
 	usage = '/unpunish <phoneNumber/name> [reason]',
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
+	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
 	---@param man Human?
 	---@param args string[]
@@ -128,9 +131,10 @@ plugin.commands['/unpunish'] = {
 }
 
 plugin.commands['/ban'] = {
-	info = 'Ban a player.',
+	info = 'Ban an account.',
 	usage = '/ban <phoneNumber/name> <minutes> [reason]',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
+	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
 	---@param man Human?
 	---@param args string[]
@@ -163,9 +167,10 @@ plugin.commands['/ban'] = {
 }
 
 plugin.commands['/unban'] = {
-	info = 'Unban a player.',
+	info = 'Unban an account.',
 	usage = '/unban <phoneNumber/name> [reason]',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
+	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
 	---@param man Human?
 	---@param args string[]
@@ -198,6 +203,7 @@ plugin.commands['/kill'] = {
 	info = 'Kill a player.',
 	usage = '/kill <phoneNumber/name>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
+	autoComplete = shared.autoCompletePlayerFirstArg,
 	---@param ply Player
 	---@param man Human?
 	---@param args string[]

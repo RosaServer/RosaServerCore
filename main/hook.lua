@@ -159,7 +159,7 @@ end
 
 ---Find a command by its name or alias.
 ---@param name string The name or alias of the command to find.
----@return table|nil command The found command, if any.
+---@return table? command The found command, if any.
 function hook.findCommand (name)
 	for _, plugin in pairs(hook.plugins) do
 		if plugin.isEnabled then
@@ -179,9 +179,72 @@ function hook.findCommand (name)
 	return nil
 end
 
+local function commandNameStartsWith (name, beginning)
+	if name:startsWith(beginning) then
+		return true
+	end
+
+	if name:startsWith('/') then
+		return name:sub(2):startsWith(beginning)
+	end
+
+	return false
+end
+
+---Auto complete a command by its name or alias.
+---@param beginning string The name to auto complete.
+---@return string? name The full name of the found command, if any.
+---@return table? command The found command, if any.
+function hook.autoCompleteCommand (beginning)
+	--- Check raw names first
+	for _, plugin in pairs(hook.plugins) do
+		if plugin.isEnabled then
+			for name, c in pairs(plugin.commands) do
+				if commandNameStartsWith(name, beginning) then
+					return name, c
+				end
+			end
+		end
+	end
+
+	--- Check aliases, auto complete with raw name anyway
+	for _, plugin in pairs(hook.plugins) do
+		if plugin.isEnabled then
+			for name, c in pairs(plugin.commands) do
+				if c.alias then
+					for _, alias in ipairs(c.alias) do
+						if commandNameStartsWith(alias, beginning) then
+							return name, c
+						end
+					end
+				end
+			end
+		end
+	end
+
+	return nil, nil
+end
+
+---Auto complete a plugin by its file name or alias.
+---@param beginning string The name to auto complete.
+---@param nameSpace string? The plugin name space to limit the search to.
+---@return string? name The full file name of the found plugin, if any.
+---@return Plugin? plugin The found plugin, if any.
+function hook.autoCompletePlugin (beginning, nameSpace)
+	beginning = beginning:lower()
+
+	for _, plugin in pairs(hook.plugins) do
+		if (not nameSpace or plugin.nameSpace == nameSpace) and plugin.fileName:lower():startsWith(beginning) then
+			return plugin.fileName, plugin
+		end
+	end
+
+	return nil, nil
+end
+
 ---Run a command.
 ---@param name string The name of the command being passed.
----@param command table|nil The command to run, usually the result of hook.findCommand.
+---@param command table? The command to run, usually the result of hook.findCommand.
 ---@vararg any The rest of the parameters the command expects.
 ---@see hook.findCommand
 function hook.runCommand (name, command, ...)

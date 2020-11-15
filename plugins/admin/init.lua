@@ -70,6 +70,15 @@ plugin.commands['/mode'] = {
 	info = 'Change the enabled mode.',
 	usage = '/mode <mode>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
+	---@param args string[]
+	autoComplete = function (args)
+		if #args < 1 then return end
+
+		local foundName = hook.autoCompletePlugin(args[1])
+		if foundName then
+			args[1] = foundName
+		end
+	end,
 	---@param ply Player
 	---@param man Human?
 	---@param args string[]

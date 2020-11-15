@@ -28,4 +28,24 @@ function module.discordEmbed (embed)
 	)
 end
 
+---@param args string[]
+function module.autoCompleteAccountFirstArg (args)
+	if #args < 1 then return end
+
+	local result = autoCompleteAccount(args[1])
+	if result then
+		args[1] = result
+	end
+end
+
+---@param args string[]
+function module.autoCompletePlayerFirstArg (args)
+	if #args < 1 then return end
+
+	local result = autoCompletePlayer(args[1])
+	if result then
+		args[1] = result
+	end
+end
+
 return module

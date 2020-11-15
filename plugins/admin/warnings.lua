@@ -53,6 +53,7 @@ plugin.commands['/warn'] = {
 	info = 'Warn a player.',
 	usage = '/warn <phoneNumber/name> <reason>',
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
+	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
 	---@param man Human?
 	---@param args string[]

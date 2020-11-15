@@ -1,5 +1,7 @@
 local plugin = ...
 
+local shared = plugin:require('shared')
+
 local function getItemType(input)
 	local itemID = tonumber(input)
 	local itemName = nil
@@ -184,6 +186,7 @@ plugin.commands['/give'] = {
 	info = 'Give a player money.',
 	usage = '/give <phoneNumber> <amount>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
+	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
 	---@param man Human?
 	---@param args string[]
