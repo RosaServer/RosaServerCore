@@ -49,8 +49,11 @@ plugin.commands['listplugins'] = {
 			if plug.nameSpace == 'plugins' then
 				local numHooks = table.numElements(plug.hooks)
 				local numCommands = table.numElements(plug.commands)
-				totalHooks = totalHooks + numHooks
-				totalCommands = totalCommands + numCommands
+
+				if plug.isEnabled then
+					totalHooks = totalHooks + numHooks
+					totalCommands = totalCommands + numCommands
+				end
 
 				print((plug.isEnabled and green or red) .. plug.name .. reset .. ' by ' .. plug.author)
 				print('  ' .. plug.description)
@@ -59,7 +62,52 @@ plugin.commands['listplugins'] = {
 				print(line)
 			end
 		end
-		print(string.format('Total of %i hooks, %i commands', totalHooks, totalCommands))
+		print(string.format('Total of %i hooks, %i commands enabled', totalHooks, totalCommands))
+	end
+}
+
+---@param args string[]
+local function autoCompletePluginArg (args)
+	if #args < 1 then return end
+
+	local foundName = hook.autoCompletePlugin(args[1], 'plugins')
+	if foundName then
+		args[1] = foundName
+	end
+end
+
+plugin.commands['enableplugin'] = {
+	info = 'Enable a plugin.',
+	usage = 'enableplugin <plugin>',
+	autoComplete = autoCompletePluginArg,
+	---@param args string[]
+	call = function (args)
+		assert(#args >= 1, 'usage')
+
+		local foundPlugin = hook.getPluginByName(args[1], 'plugins')
+		assert(foundPlugin, 'Invalid plugin')
+		assert(not foundPlugin.isEnabled, 'Plugin already enabled')
+
+		foundPlugin:enable()
+		print(string.format('Enabled the %s plugin by %s', foundPlugin.name, foundPlugin.author))
+	end
+}
+
+plugin.commands['disableplugin'] = {
+	info = 'Disable a plugin.',
+	usage = 'disableplugin <plugin>',
+	autoComplete = autoCompletePluginArg,
+	---@param args string[]
+	call = function (args)
+		assert(#args >= 1, 'usage')
+
+		local foundPlugin = hook.getPluginByName(args[1], 'plugins')
+		assert(foundPlugin, 'Invalid plugin')
+		assert(foundPlugin ~= plugin, 'Cannot disable myself')
+		assert(foundPlugin.isEnabled, 'Plugin already disabled')
+
+		foundPlugin:disable()
+		print(string.format('Disabled the %s plugin by %s', foundPlugin.name, foundPlugin.author))
 	end
 }
 

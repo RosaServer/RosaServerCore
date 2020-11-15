@@ -242,6 +242,22 @@ function hook.autoCompletePlugin (beginning, nameSpace)
 	return nil, nil
 end
 
+---Find a plugin by its file name.
+---@param name string The name of the desired plugin.
+---@param nameSpace string? The plugin name space to limit the search to.
+---@return Plugin? plugin The found plugin, if any.
+function hook.getPluginByName (name, nameSpace)
+	name = name:lower()
+
+	for _, plugin in pairs(hook.plugins) do
+		if (not nameSpace or plugin.nameSpace == nameSpace) and plugin.fileName:lower() == name then
+			return plugin
+		end
+	end
+
+	return nil
+end
+
 ---Run a command.
 ---@param name string The name of the command being passed.
 ---@param command table? The command to run, usually the result of hook.findCommand.

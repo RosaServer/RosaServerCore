@@ -74,7 +74,7 @@ plugin.commands['/mode'] = {
 	autoComplete = function (args)
 		if #args < 1 then return end
 
-		local foundName = hook.autoCompletePlugin(args[1])
+		local foundName = hook.autoCompletePlugin(args[1], 'modes')
 		if foundName then
 			args[1] = foundName
 		end
@@ -85,12 +85,7 @@ plugin.commands['/mode'] = {
 	call = function (ply, man, args)
 		assert(#args >= 1, 'usage')
 
-		local foundPlugin
-		for _, plugin in pairs(hook.plugins) do
-			if plugin.nameSpace == 'modes' and plugin.fileName == args[1] then
-				foundPlugin = plugin
-			end
-		end
+		local foundPlugin = hook.getPluginByName(args[1], 'modes')
 		assert(foundPlugin, 'Invalid mode')
 
 		-- Disable all mode plugins

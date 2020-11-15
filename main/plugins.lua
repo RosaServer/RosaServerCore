@@ -1,7 +1,45 @@
-local config = require('config')
+local json = require 'main.json'
+
+local config = require 'config'
 
 if hook.persistentMode == '' then
 	hook.persistentMode = config.defaultGameMode
+end
+
+local disabledPluginsFile = 'disabledPlugins.json'
+
+local disabledPluginsMap = {}
+do
+	local f = io.open(disabledPluginsFile, 'r')
+	if f then
+		local array = json.decode(f:read('*all'))
+		for _, name in ipairs(array) do
+			disabledPluginsMap[name] = true
+		end
+
+		f:close()
+	end
+end
+
+local function saveDisabledPlugins ()
+	local f = io.open(disabledPluginsFile, 'w')
+	if f then
+		local array = {}
+		for name, _ in pairs(disabledPluginsMap) do
+			table.insert(array, name)
+		end
+
+		if #array == 0 then
+			f:close()
+			if os.remove(disabledPluginsFile) then
+				print('Removed ' .. disabledPluginsFile)
+			end
+		else
+			f:write(json.encode(array))
+			f:close()
+			print('Exported to ' .. disabledPluginsFile)
+		end
+	end
 end
 
 ---@class Plugin
@@ -22,6 +60,11 @@ function plugin:enable ()
 		self.isEnabled = true
 		hook.resetCache()
 		self.onEnable()
+
+		if self.nameSpace == 'plugins' then
+			disabledPluginsMap[self.fileName] = nil
+			saveDisabledPlugins()
+		end
 	end
 end
 
@@ -31,6 +74,11 @@ function plugin:disable ()
 		self.isEnabled = false
 		self.onDisable()
 		hook.resetCache()
+
+		if self.nameSpace == 'plugins' then
+			disabledPluginsMap[self.fileName] = true
+			saveDisabledPlugins()
+		end
 	end
 end
 
@@ -132,7 +180,7 @@ local function loadPlugins (nameSpace, isEnabledFunc)
 end
 
 loadPlugins('plugins', function (plug)
-	return true
+	return not disabledPluginsMap[plug.fileName]
 end)
 
 loadPlugins('modes', function (plug)
