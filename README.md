@@ -16,7 +16,11 @@ The easiest way to start working is to create either a plugin or a gamemode. The
 
 ## Types
 
-If you use VS Code, you can get IntelliSense working using [this Lua extension](https://marketplace.visualstudio.com/items?itemName=sumneko.lua). All of the RosaServer types/globals are laid out in `.meta/template` for this reason. It's also useful as documentation.
+If you use VS Code, you can get IntelliSense working using [this Lua extension](https://marketplace.visualstudio.com/items?itemName=sumneko.lua).
+
+IntelliJ IDEA also has better support, using [this plugin](https://github.com/EmmyLua/IntelliJ-EmmyLua).
+
+All the RosaServer types/globals are laid out in `.meta/template` for this reason. It's also useful as documentation.
 
 # Standard Plugins
 
@@ -101,8 +105,8 @@ Adds some useful console commands.
 - `eval <code>` - Evaluate a Lua string.
 - `list` - List all current players.
 - `list` - List all plugins.
-- `enableplugin <plugin>` - Enable a plugin (persists after restart).
-- `disableplugin <plugin>` - Disable a plugin (persists after restart).
+- `enableplugin <plugin>` - Enable a plugin (persists after a restart).
+- `disableplugin <plugin>` - Disable a plugin (persists after a restart).
 - `listbans` - List all current bans.
 
 ## Help
@@ -136,7 +140,7 @@ plugin.defaultConfig = {
 }
 ```
 
-Also adds the `/tps` command.
+Also, adds the `/tps` command.
 
 ## Web Uploader
 
