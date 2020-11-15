@@ -83,19 +83,19 @@ http = {}
 ---@class HTTPResponse
 ---@field status integer The HTTP status code.
 ---@field body string The response body.
----@field headers table The response headers.
+---@field headers table<string, string> The response headers.
 
 ---Send an HTTP(S) GET request asynchronously.
 ---@param scheme string The hostname of the server to send the request to, with optional protocol and port. Ex. google.com, https://google.com, https://google.com:443
 ---@param path string The path to request from the server.
----@param headers table The table of request headers.
+---@param headers table<string, string> The table of request headers.
 ---@param callback "function (response: HTTPResponse?) end" The function to be called when the response is received or there was an error.
 function http.get(scheme, path, headers, callback) end
 
 ---Send an HTTP(S) POST request asynchronously.
 ---@param scheme string The hostname of the server to send the request to, with optional protocol and port. Ex. google.com, https://google.com, https://google.com:443
 ---@param path string The path to request from the server.
----@param headers table The table of request headers.
+---@param headers table<string, string> The table of request headers.
 ---@param body string The request body.
 ---@param contentType string The request body MIME type.
 ---@param callback "function (response: HTTPResponse?) end" The function to be called when the response is received or there was an error.
