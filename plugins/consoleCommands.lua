@@ -89,7 +89,7 @@ plugin.commands['enableplugin'] = {
 		assert(foundPlugin, 'Invalid plugin')
 		assert(not foundPlugin.isEnabled, 'Plugin already enabled')
 
-		foundPlugin:enable()
+		foundPlugin:enable(true)
 		print(string.format('Enabled the %s plugin by %s', foundPlugin.name, foundPlugin.author))
 	end
 }
@@ -107,7 +107,7 @@ plugin.commands['disableplugin'] = {
 		assert(foundPlugin ~= plugin, 'Cannot disable myself')
 		assert(foundPlugin.isEnabled, 'Plugin already disabled')
 
-		foundPlugin:disable()
+		foundPlugin:disable(true)
 		print(string.format('Disabled the %s plugin by %s', foundPlugin.name, foundPlugin.author))
 	end
 }

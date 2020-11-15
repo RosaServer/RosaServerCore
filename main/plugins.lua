@@ -55,13 +55,14 @@ local plugin = {}
 plugin.__index = plugin
 
 ---Enable safely.
-function plugin:enable ()
+---@param shouldSave boolean? Whether to persist the plugin being enabled and save disabled plugins to disk.
+function plugin:enable (shouldSave)
 	if not self.isEnabled then
 		self.isEnabled = true
 		hook.resetCache()
 		self.onEnable()
 
-		if self.nameSpace == 'plugins' then
+		if shouldSave then
 			disabledPluginsMap[self.fileName] = nil
 			saveDisabledPlugins()
 		end
@@ -69,13 +70,14 @@ function plugin:enable ()
 end
 
 ---Disable safely.
-function plugin:disable ()
+---@param shouldSave boolean? Whether to persist the plugin being disabled and save disabled plugins to disk.
+function plugin:disable (shouldSave)
 	if self.isEnabled then
 		self.isEnabled = false
 		self.onDisable()
 		hook.resetCache()
 
-		if self.nameSpace == 'plugins' then
+		if shouldSave then
 			disabledPluginsMap[self.fileName] = true
 			saveDisabledPlugins()
 		end
