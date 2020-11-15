@@ -13,6 +13,7 @@ plugin.commands['clear'] = {
 
 plugin.commands['eval'] = {
 	info = 'Evaluate a Lua string.',
+	usage = 'eval <code>',
 	---@param args string[]
 	call = function (args)
 		local str = table.concat(args, ' ')
