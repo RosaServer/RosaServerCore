@@ -150,3 +150,20 @@ plugin.defaultConfig = {
 	maximumWaitTime = 10 * 60
 }
 ```
+
+## Whitelist
+
+Only let in certain players.
+
+```lua
+plugin.defaultConfig = {
+	-- How many people can be let in regardless of if they're whitelisted
+	maxPublicSlots = 0
+}
+```
+
+### Most Notable Commands
+
+- `listwhitelist` - List all whitelisted players.
+- `/whitelist <phoneNumber>` - Add a player to the whitelist.
+- `/unwhitelist <phoneNumber>` - Remove a player from the whitelist.
