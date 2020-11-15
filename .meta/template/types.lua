@@ -16,6 +16,9 @@ do
 	---@field time integer Time remaining in ticks (see TPS). Always networked.
 	---@field sunTime integer Time of day in ticks, where noon is 2592000 (12*60*60*TPS). Always networked.
 	---@field version string 🔒 Game build, ex. "36a"
+	---@field versionMajor integer 🔒 Major version number, ex. 36
+	---@field versionMinor integer 🔒 Minor version number, ex. 1
+	---@field numEvents integer 🔒 How many networked events there currently are, resets to 0 when the server resets.
 	local mt
 
 	---Reset the game with reason RESET_REASON_LUACALL.
@@ -96,6 +99,7 @@ do
 	---💲 = To network changed value to clients, the `updateFinance` method needs to be called.
 	---@class Player
 	---@field class string 🔒 "Player"
+	---@field data table A Lua table which persists throughout the lifespan of this object.
 	---@field subRosaID integer See Account.subRosaID
 	---@field phoneNumber integer 💲 See Account.phoneNumber
 	---@field money integer 💲
@@ -127,6 +131,16 @@ do
 	---@field botDestination Vector? The location this bot will walk towards.
 	local mt
 
+	---Get a specific action.
+	---@param index integer The index between 0 and 63.
+	---@return Action action The desired action.
+	function mt:getAction(index) end
+
+	---Get a specific menu button.
+	---@param index integer The index between 0 and 31.
+	---@return MenuButton menuButton The desired menu button.
+	function mt:getMenuButton(index) end
+
 	---Fire a network event containing basic info.
 	function mt:update() end
 
@@ -145,6 +159,7 @@ do
 	---Represents a human, including dead bodies.
 	---@class Human
 	---@field class string 🔒 "Human"
+	---@field data table A Lua table which persists throughout the lifespan of this object.
 	---@field stamina integer
 	---@field maxStamina integer
 	---@field vehicleSeat integer Seat index of the vehicle they are in.
@@ -167,12 +182,16 @@ do
 	---@field rightArmHP integer
 	---@field leftLegHP integer
 	---@field rightLegHP integer
-	---@field gender integer See Player.gender, not networked
-	---@field head integer See Player.head, not networked
-	---@field skinColor integer See Player.skinColor, not networked
-	---@field hairColor integer See Player.hairColor, not networked
-	---@field hair integer See Player.hair, not networked
-	---@field eyeColor integer See Player.eyeColor, not networked
+	---@field gender integer See Player.gender.
+	---@field head integer See Player.head.
+	---@field skinColor integer See Player.skinColor.
+	---@field hairColor integer See Player.hairColor.
+	---@field hair integer See Player.hair.
+	---@field eyeColor integer See Player.eyeColor.
+	---@field model integer See Player.model.
+	---@field suitColor integer See Player.suitColor.
+	---@field tieColor integer See Player.tieColor.
+	---@field necklace integer See Player.necklace.
 	---@field index integer 🔒 The index of the array in memory this is (0-255).
 	---@field isActive boolean Whether or not this exists, only change if you know what you are doing.
 	---@field isAlive boolean
@@ -186,6 +205,7 @@ do
 	---@field leftHandItem Item? 🔒
 	---@field rightHandGrab Human? 🔒
 	---@field leftHandGrab Human? 🔒
+	---@field isAppearanceDirty boolean Whether the appearance fields (model, gender, etc.) are dirty and need to be networked.
 	local mt
 
 	---Remove self safely and fire a network event.
@@ -241,6 +261,7 @@ do
 	---💾 = To network changed value to clients, the `update` method needs to be called.
 	---@class Item
 	---@field class string 🔒 "Item"
+	---@field data table A Lua table which persists throughout the lifespan of this object.
 	---@field type integer 💾
 	---@field despawnTime integer Ticks remaining until removal.
 	---@field parentSlot integer The slot this item occupies if it has a parent.
@@ -259,6 +280,7 @@ do
 	---@field physicsSettled boolean Whether this item is settled by gravity.
 	---@field physicsSettledTimer integer How many ticks the item has been settling. Once it has reached 60, it will be settled.
 	---@field rigidBody RigidBody The rigid body representing the physics of this item.
+	---@field grenadePrimer Player? The player who primed this grenade.
 	local mt
 
 	---Fire a network event containing basic info.
@@ -318,6 +340,7 @@ do
 	---💾 = To network changed value to clients, the `updateType` method needs to be called.
 	---@class Vehicle
 	---@field class string 🔒 "Vehicle"
+	---@field data table A Lua table which persists throughout the lifespan of this object.
 	---@field type integer 💾
 	---@field controllableState integer 0 = cannot be controlled, 1 = car, 2 = helicopter.
 	---@field health integer 0-100
@@ -332,7 +355,7 @@ do
 	---@field index integer 🔒 The index of the array in memory this is (0-511).
 	---@field isActive boolean Whether or not this exists, only change if you know what you are doing.
 	---@field lastDriver Player? 🔒 The last person to drive the vehicle.
-	---@field rigidBody RigidBody The rigid body representing the physics of this vehicle.
+	---@field rigidBody RigidBody 🔒 The rigid body representing the physics of this vehicle.
 	local mt
 
 	---Fire a network event containing basic info.
@@ -353,6 +376,7 @@ do
 	---Represents a rigid body currently in use by the physics engine.
 	---@class RigidBody
 	---@field class string 🔒 "RigidBody"
+	---@field data table A Lua table which persists throughout the lifespan of this object.
 	---@field type integer 0 = bone, 1 = car body, 2 = wheel, 3 = item.
 	---@field mass number In kilograms, kind of.
 	---@field pos Vector Position.
@@ -524,6 +548,8 @@ end
 ---@field money integer
 ---@field corporateRating integer
 ---@field criminalRating integer
+---@field spawnTimer integer How long this person has to wait to spawn in, in seconds.
+---@field playTime integer How many world mode minutes this person has played for.
 ---@field banTime integer Remaining ban time in minutes.
 ---@field index integer 🔒 The index of the array in memory this is (0-255).
 ---@field name string 🔒 Last known player name.
@@ -574,6 +600,15 @@ end
 ---@field isActive boolean Whether or not this exists, only change if you know what you are doing.
 ---@field body RigidBody The rigid body of this bond.
 ---@field otherBody RigidBody The second rigid body of this bond, if there is one.
+
+---Represents a networked action sent from a player.
+---@class Action
+---@field class string 🔒 "Action"
+---@field type integer
+---@field a integer
+---@field b integer
+---@field c integer
+---@field d integer
 
 ---Represents a button in the world base menu.
 ---@class MenuButton
