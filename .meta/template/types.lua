@@ -410,6 +410,26 @@ do
 end
 
 do
+	---Represents a street.
+	---@class Street
+	---@field class string 🔒 "Street"
+	---@field trafficCuboidA Vector The first corner of a cuboid, where points inside are considered to be on the street by traffic AI.
+	---@field trafficCuboidB Vector The second corner of a cuboid, where points inside are considered to be on the street by traffic AI.
+	---@field numTraffic integer How many AI vehicles are currently on the street.
+	---@field index integer 🔒 The index of the array in memory this is.
+	---@field name string 🔒 The name of the street, ex. "First Street"
+	---@field intersectionA StreetIntersection 🔒 The intersection that the street starts at.
+	---@field intersectionB StreetIntersection 🔒 The intersection that the street ends at.
+	---@field numLanes integer 🔒 How many lanes the street has.
+	local mt = {}
+
+	---Get a lane on the street.
+	---@param index integer The index between 0 and numLanes-1.
+	---@return StreetLane lane The desired lane.
+	function mt:getLane(index) end
+end
+
+do
 	---Represents a worker thread.
 	---@class Worker
 	Worker = {}
@@ -617,3 +637,27 @@ end
 ---@field class string 🔒 "MenuButton"
 ---@field id integer The ID of the button.
 ---@field text string The text displayed on the button.
+
+---Represents a lane on a street.
+---@class StreetLane
+---@field class string 🔒 "StreetLane"
+---@field direction integer The direction of the lane, either 0 or 1.
+---@field posA Vector The first point in the lane path.
+---@field posB Vector The second point in the lane path.
+
+---Represents an intersection of one or more streets.
+---@class StreetIntersection
+---@field class string 🔒 "StreetIntersection"
+---@field pos Vector The centre point of the intersection.
+---@field lightsState integer A number used internally by the traffic AI, which changes when the timer resets.
+---@field lightsTimer integer A timer used internally by the traffic AI, which increments every tick until it reaches lightsTimerMax.
+---@field lightsTimerMax integer The maximum value of the traffic timer before it resets.
+---@field lightEast integer The colour of the east light. 0 = red, 1 = yellow, 2 = green.
+---@field lightSouth integer The colour of the south light. 0 = red, 1 = yellow, 2 = green.
+---@field lightWest integer The colour of the west light. 0 = red, 1 = yellow, 2 = green.
+---@field lightNorth integer The colour of the north light. 0 = red, 1 = yellow, 2 = green.
+---@field index integer 🔒 The index of the array in memory this is.
+---@field streetEast Street? 🔒 The street connected to the east, if any.
+---@field streetSouth Street? 🔒 The street connected to the south, if any.
+---@field streetWest Street? 🔒 The street connected to the west, if any.
+---@field streetNorth Street? 🔒 The street connected to the north, if any.

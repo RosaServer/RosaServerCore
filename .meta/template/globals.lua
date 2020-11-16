@@ -360,6 +360,30 @@ function bonds.getAll() end
 ---@return integer count How many Bond objects there are.
 function bonds.getCount() end
 
+---Library for managing Street objects.
+---streets[index: integer] -> Street
+streets = {}
+
+---Get all streets.
+---@return Street[] streets A list of all Street objects.
+function streets.getAll() end
+
+---Get the number of streets.
+---@return integer count How many Street objects there are.
+function streets.getCount() end
+
+---Library for managing StreetIntersection objects.
+---intersections[index: integer] -> StreetIntersection
+intersections = {}
+
+---Get all street intersections.
+---@return StreetIntersection[] intersections A list of all StreetIntersection objects.
+function intersections.getAll() end
+
+---Get the number of street intersections.
+---@return integer count How many StreetIntersection objects there are.
+function intersections.getCount() end
+
 ---@class ListDirectoryEntry
 ---@field isDirectory boolean Whether the entry is a directory.
 ---@field name string The name of the file/directory. Ex. "asphalt2.png".
