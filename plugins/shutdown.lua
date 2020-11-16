@@ -26,7 +26,7 @@ local function shutdown ()
 		plug:disable()
 	end
 
-	print('Goodbye!')
+	plugin:print('Goodbye!')
 	os.exit()
 end
 
