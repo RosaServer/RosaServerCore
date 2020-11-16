@@ -96,15 +96,15 @@ end
 ---@vararg any The values to print.
 function plugin:print (...)
 	local color = self.nameSpace == 'modes' and '36;1' or '36'
-	printAppend('\27[' .. color .. 'm[' .. self.name .. ']\27[0m ')
-	print(...)
+	local prefix = '\27[' .. color .. 'm[' .. self.name .. ']\27[0m '
+	print(prefix .. concatVarArgs('\t', ...))
 end
 
 ---Print a warning message.
 ---@vararg any The values to print.
 function plugin:warn (...)
-	printAppend('\27[33m[' .. self.name .. ']\27[0m ')
-	print(...)
+	local prefix = '\27[33m[' .. self.name .. ']\27[0m '
+	print(prefix .. concatVarArgs('\t', ...))
 end
 
 ---Include another file.

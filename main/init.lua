@@ -91,10 +91,8 @@ local consolePlayer = {
 	isConsole = true,
 	name = 'Big Brother',
 	data = {},
-	sendMessage = function (_, ...)
-		printAppend('\27[31;1m')
-		print(...)
-		printAppend('\27[0m')
+	sendMessage = function (_, message)
+		print('\27[31;1m' .. message .. '\27[0m')
 	end
 }
 

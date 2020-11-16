@@ -95,8 +95,8 @@ function getCirclePoints (numPoints, radius, angleOffset)
 end
 
 ---Shuffle a table in place.
----@param tbl table The table to shuffle.
----@return table tbl The shuffled table.
+---@param tbl any[] The table to shuffle.
+---@return any[] tbl The shuffled table.
 function table.shuffle (tbl)
 	for i = #tbl, 2, -1 do
 		local j = math.random(i)
@@ -106,7 +106,7 @@ function table.shuffle (tbl)
 end
 
 ---Determine if a list contains a value.
----@param tbl table The table of values to check.
+---@param tbl any[] The table of values to check.
 ---@param val any The value to check against.
 ---@return boolean contains Whether the value was found in the table.
 function table.contains (tbl, val)
@@ -449,4 +449,27 @@ function autoCompletePlayer (input)
 	end
 
 	return nil, nil
+end
+
+---Convert all arguments to strings and concatenate.
+---@param separator string The string to join two arguments with.
+---@vararg any The values to concatenate.
+function concatVarArgs (separator, ...)
+	local numArgs = select('#', ...)
+	local args = {...}
+
+	local str = ''
+	local doneFirst = false
+
+	for i = 1, numArgs do
+		if doneFirst then
+			str = str .. separator
+		else
+			doneFirst = true
+		end
+
+		str = str .. tostring(args[i])
+	end
+
+	return str
 end
