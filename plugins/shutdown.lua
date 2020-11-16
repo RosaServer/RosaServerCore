@@ -1,3 +1,4 @@
+---@type Plugin
 local plugin = ...
 plugin.name = 'Shutdown'
 plugin.author = 'jdb'

@@ -1,3 +1,4 @@
+---@type Plugin
 local plugin = ...
 plugin.name = 'Whitelist'
 plugin.author = 'jdb'

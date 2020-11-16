@@ -1,3 +1,4 @@
+---@type Plugin
 local plugin = ...
 plugin.name = 'Console Commands'
 plugin.author = 'jdb'

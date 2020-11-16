@@ -1,3 +1,4 @@
+---@type Plugin
 local plugin = ...
 plugin.name = 'Web Uploader'
 plugin.author = 'jdb'

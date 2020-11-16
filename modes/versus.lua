@@ -1,3 +1,4 @@
+---@type Plugin
 local mode = ...
 mode.name = 'Versus'
 mode.author = 'Cryptic Sea'

@@ -1,3 +1,4 @@
+---@type Plugin
 local plugin = ...
 plugin.name = 'Ban Messages'
 plugin.author = 'jdb'

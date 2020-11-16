@@ -1,3 +1,4 @@
+---@type Plugin
 local mode = ...
 mode.name = 'Raw Test'
 mode.author = 'jdb'
@@ -67,7 +68,7 @@ mode.commands['/map'] = {
 
 		mapName = args[1]
 
-		hook.once('PostPlayerActions', function ()
+		hook.once('Logic', function ()
 			server:reset()
 		end)
 	end
