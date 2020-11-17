@@ -6,6 +6,11 @@ if hook.persistentMode == '' then
 	hook.persistentMode = config.defaultGameMode
 end
 
+local function printScoped (...)
+	local prefix = '\27[34m[Plugins]\27[0m '
+	print(prefix .. concatVarArgs('\t', ...))
+end
+
 local disabledPluginsFile = 'disabledPlugins.json'
 
 local disabledPluginsMap = {}
@@ -32,12 +37,12 @@ local function saveDisabledPlugins ()
 		if #array == 0 then
 			f:close()
 			if os.remove(disabledPluginsFile) then
-				print('Removed ' .. disabledPluginsFile)
+				printScoped('Removed ' .. disabledPluginsFile)
 			end
 		else
 			f:write(json.encode(array))
 			f:close()
-			print('Exported to ' .. disabledPluginsFile)
+			printScoped('Exported to ' .. disabledPluginsFile)
 		end
 	end
 end
@@ -143,7 +148,7 @@ local function newPlugin (nameSpace, stem)
 end
 
 local function loadPlugins (nameSpace, isEnabledFunc)
-	print('Loading ' .. nameSpace .. '...')
+	printScoped('Loading ' .. nameSpace .. '...')
 	local numLoaded = 0
 
 	local entries = os.listDirectory(nameSpace)
@@ -186,7 +191,7 @@ local function loadPlugins (nameSpace, isEnabledFunc)
 		end
 	end
 
-	print('Loaded ' .. numLoaded .. ' ' .. nameSpace)
+	printScoped('Loaded ' .. numLoaded .. ' ' .. nameSpace)
 end
 
 loadPlugins('plugins', function (plug)

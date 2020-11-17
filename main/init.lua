@@ -1,5 +1,3 @@
-print('Alpha ' .. server.version .. ', ' .. _VERSION .. ', ' .. jit.version)
-
 math.randomseed(os.time())
 
 require('main.util')
