@@ -279,9 +279,13 @@ end
 ---@param ply Player The player to send the message to.
 ---@param str string The message to announce.
 function messagePlayerWrap (ply, str)
-	local lines = str:splitMaxLen(63)
-	for _, line in ipairs(lines) do
-		ply:sendMessage(line)
+	if ply.isConsole then
+		ply:sendMessage(str)
+	else
+		local lines = str:splitMaxLen(63)
+		for _, line in ipairs(lines) do
+			ply:sendMessage(line)
+		end
 	end
 end
 
