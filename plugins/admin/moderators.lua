@@ -5,16 +5,21 @@ local module = {}
 local shared = plugin:require('shared')
 local persistence = plugin:require('persistence')
 
+local reminderDisplayEvery = 5 * 60 * server.TPS
+
+local reminderDisplayTimer
 local visibleModerators
 local awaitConnected
 local hiddenPlayers
 
 function module.onEnable ()
+	reminderDisplayTimer = 0
 	visibleModerators = {}
 	awaitConnected = {}
 end
 
 function module.onDisable ()
+	reminderDisplayTimer = nil
 	visibleModerators = nil
 	awaitConnected = nil
 end
@@ -50,6 +55,14 @@ function plugin.hooks.PostPlayerDelete (ply)
 	visibleModerators[ply.index] = nil
 end
 
+local function displayReminders()
+	for _, ply in ipairs(players.getNonBots()) do
+		if isHiddenModerator(ply) then
+			ply:sendMessage('Note: You are currently hidden from the UI. (/join, /leave)')
+		end
+	end
+end
+
 function module.hookLogic ()
 	for index, _ in pairs(awaitConnected) do
 		local ply = players[index]
@@ -64,6 +77,12 @@ function module.hookLogic ()
 				end
 			end
 		end
+	end
+
+	reminderDisplayTimer = reminderDisplayTimer + 1
+	if reminderDisplayTimer == reminderDisplayEvery then
+		reminderDisplayTimer = 0
+		displayReminders()
 	end
 end
 

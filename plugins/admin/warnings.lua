@@ -35,10 +35,6 @@ local function displayWarnings()
 			ply:sendMessage('Type /warned to acknowledge.')
 			ply:sendMessage(line)
 		end
-
-		if isHiddenModerator(ply) then
-			ply:sendMessage('Note: You are currently hidden from the UI. (/join, /leave)')
-		end
 	end
 end
 
