@@ -76,6 +76,7 @@ function hook.remove (eventName, name)
 	if _hooks[eventName] == nil then return end
 
 	_hooks[eventName][name] = nil
+	hook.resetCache()
 end
 
 ---Run a hook.
