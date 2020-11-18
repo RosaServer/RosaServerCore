@@ -97,11 +97,38 @@ function plugin:disable (shouldSave)
 	end
 end
 
+local acceptableColors = {}
+do
+	local i = 0
+	for color = 17, 230 do
+		if (color % 6 < 4) then
+			i = i + 1
+			acceptableColors[i] = color
+		end
+	end
+end
+
+---@param name string
+local function nameToColor (name)
+	local sum = 0
+
+	for i = 1, #name do
+		sum = sum + name:byte(i) * 17
+	end
+
+	return acceptableColors[sum % #acceptableColors + 1]
+end
+
 ---Print a message.
 ---@vararg any The values to print.
 function plugin:print (...)
-	local color = self.nameSpace == 'modes' and '36;1' or '36'
-	local prefix = '\27[' .. color .. 'm[' .. self.name .. ']\27[0m '
+	if not self._printColor then
+		self._printColor = nameToColor(self.name)
+		print(self.name, self._printColor)
+	end
+
+	local color = self.nameSpace == 'modes' and 248 or self._printColor
+	local prefix = '\27[38;5;' .. color .. 'm[' .. self.name .. ']\27[0m '
 	print(prefix .. concatVarArgs('\t', ...))
 end
 
