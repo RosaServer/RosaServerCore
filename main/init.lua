@@ -160,3 +160,12 @@ hook.add(
 )
 
 require('main.plugins')
+
+hook.add(
+	'InterruptSignal', 'main',
+	function ()
+		for _, plug in pairs(hook.plugins) do
+			plug:disable()
+		end
+	end
+)
