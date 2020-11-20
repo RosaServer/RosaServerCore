@@ -21,17 +21,17 @@ do
 	---@field versionMajor integer 🔒 Major version number, ex. 36
 	---@field versionMinor integer 🔒 Minor version number, ex. 1
 	---@field numEvents integer 🔒 How many networked events there currently are, resets to 0 when the server resets.
-	local mt
+	local Server
 
 	---Reset the game with reason RESET_REASON_LUACALL.
-	function mt:reset() end
+	function Server:reset() end
 
 	---Set the title displayed on the terminal the server is running on.
 	---@param title string The title to set.
-	function mt:setConsoleTitle(title) end
+	function Server:setConsoleTitle(title) end
 
 	---The global Server instance.
-	server = mt
+	server = Server
 end
 
 do
@@ -41,34 +41,34 @@ do
 	---@field x number
 	---@field y number
 	---@field z number
-	local mt
+	local Vector
 
 	---Add other to self.
 	---@param other Vector The vector to add.
-	function mt:add(other) end
+	function Vector:add(other) end
 
 	---Multiply self by scalar.
 	---@param scalar number The scalar to multiply each coordinate by.
-	function mt:mult(scalar) end
+	function Vector:mult(scalar) end
 
 	---Replace values with those in another vector.
 	---@param other Vector The vector to inherit values from.
-	function mt:set(other) end
+	function Vector:set(other) end
 
 	---Create a copy of self.
 	---@return Vector clone The created copy.
-	function mt:clone() end
+	function Vector:clone() end
 
 	---Calculate the distance between self and other.
 	---@param other Vector The vector to calculate distance to.
 	---@return number distance The distance in units.
-	function mt:dist(other) end
+	function Vector:dist(other) end
 
 	---Calculate the distance between self and other, squared.
 	---Much faster as it does not square root the value.
 	---@param other Vector The vector to calculate distance to.
 	---@return number distanceSquared The distance in units, squared.
-	function mt:distSquare(other) end
+	function Vector:distSquare(other) end
 end
 
 do
@@ -84,15 +84,15 @@ do
 	---@field x3 number
 	---@field y3 number
 	---@field z3 number
-	local mt
+	local RotMatrix
 
 	---Replace values with those in another matrix.
 	---@param other RotMatrix The matrix to inherit values from.
-	function mt:set(other) end
+	function RotMatrix:set(other) end
 
 	---Create a copy of self.
 	---@return RotMatrix clone The created copy.
-	function mt:clone() end
+	function RotMatrix:clone() end
 end
 
 do
@@ -131,30 +131,30 @@ do
 	---@field connection Connection? 🔒 Their network connection.
 	---@field account Account Their account.
 	---@field botDestination Vector? The location this bot will walk towards.
-	local mt
+	local Player
 
 	---Get a specific action.
 	---@param index integer The index between 0 and 63.
 	---@return Action action The desired action.
-	function mt:getAction(index) end
+	function Player:getAction(index) end
 
 	---Get a specific menu button.
 	---@param index integer The index between 0 and 31.
 	---@return MenuButton menuButton The desired menu button.
-	function mt:getMenuButton(index) end
+	function Player:getMenuButton(index) end
 
 	---Fire a network event containing basic info.
-	function mt:update() end
+	function Player:update() end
 
 	---Fire a network event containing financial info.
-	function mt:updateFinance() end
+	function Player:updateFinance() end
 
 	---Remove self safely and fire a network event.
-	function mt:remove() end
+	function Player:remove() end
 
 	---Create a red chat message only this player receives.
 	---@param message string The message to send.
-	function mt:sendMessage(message) end
+	function Player:sendMessage(message) end
 end
 
 do
@@ -208,53 +208,53 @@ do
 	---@field rightHandGrab Human? 🔒
 	---@field leftHandGrab Human? 🔒
 	---@field isAppearanceDirty boolean Whether the appearance fields (model, gender, etc.) are dirty and need to be networked.
-	local mt
+	local Human
 
 	---Remove self safely and fire a network event.
-	function mt:remove() end
+	function Human:remove() end
 
 	---Teleport safely to a different position.
 	---@param position Vector The position to teleport to.
-	function mt:teleport(position) end
+	function Human:teleport(position) end
 
 	---Speak a message.
 	---@param message string The message to say.
 	---@param volumeLevel integer The volume to speak at. 0 = whisper, 1 = normal, 2 = yell.
-	function mt:speak(message, volumeLevel) end
+	function Human:speak(message, volumeLevel) end
 
 	---Arm with a gun and magazines.
 	---@param weaponType integer The ID of the item type. Must be a weapon.
 	---@param magazineCount integer The number of magazines to give.
-	function mt:arm(weaponType, magazineCount) end
+	function Human:arm(weaponType, magazineCount) end
 
 	---Get a specific bone.
 	---@param index integer The index between 0 and 15.
 	---@return Bone bone The desired bone.
-	function mt:getBone(index) end
+	function Human:getBone(index) end
 
 	---Get a specific rigid body.
 	---@param index integer The index between 0 and 15.
 	---@return RigidBody rigidBody The desired rigid body.
-	function mt:getRigidBody(index) end
+	function Human:getRigidBody(index) end
 
 	---Set the velocity of every rigid body.
 	---@param velocity Vector The velocity to set.
-	function mt:setVelocity(velocity) end
+	function Human:setVelocity(velocity) end
 
 	---Add velocity to every rigid body.
 	---@param velocity Vector The velocity to add.
-	function mt:addVelocity(velocity) end
+	function Human:addVelocity(velocity) end
 
 	---Mount an item to an inventory slot.
 	---@param childItem Item The item to mount.
 	---@param slot integer The slot to mount to.
 	---@return boolean success Whether the mount was successful.
-	function mt:mountItem(childItem, slot) end
+	function Human:mountItem(childItem, slot) end
 
 	---Apply damage points to a specific bone.
 	---@param boneIndex integer The index of the bone to apply damage to.
 	---@param damage integer The amount of damage to apply.
-	function mt:applyDamage(boneIndex, damage) end
+	function Human:applyDamage(boneIndex, damage) end
 end
 
 
@@ -283,50 +283,50 @@ do
 	---@field physicsSettledTimer integer How many ticks the item has been settling. Once it has reached 60, it will be settled.
 	---@field rigidBody RigidBody The rigid body representing the physics of this item.
 	---@field grenadePrimer Player? The player who primed this grenade.
-	local mt
+	local Item
 
 	---Fire a network event containing basic info.
-	function mt:update() end
+	function Item:update() end
 
 	---Remove self safely and fire a network event.
-	function mt:remove() end
+	function Item:remove() end
 
 	---Mount another item onto this item.
 	---Ex. a magazine to this gun.
 	---@param childItem Item The child item to mount to this item.
 	---@param slot integer The slot to mount the child item to.
 	---@return boolean success Whether the mount was successful.
-	function mt:mountItem(childItem, slot) end
+	function Item:mountItem(childItem, slot) end
 
 	---Remove this item from any parent, back into the world.
 	---@return boolean success Whether the unmount was successful.
-	function mt:unmount() end
+	function Item:unmount() end
 
 	---Speak a message.
 	---The item does not need to be a phone type.
 	---@param message string The message to say.
 	---@param volumeLevel integer The volume to speak at. 0 = whisper, 1 = normal, 2 = yell.
-	function mt:speak(message, volumeLevel) end
+	function Item:speak(message, volumeLevel) end
 
 	---Explode like a grenade, whether or not it is one.
 	---Does not alter or remove the item.
-	function mt:explode() end
+	function Item:explode() end
 
 	---Set the text displayed on this item.
 	---Visible if it is a Memo or a Newspaper item.
 	---@param memo string The memo to set. Max 1023 characters.
-	function mt:setMemo(memo) end
+	function Item:setMemo(memo) end
 
 	---Update the color and text of a line and network it.
 	---Only works if this item is a computer.
 	---@param lineIndex integer Which line to transmit.
-	function mt:computerTransmitLine(lineIndex) end
+	function Item:computerTransmitLine(lineIndex) end
 
 	---Set the text to display on a line. Does not immediately network.
 	---Only works if this item is a computer.
 	---@param lineIndex integer Which line to edit.
 	---@param text string The text to set the line to. Max 63 characters.
-	function mt:computerSetLine(lineIndex, text) end
+	function Item:computerSetLine(lineIndex, text) end
 
 	---Set the color of a character on screen. Does not immediately network.
 	---Only works if this item is a computer.
@@ -334,7 +334,7 @@ do
 	---@param lineIndex integer Which line to edit.
 	---@param columnIndex integer Which column to edit.
 	---@param color integer The color to set, between 0x00 and 0xFF.
-	function mt:computerSetColor(lineIndex, columnIndex, color) end
+	function Item:computerSetColor(lineIndex, columnIndex, color) end
 end
 
 do
@@ -358,20 +358,20 @@ do
 	---@field isActive boolean Whether or not this exists, only change if you know what you are doing.
 	---@field lastDriver Player? 🔒 The last person to drive the vehicle.
 	---@field rigidBody RigidBody 🔒 The rigid body representing the physics of this vehicle.
-	local mt
+	local Vehicle
 
 	---Fire a network event containing basic info.
-	function mt:updateType() end
+	function Vehicle:updateType() end
 
 	---Fire a network event to make a part appear to break.
 	---Also used to visually toggle train doors.
 	---@param kind integer The kind of part. 0 = window, 1 = tire, 2 = entire body.
 	---@param position Vector The global position of the destruction.
 	---@param normal Vector The normal of the destruction.
-	function mt:updateDestruction(kind, partIndex, position, normal) end
+	function Vehicle:updateDestruction(kind, partIndex, position, normal) end
 
 	---Remove self safely and fire a network event.
-	function mt:remove() end
+	function Vehicle:remove() end
 end
 
 do
@@ -387,26 +387,26 @@ do
 	---@field index integer 🔒 The index of the array in memory this is (0-8191).
 	---@field isActive boolean Whether or not this exists, only change if you know what you are doing.
 	---@field isSettled boolean Whether this rigid body is settled by gravity.
-	local mt
+	local RigidBody
 
 	---Create a bond between this body and another at specific local coordinates.
 	---@param otherBody RigidBody The second body in the bond.
 	---@param thisLocalPos Vector The local position relative to this body.
 	---@param otherLocalPos Vector The local position relative to the other body.
 	---@return Bond? bond The created bond, if successful.
-	function mt:bondTo(otherBody, thisLocalPos, otherLocalPos) end
+	function RigidBody:bondTo(otherBody, thisLocalPos, otherLocalPos) end
 
 	---Link rotation between this body and another.
 	---Does not seem to be very strong.
 	---@param otherBody RigidBody The second body in the bond.
 	---@return Bond? bond The created bond, if successful.
-	function mt:bondRotTo(otherBody) end
+	function RigidBody:bondRotTo(otherBody) end
 
 	---Bond a local coordinate of this body to a static point in space.
 	---@param localPos Vector The local position relative to this body.
 	---@param globalPos Vector The global position in the level.
 	---@return Bond? bond The created bond, if successful.
-	function mt:bondToLevel(localPos, globalPos) end
+	function RigidBody:bondToLevel(localPos, globalPos) end
 end
 
 do
@@ -421,12 +421,12 @@ do
 	---@field intersectionA StreetIntersection 🔒 The intersection that the street starts at.
 	---@field intersectionB StreetIntersection 🔒 The intersection that the street ends at.
 	---@field numLanes integer 🔒 How many lanes the street has.
-	local mt = {}
+	local Street = {}
 
 	---Get a lane on the street.
 	---@param index integer The index between 0 and numLanes-1.
 	---@return StreetLane lane The desired lane.
-	function mt:getLane(index) end
+	function Street:getLane(index) end
 end
 
 do
