@@ -124,7 +124,6 @@ end
 function plugin:print (...)
 	if not self._printColor then
 		self._printColor = nameToColor(self.name)
-		print(self.name, self._printColor)
 	end
 
 	local color = self.nameSpace == 'modes' and 248 or self._printColor
