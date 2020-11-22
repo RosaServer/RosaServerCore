@@ -2,7 +2,7 @@
 local plugin = ...
 plugin.name = 'Short Chat'
 plugin.author = 'jdb'
-plugin.description = 'Reject very wide chat messages.'
+plugin.description = 'Rejects very wide chat messages.'
 
 plugin.defaultConfig = {
 	maxPixelWidth = 2060
