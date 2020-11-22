@@ -33,7 +33,7 @@ end
 
 plugin.commands['/shutdown'] = {
 	info = 'Begin or cancel shutdown.',
-	usage = '/shutdown [minutes/"now"]',
+	usage = '/shutdown <minutes/"now"> [reason]',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param args string[]
 	autoComplete = function (args)
@@ -46,6 +46,8 @@ plugin.commands['/shutdown'] = {
 	---@param ply Player
 	---@param args string[]
 	call = function (ply, _, args)
+		assert(#args >= 1, 'usage')
+
 		if args[1]:lower() == 'now' then
 			if adminLog then
 				adminLog('%s initiated instant shutdown', ply.name)
@@ -66,7 +68,7 @@ plugin.commands['/shutdown'] = {
 			return
 		end
 
-		local seconds = math.max(math.floor(table.remove(args, 1) or 30), 0)
+		local seconds = math.max(math.floor(table.remove(args, 1)), 0)
 		reason = #args > 0 and table.concat(args, ' ') or nil
 
 		shuttingDown = true
