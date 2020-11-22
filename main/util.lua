@@ -477,3 +477,72 @@ function concatVarArgs (separator, ...)
 
 	return str
 end
+
+--[[
+
++--------------+-----------------+
+| Phone Number | Name            |
++--------------+-----------------+
+| 256-3956     | jdb             |
++--------------+-----------------+
+| 256-6393     | Credulous Crumb |
++--------------+-----------------+
+
+]]
+
+---@param columnWidths integer[]
+---@param padding integer
+local function getHorizontalLine (columnWidths, padding)
+	local line = '+'
+	
+	for _, width in ipairs(columnWidths) do
+		line = line .. ('-'):rep(width + padding * 2) .. '+'
+	end
+
+	return line
+end
+
+---@param row any[]
+---@param columnWidths integer[]
+local function getRowString (row, columnWidths, padding)
+	local str = '|'
+
+	for column, width in ipairs(columnWidths) do
+		str = str .. (' '):rep(padding)
+		local cell = tostring(row[column])
+		str = str .. cell
+		str = str .. (' '):rep(width - #cell + padding)
+		str = str .. '|'
+	end
+
+	return str
+end
+
+---@param rows table[] An array of columns which will be printed as a clean table.
+function drawTable (rows)
+	if #rows == 0 then return end
+
+	local padding = 1
+	local columnWidths = {}
+
+	for columnID, _ in ipairs(rows[1]) do
+		local max = 0
+
+		for _, row in ipairs(rows) do
+			local cell = tostring(row[columnID])
+			if #cell > max then
+				max = #cell
+			end
+		end
+
+		columnWidths[columnID] = max
+	end
+
+	local line = getHorizontalLine(columnWidths, padding)
+	print(line)
+
+	for _, row in ipairs(rows) do
+		print(getRowString(row, columnWidths, padding))
+		print(line)
+	end
+end
