@@ -110,6 +110,7 @@ do
 	---@field team integer 💾
 	---@field teamSwitchTimer integer Ticks remaining until they can switch teams again.
 	---@field stocks integer 💲 The amount of shares they own in their company.
+	---@field spawnTimer integer How long this person has to wait to spawn in, in seconds.
 	---@field menuTab integer What tab in the menu they are currently in.
 	---@field gender integer 💾 0 = female, 1 = male.
 	---@field skinColor integer 💾 Starts at 0.
