@@ -4,6 +4,7 @@
 !/consoleCommands.lua
 !/help.lua
 !/logs.lua
+!/shortChat.lua
 !/shutdown.lua
 !/titleInfo.lua
 !/webUploader.lua
