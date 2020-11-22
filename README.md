@@ -161,7 +161,7 @@ plugin.defaultConfig = {
 
 ## Where
 
-Locate players.
+Locates players relative to streets.
 
 ### Most Notable Commands
 

@@ -2,7 +2,7 @@
 local plugin = ...
 plugin.name = 'Where'
 plugin.author = 'jdb'
-plugin.description = 'Locate players.'
+plugin.description = 'Locates players relative to streets.'
 
 ---@param pos Vector
 ---@return Street?
