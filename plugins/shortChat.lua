@@ -253,7 +253,6 @@ end
 ---@param message string
 function plugin.hooks.PlayerChat (ply, message)
 	local width = getRockwellWidth(message)
-	plugin:print(width)
 	if width > plugin.config.maxPixelWidth then
 		ply:sendMessage('Message too long')
 		return hook.override
