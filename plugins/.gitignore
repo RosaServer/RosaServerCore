@@ -7,4 +7,5 @@
 !/shutdown.lua
 !/titleInfo.lua
 !/webUploader.lua
+!/where.lua
 !/whitelist.lua
