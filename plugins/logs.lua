@@ -109,7 +109,7 @@ do
 				table.remove(cachedLines, 1)
 			end
 
-			if plugin.config.webhookEnabled then
+			if str ~= '' and plugin.config.webhookEnabled then
 				http.post(plugin.config.webhookHost, plugin.config.webhookPath, {}, json.encode({
 					content = '```accesslog\n' .. str .. '```',
 					username = server.name
