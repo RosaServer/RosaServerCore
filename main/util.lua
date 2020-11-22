@@ -125,6 +125,21 @@ function table.numElements (tbl)
 	return count
 end
 
+---Get a list of all keys in a table.
+---@param tbl table The table to get the keys of.
+---@return any[] keys The keys in the table.
+function table.keys (tbl)
+	local keys = {}
+	local n = 0
+
+	for key, _ in pairs(tbl) do
+		n = n + 1
+		keys[n] = key
+	end
+
+	return keys
+end
+
 ---Clamp a number between two bounds.
 ---@param val number The value to clamp.
 ---@param lower number The minimum value.
