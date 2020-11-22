@@ -26,10 +26,16 @@ plugin.commands['eval'] = {
 plugin.commands['list'] = {
 	info = 'List all current players.',
 	call = function ()
-		print('Phone', 'Name')
+		local rows = {
+			{ 'Phone', 'Name' }
+		}
 		for _, ply in pairs(players.getNonBots()) do
-			print(ply.phoneNumber, ply.name)
+			table.insert(rows, {
+				dashPhoneNumber(ply.phoneNumber),
+				ply.name
+			})
 		end
+		drawTable(rows)
 	end
 }
 
@@ -113,31 +119,53 @@ plugin.commands['disableplugin'] = {
 plugin.commands['listbans'] = {
 	info = 'List all current bans.',
 	call = function ()
-		print('Phone', 'Time', 'Name')
+		local rows = {
+			{ 'Phone', 'Time Remaining', 'Name' }
+		}
 		for _, acc in pairs(accounts.getAll()) do
 			if acc.banTime ~= 0 then
-				print(acc.phoneNumber, acc.banTime..'m', acc.name)
+				table.insert(rows, {
+					dashPhoneNumber(acc.phoneNumber),
+					acc.banTime .. 'm',
+					acc.name
+				})
 			end
 		end
+		drawTable(rows)
 	end
 }
 
 plugin.commands['listitemtypes'] = {
 	info = 'List all item types.',
 	call = function ()
-		print('Index', 'Hands', 'Price', 'Mass', 'Name')
+		local rows = {
+			{ 'Index', 'Hands', 'Price', 'Mass', 'Name' }
+		}
 		for _, type in pairs(itemTypes.getAll()) do
-			print(type.index, type.numHands, type.price, type.mass, type.name)
+			table.insert(rows, {
+				type.index,
+				type.numHands,
+				type.price,
+				type.mass,
+				type.name
+			})
 		end
+		drawTable(rows)
 	end
 }
 
 plugin.commands['listitems'] = {
 	info = 'List all items.',
 	call = function ()
-		print('Index', 'Type')
+		local rows = {
+			{ 'Index', 'Type' }
+		}
 		for _, item in pairs(items.getAll()) do
-			print(item.index, itemTypes[item.type].name)
+			table.insert(rows, {
+				item.index,
+				itemTypes[item.type].name
+			})
 		end
+		drawTable(rows)
 	end
 }
