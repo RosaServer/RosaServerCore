@@ -126,6 +126,10 @@ plugin.defaultConfig = {
 }
 ```
 
+## Short Chat
+
+Rejects very wide chat messages.
+
 ## Shutdown
 
 Adds the `/shutdown [minutes/"now"]` command.
@@ -154,6 +158,14 @@ plugin.defaultConfig = {
 	maximumWaitTime = 10 * 60
 }
 ```
+
+## Where
+
+Locate players.
+
+### Most Notable Commands
+
+- `/where <phoneNumber/name>` - Locate a player.
 
 ## Whitelist
 
