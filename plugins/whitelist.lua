@@ -23,6 +23,17 @@ local function getWhitelistIndex (phoneNumber)
 	return nil
 end
 
+---Check if a phone number is in the whitelist.
+---@param phoneNumber integer The phone number to check.
+---@return boolean isWhitelisted
+function isNumberWhitelisted (phoneNumber)
+	if not plugin.isEnabled then
+		return false
+	end
+
+	return not not getWhitelistIndex(phoneNumber)
+end
+
 local function saveWhitelist ()
 	local f, errorMessage = io.open(whitelistPath, 'w')
 	if f then
