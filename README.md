@@ -104,7 +104,7 @@ Adds some useful console commands.
 
 - `eval <code>` - Evaluate a Lua string.
 - `list` - List all current players.
-- `list` - List all plugins.
+- `listplugins` - List all plugins.
 - `enableplugin <plugin>` - Enable a plugin (persists after a restart).
 - `disableplugin <plugin>` - Disable a plugin (persists after a restart).
 - `listbans` - List all current bans.
