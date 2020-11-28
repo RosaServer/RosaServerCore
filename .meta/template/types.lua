@@ -286,9 +286,6 @@ do
 	---@field grenadePrimer Player? The player who primed this grenade.
 	local Item
 
-	---Fire a network event containing basic info.
-	function Item:update() end
-
 	---Remove self safely and fire a network event.
 	function Item:remove() end
 
