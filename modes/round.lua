@@ -3,7 +3,9 @@ local mode = ...
 mode.name = 'Round'
 mode.author = 'Cryptic Sea'
 
-function mode.onEnable ()
+function mode.onEnable (isReload)
 	server.type = TYPE_ROUND
-	server:reset()
+	if not isReload then
+		server:reset()
+	end
 end

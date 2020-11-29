@@ -81,6 +81,16 @@ local function autoCompletePluginArg (args)
 	end
 end
 
+---@param args string[]
+local function autoCompletePluginOrModeArg (args)
+	if #args < 1 then return end
+
+	local foundName = hook.autoCompletePlugin(args[1])
+	if foundName then
+		args[1] = foundName
+	end
+end
+
 plugin.commands['enableplugin'] = {
 	info = 'Enable a plugin.',
 	usage = 'enableplugin <plugin>',
@@ -94,7 +104,7 @@ plugin.commands['enableplugin'] = {
 		assert(not foundPlugin.isEnabled, 'Plugin already enabled')
 
 		foundPlugin:enable(true)
-		print(string.format('Enabled the %s plugin by %s', foundPlugin.name, foundPlugin.author))
+		plugin:print(string.format('Enabled the %s plugin by %s', foundPlugin.name, foundPlugin.author))
 	end
 }
 
@@ -112,7 +122,37 @@ plugin.commands['disableplugin'] = {
 		assert(foundPlugin.isEnabled, 'Plugin already disabled')
 
 		foundPlugin:disable(true)
-		print(string.format('Disabled the %s plugin by %s', foundPlugin.name, foundPlugin.author))
+		plugin:print(string.format('Disabled the %s plugin by %s', foundPlugin.name, foundPlugin.author))
+	end
+}
+
+plugin.commands['reloadplugin'] = {
+	info = 'Reload a plugin.',
+	usage = 'reloadplugin <plugin>',
+	autoComplete = autoCompletePluginOrModeArg,
+	---@param args string[]
+	call = function (args)
+		assert(#args >= 1, 'usage')
+
+		local foundPlugin = hook.getPluginByName(args[1])
+		assert(foundPlugin, 'Invalid plugin')
+
+		local isActiveMode = foundPlugin.nameSpace == 'modes' and foundPlugin.isEnabled
+
+		plugin:print(string.format('Reloading the %s plugin by %s', foundPlugin.name, foundPlugin.author))
+
+		if isActiveMode then
+			chat.announce('[!] Reloading the active game mode!')
+
+			local startTime = os.clock()
+
+			foundPlugin:reload()
+
+			local elapsed = (os.clock() - startTime) * 1000
+			chat.announce(('[!] OK (%ims)'):format(elapsed))
+		else
+			foundPlugin:reload()
+		end
 	end
 }
 

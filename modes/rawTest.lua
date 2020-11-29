@@ -6,9 +6,11 @@ mode.description = 'An empty world where anything is possible.'
 
 local mapName
 
-function mode.onEnable ()
+function mode.onEnable (isReload)
 	mapName = 'versus2'
-	server:reset()
+	if not isReload then
+		server:reset()
+	end
 end
 
 function mode.onDisable ()

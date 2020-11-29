@@ -73,7 +73,7 @@ function plugin:enable (shouldSave)
 	if not self.isEnabled then
 		self.isEnabled = true
 		hook.resetCache()
-		self.onEnable()
+		self.onEnable(false)
 
 		if shouldSave then
 			disabledPluginsMap[self.fileName] = nil
@@ -87,7 +87,7 @@ end
 function plugin:disable (shouldSave)
 	if self.isEnabled then
 		self.isEnabled = false
-		self.onDisable()
+		self.onDisable(false)
 		hook.resetCache()
 
 		if shouldSave then
@@ -151,11 +151,50 @@ function plugin:require (modName)
 	return self.requireCache[modName]
 end
 
+function plugin:load (isEnabled, isReload)
+	local loadedFile = assert(loadfile(self.entryPath))
+
+	loadedFile(self)
+
+	-- Load default config
+	for k, v in pairs(self.defaultConfig) do
+		self.config[k] = v
+	end
+
+	-- Load config
+	local conf = config[self.nameSpace][self.fileName]
+	if conf then
+		for k, v in pairs(conf) do
+			self.config[k] = v
+		end
+	end
+
+	-- Enable
+	self.isEnabled = isEnabled
+	if self.isEnabled then
+		self.onEnable(isReload)
+	end
+end
+
+function plugin:reload ()
+	local isEnabled = self.isEnabled
+
+	if isEnabled then
+		self:onDisable(true)
+	end
+
+	self:load(isEnabled, true)
+
+	hook.resetCache()
+end
+
 ---Indicate the plugin has been enabled.
-function plugin:onEnable () end
+---@param isReload boolean
+function plugin:onEnable (isReload) end
 
 ---Indicate the plugin has been disabled.
-function plugin:onDisable () end
+---@param isReload boolean
+function plugin:onDisable (isReload) end
 
 local function newPlugin (nameSpace, stem)
 	return setmetatable({
@@ -182,36 +221,18 @@ local function loadPlugins (nameSpace, isEnabledFunc)
 		if entry.isDirectory or entry.extension == '.lua' then
 			local plug = newPlugin(nameSpace, entry.stem)
 
-			local entryPath
 			if entry.isDirectory then
-				entryPath = nameSpace .. '/' .. entry.stem ..'/init.lua'
+				plug.entryPath = nameSpace .. '/' .. entry.stem ..'/init.lua'
 			else
-				entryPath = nameSpace .. '/' .. entry.name
+				plug.entryPath = nameSpace .. '/' .. entry.name
 			end
-
-			local loadedFile = assert(loadfile(entryPath))
-			loadedFile(plug)
 
 			hook.plugins[entry.stem] = plug
 
-			-- Load default config
-			for k, v in pairs(plug.defaultConfig) do
-				plug.config[k] = v
-			end
+			local isEnabled = isEnabledFunc(plug)
 
-			-- Load config
-			local conf = config[nameSpace][entry.stem]
-			if conf then
-				for k, v in pairs(conf) do
-					plug.config[k] = v
-				end
-			end
-
-			-- Enable
-			plug.isEnabled = isEnabledFunc(plug)
-			if plug.isEnabled then
-				plug.onEnable()
-			end
+			printScoped(string.format('Loading \27[30;1m%s.\27[0m%s', nameSpace, entry.stem))
+			plug:load(isEnabled, false)
 
 			numLoaded = numLoaded + 1
 		end
