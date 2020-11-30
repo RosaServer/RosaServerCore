@@ -51,9 +51,9 @@ end
 ---@field info string What the command does.
 ---@field usage string? How to use the command.
 ---@field alias string[]? Aliases of the command.
----@field canCall (fun(player: Player): boolean)? Function which checks whether a player can call this command.
----@field autoComplete (fun(args: string[]))? Function which manipulates arguments when pressing tab in the terminal.
----@field call fun(player: Player, human: Human?, args: string[]) Calls the command.
+---@field canCall fun(player: Player)?: boolean Function which checks whether a player can call this command.
+---@field autoComplete fun(args: string[])? Function which manipulates arguments when pressing tab in the terminal.
+---@field call fun(player: Player, human?: Human, args: string[]) Calls the command.
 
 ---@class Plugin
 ---@field name string The name of the plugin.

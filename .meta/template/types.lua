@@ -1,5 +1,3 @@
----@alias integer number
-
 do
 	---Represents the server; only one instance in the global variable `server`.
 	---@class Server

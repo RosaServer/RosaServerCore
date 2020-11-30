@@ -89,7 +89,7 @@ http = {}
 ---@param scheme string The hostname of the server to send the request to, with optional protocol and port. Ex. google.com, https://google.com, https://google.com:443
 ---@param path string The path to request from the server.
 ---@param headers table<string, string> The table of request headers.
----@param callback fun(response: HTTPResponse?) The function to be called when the response is received or there was an error.
+---@param callback fun(response?: HTTPResponse) The function to be called when the response is received or there was an error.
 function http.get(scheme, path, headers, callback) end
 
 ---Send an HTTP(S) POST request asynchronously.
@@ -98,7 +98,7 @@ function http.get(scheme, path, headers, callback) end
 ---@param headers table<string, string> The table of request headers.
 ---@param body string The request body.
 ---@param contentType string The request body MIME type.
----@param callback fun(response: HTTPResponse?) The function to be called when the response is received or there was an error.
+---@param callback fun(response?: HTTPResponse) The function to be called when the response is received or there was an error.
 function http.post(scheme, path, headers, body, contentType, callback) end
 
 ---Library for creating networked events.
