@@ -30,8 +30,6 @@ end
 function plugin.hooks.PostResetGame ()
 	local boards = {}
 
-	plugin:print(server.port)
-
 	if hook.run('BuildBoards', boards) then
 		return
 	end
