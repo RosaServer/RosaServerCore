@@ -183,6 +183,8 @@ function plugin:reload ()
 		self:onDisable(true)
 	end
 
+	hook.resetCache()
+
 	self:load(isEnabled, true)
 
 	hook.resetCache()
