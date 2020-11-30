@@ -5,7 +5,7 @@ local module = {}
 local json = require 'main.json'
 
 local function onResponse (res)
-	if not res then
+	if plugin.isEnabled and not res then
 		plugin:print('Webhook POST failed')
 	end
 end

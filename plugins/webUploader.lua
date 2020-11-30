@@ -40,6 +40,8 @@ function plugin.hooks.PostResetGame ()
 end
 
 local function onResponse (res)
+	if not plugin.isEnabled then return end
+
 	if not res then
 		plugin:print('Request failed')
 		return
