@@ -430,13 +430,10 @@ do
 	---@class Worker
 	Worker = {}
 
-	---Create a new Worker.
-	---@return Worker worker The created Worker.
-	function Worker.new() end
-
-	---Start working using a given lua file path.
+	---Create a new Worker using a given lua file path.
 	---@param fileName string The path to a lua file to execute on the worker thread.
-	function Worker:start(fileName) end
+	---@return Worker worker The created Worker.
+	function Worker.new(fileName) end
 
 	---Indicate that the worker should stop what it's doing.
 	---The next time `sleep(ms: integer) -> boolean` is called in the worker thread, true will be returned.
@@ -530,6 +527,12 @@ do
 	---@param filePath string The path to the image file to load.
 	function Image:loadFromFile(filePath) end
 
+	---Load a blank image with desired dimensions.
+	---@param width integer How wide the image should be.
+	---@param height integer How tall the image should be.
+	---@param numChannels integer How many channels the image should have (1-4).
+	function Image:loadBlank(width, height, numChannels) end
+
 	---Get the RGB pixel color at a given coordinate.
 	---Coordinate (0, 0) is the top left of the image.
 	---@param x integer The X pixel coordinate.
@@ -548,6 +551,25 @@ do
 	---@return integer blue The value of the blue channel (0-255).
 	---@return integer alpha The value of the alpha channel (0-255).
 	function Image:getRGBA(x, y) end
+
+	---Set the color of a pixel.
+	---@param x integer The X pixel coordinate.
+	---@param y integer The Y pixel coordinate.
+	---@param red integer The red channel value.
+	---@param green integer The green channel value.
+	---@param blue integer The blue channel value.
+	function Image:setPixel(x, y, red, green, blue) end
+	---@param x integer The X pixel coordinate.
+	---@param y integer The Y pixel coordinate.
+	---@param red integer The red channel value.
+	---@param green integer The green channel value.
+	---@param blue integer The blue channel value.
+	---@param alpha integer The alpha channel value.
+	function Image:setPixel(x, y, red, green, blue, alpha) end
+
+	---Get the PNG representation of an image.
+	---@return string png The buffer of a PNG file representing the image.
+	function Image:getPNG() end
 end
 
 ---Represents an active client network connection.

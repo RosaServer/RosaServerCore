@@ -39,11 +39,6 @@ hook = {
 	persistentMode = ''
 }
 
----Append to the prefix of the next printed line.
----@param prefix string The string to add to the next prefix.
----@deprecated
-function printAppend(prefix) end
-
 ---Recreate the Lua state completely at the start of the next logic tick.
 ---Runs lua/main.lua again after reset.
 ---@param mode string The string to set to hook.persistentMode in the new state.
@@ -100,6 +95,24 @@ function http.get(scheme, path, headers, callback) end
 ---@param contentType string The request body MIME type.
 ---@param callback fun(response?: HTTPResponse) The function to be called when the response is received or there was an error.
 function http.post(scheme, path, headers, body, contentType, callback) end
+
+---Send an HTTP(S) GET request synchronously.
+---Not recommended to use this on the main thread.
+---@param scheme string The hostname of the server to send the request to, with optional protocol and port. Ex. google.com, https://google.com, https://google.com:443
+---@param path string The path to request from the server.
+---@param headers table<string, string> The table of request headers.
+---@return HTTPResponse? response
+function http.getSync(scheme, path, headers) end
+
+---Send an HTTP(S) POST request synchronously.
+---Not recommended to use this on the main thread.
+---@param scheme string The hostname of the server to send the request to, with optional protocol and port. Ex. google.com, https://google.com, https://google.com:443
+---@param path string The path to request from the server.
+---@param headers table<string, string> The table of request headers.
+---@param body string The request body.
+---@param contentType string The request body MIME type.
+---@return HTTPResponse? response
+function http.postSync(scheme, path, headers, body, contentType) end
 
 ---Library for creating networked events.
 event = {}
@@ -399,3 +412,7 @@ function os.listDirectory(path) end
 ---@param path string The path of the directory.
 ---@return boolean created Whether the directory was created.
 function os.createDirectory(path) end
+
+---Get an accurate clock value counting up in real seconds.
+---@return number seconds The number of seconds elapsed, with millisecond precision.
+function os.realClock() end
