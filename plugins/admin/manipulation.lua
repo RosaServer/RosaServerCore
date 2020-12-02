@@ -46,13 +46,13 @@ function plugin.hooks.Physics ()
 		else
 			local s = 0.1
 			local offset = Vector()
-			if bit.band(man.inputFlags, 16) ~= 0 then
+			if bit32.band(man.inputFlags, 16) ~= 0 then
 				s = 1.5
 			end
-			if bit.band(man.inputFlags, 4) ~= 0 then
+			if bit32.band(man.inputFlags, 4) ~= 0 then
 				offset:add(Vector(0, s, 0))
 			end
-			if bit.band(man.inputFlags, 8) ~= 0 then
+			if bit32.band(man.inputFlags, 8) ~= 0 then
 				offset:add(Vector(0, -s, 0))
 			end
 
