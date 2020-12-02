@@ -68,7 +68,7 @@ end
 hook.add(
 	'PlayerChat', 'main',
 	function (ply, message)
-		local now = os.clock()
+		local now = os.realClock()
 
 		-- Rate limit chat for non-admins
 		if not ply.isAdmin and chatCooldowns[ply.index] ~= nil

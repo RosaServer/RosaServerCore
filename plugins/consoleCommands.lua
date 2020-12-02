@@ -144,11 +144,11 @@ plugin.commands['reloadplugin'] = {
 		if isActiveMode then
 			chat.announce('[!] Reloading the active game mode!')
 
-			local startTime = os.clock()
+			local startTime = os.realClock()
 
 			foundPlugin:reload()
 
-			local elapsed = (os.clock() - startTime) * 1000
+			local elapsed = (os.realClock() - startTime) * 1000
 			chat.announce(('[!] OK (%ims)'):format(elapsed))
 		else
 			foundPlugin:reload()

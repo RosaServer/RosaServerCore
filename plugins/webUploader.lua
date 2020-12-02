@@ -61,7 +61,7 @@ end
 function plugin.hooks.PostSendPacket ()
 	if not ready then return end
 
-	local now = os.clock()
+	local now = os.realClock()
 
 	if now - lastCheckTime <= 6 then return end
 	lastCheckTime = now
