@@ -2,6 +2,7 @@ math.randomseed(os.time())
 
 require('main.util')
 require('main.hook')
+require('main.gameUtil')
 
 local chatCooldowns = {}
 local chatCooldownSeconds = 0.5
