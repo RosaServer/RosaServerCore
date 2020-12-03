@@ -57,6 +57,22 @@ local function attemptChatCommand (ply, message)
 		return hook.continue
 	end
 
+	if not ply.isAdmin and command.cooldownTime then
+		local now = os.realClock()
+
+		if not ply.data.commandCooldowns then
+			ply.data.commandCooldowns = {}
+		end
+		local cooldowns = ply.data.commandCooldowns
+
+		if cooldowns[command] and now - cooldowns[command] < command.cooldownTime then
+			ply:sendMessage(('Error: Please wait %.1fs'):format(command.cooldownTime - (now - cooldowns[command])))
+			return hook.override
+		end
+
+		cooldowns[command] = now
+	end
+
 	local success, result = pcall(hook.runCommand, commandName, command, ply, ply.human, args)
 	if not success then
 		handleChatCommandError(ply, commandName, command, result)

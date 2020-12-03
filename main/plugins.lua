@@ -54,6 +54,7 @@ end
 ---@field canCall fun(player: Player)?: boolean Function which checks whether a player can call this command.
 ---@field autoComplete fun(args: string[])? Function which manipulates arguments when pressing tab in the terminal.
 ---@field call fun(player: Player, human?: Human, args: string[]) Calls the command.
+---@field cooldownTime number? How many seconds a player has to wait before using the command again.
 
 ---@class Plugin
 ---@field name string The name of the plugin.
