@@ -4,7 +4,6 @@ require('main.util')
 require('main.hook')
 require('main.gameUtil')
 
-local chatCooldowns = {}
 local chatCooldownSeconds = 0.5
 
 local function splitArguments (str)
@@ -69,15 +68,17 @@ end
 hook.add(
 	'PlayerChat', 'main',
 	function (ply, message)
-		local now = os.realClock()
-
 		-- Rate limit chat for non-admins
-		if not ply.isAdmin and chatCooldowns[ply.index] ~= nil
-		and chatCooldowns[ply.index] + chatCooldownSeconds > now then
-			return hook.override
-		end
+		if not ply.isAdmin then
+			local data = ply.data
+			local now = os.realClock()
 
-		chatCooldowns[ply.index] = now
+			if data.chatCooldown and now - data.chatCooldown < chatCooldownSeconds then
+				return hook.override
+			end
+
+			data.chatCooldown = now
+		end
 
 		-- Run Lua commands
 		if message:startsWith('/') then
