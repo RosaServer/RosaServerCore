@@ -1,10 +1,26 @@
 math.randomseed(os.time())
 
-require('main.util')
-require('main.hook')
-require('main.gameUtil')
+require 'main.util'
+require 'main.hook'
+require 'main.gameUtil'
+require 'main.plugins'
 
-local chatCooldownSeconds = 0.5
+local yaml = require 'main.yaml'
+
+local hasConfigLoadedOnce = false
+
+---Load config from config.yml.
+---@param fileName? string The overloaded file path to load instead of the default file.
+function loadConfig (fileName)
+	local f = assert(io.open(fileName or 'config.yml', 'r'), 'Could not open config file')
+	local contents = f:read('*all')
+	f:close()
+
+	config = yaml.parse(contents)
+
+	hook.run('ConfigLoaded', hasConfigLoadedOnce)
+	hasConfigLoadedOnce = true
+end
 
 local function splitArguments (str)
 	local args = {}
@@ -80,6 +96,15 @@ local function attemptChatCommand (ply, message)
 
 	return hook.override
 end
+
+local chatCooldownSeconds
+
+hook.add(
+	'ConfigLoaded', 'main',
+	function ()
+		chatCooldownSeconds = config.chatCooldownSeconds or 0.5
+	end
+)
 
 hook.add(
 	'PlayerChat', 'main',
@@ -177,8 +202,6 @@ hook.add(
 	end
 )
 
-require('main.plugins')
-
 hook.add(
 	'InterruptSignal', 'main',
 	function ()
@@ -187,3 +210,5 @@ hook.add(
 		end
 	end
 )
+
+loadConfig()

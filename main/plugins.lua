@@ -1,11 +1,5 @@
 local json = require 'main.json'
 
-local config = require 'config'
-
-if hook.persistentMode == '' then
-	hook.persistentMode = config.defaultGameMode
-end
-
 local function printScoped (...)
 	local prefix = '\27[34m[Plugins]\27[0m '
 	print(prefix .. concatVarArgs('\t', ...))
@@ -152,10 +146,8 @@ function plugin:require (modName)
 	return self.requireCache[modName]
 end
 
-function plugin:load (isEnabled, isReload)
-	local loadedFile = assert(loadfile(self.entryPath))
-
-	loadedFile(self)
+function plugin:setConfig ()
+	self.config = {}
 
 	-- Load default config
 	for k, v in pairs(self.defaultConfig) do
@@ -169,8 +161,15 @@ function plugin:load (isEnabled, isReload)
 			self.config[k] = v
 		end
 	end
+end
 
-	-- Enable
+function plugin:load (isEnabled, isReload)
+	local loadedFile = assert(loadfile(self.entryPath))
+
+	loadedFile(self)
+	self:setConfig()
+
+	-- Mark as enabled
 	self.isEnabled = isEnabled
 	if self.isEnabled then
 		self.onEnable(isReload)
@@ -215,7 +214,7 @@ local function newPlugin (nameSpace, stem)
 	}, plugin)
 end
 
-local function loadPlugins (nameSpace, isEnabledFunc)
+local function loadPluginNameSpace (nameSpace, isEnabledFunc)
 	printScoped('Loading ' .. nameSpace .. '...')
 	local numLoaded = 0
 
@@ -244,12 +243,38 @@ local function loadPlugins (nameSpace, isEnabledFunc)
 	printScoped('Loaded ' .. numLoaded .. ' ' .. nameSpace)
 end
 
-loadPlugins('plugins', function (plug)
-	return not disabledPluginsMap[plug.fileName]
-end)
+local function loadPlugins ()
+	if hook.persistentMode == '' then
+		hook.persistentMode = config.defaultGameMode
+	end
 
-loadPlugins('modes', function (plug)
-	return plug.fileName == hook.persistentMode
-end)
+	loadPluginNameSpace('plugins', function (plug)
+		return not disabledPluginsMap[plug.fileName]
+	end)
 
-hook.resetCache()
+	loadPluginNameSpace('modes', function (plug)
+		return plug.fileName == hook.persistentMode
+	end)
+
+	hook.resetCache()
+end
+
+local function reloadConfigOfPlugins ()
+	for _, plugs in pairs(hook.plugins) do
+		for _, plug in pairs(plugs) do
+			plug:setConfig()
+		end
+	end
+end
+
+hook.add(
+	'ConfigLoaded', 'main.plugins',
+	---@param isReload boolean
+	function (isReload)
+		if not isReload then
+			loadPlugins()
+		else
+			reloadConfigOfPlugins()
+		end
+	end
+)
