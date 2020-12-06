@@ -33,7 +33,7 @@ end
 
 plugin.commands['/shutdown'] = {
 	info = 'Begin or cancel shutdown.',
-	usage = '/shutdown <minutes/"now"> [reason]',
+	usage = '/shutdown <seconds/"now"> [reason]',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param args string[]
 	autoComplete = function (args)
