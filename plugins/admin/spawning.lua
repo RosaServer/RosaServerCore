@@ -191,16 +191,19 @@ plugin.commands['/give'] = {
 	call = function (ply, _, args)
 		assert(#args >= 2, 'usage')
 
-		local amount = math.floor(args[2])
+		local amount = assert(tonumber(args[2]), 'Amount is not a number')
+		amount = math.floor(amount)
 		if amount < 1 then error('Invalid amount') end
 
-		local victim = players.getByPhone(args[1])
+		local phoneNumber = assert(undashPhoneNumber(args[1]), 'Invalid phone number')
+
+		local victim = players.getByPhone(phoneNumber)
 		if victim and not victim.isBot then
 			victim.money = victim.money + amount
 			victim:updateFinance()
 			adminLog('%s gave $%i to %s (%s)', ply.name, amount, victim.name, dashPhoneNumber(victim.phoneNumber))
 		else
-			local acc = accounts.getByPhone(args[1])
+			local acc = assert(accounts.getByPhone(phoneNumber), 'Phone number does not exist')
 			if acc then
 				acc.money = acc.money + amount
 				adminLog('%s gave $%i to %s (%s) (Offline)', ply.name, amount, acc.name, dashPhoneNumber(acc.phoneNumber))
