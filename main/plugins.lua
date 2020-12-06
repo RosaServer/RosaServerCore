@@ -1,8 +1,18 @@
 local json = require 'main.json'
 
+local doPrintsWithoutTime
+
+local function getTimePrefix ()
+	if doPrintsWithoutTime then
+		return ''
+	end
+
+	return '[' .. os.date('%X') .. '] '
+end
+
 local function printScoped (...)
 	local prefix = '\27[34m[Plugins]\27[0m '
-	print(prefix .. concatVarArgs('\t', ...))
+	print(getTimePrefix() .. prefix .. concatVarArgs('\t', ...))
 end
 
 local disabledPluginsFile = 'disabledPlugins.json'
@@ -123,14 +133,14 @@ function plugin:print (...)
 
 	local color = self.nameSpace == 'modes' and 248 or self._printColor
 	local prefix = '\27[38;5;' .. color .. 'm[' .. self.name .. ']\27[0m '
-	print(prefix .. concatVarArgs('\t', ...))
+	print(getTimePrefix() .. prefix .. concatVarArgs('\t', ...))
 end
 
 ---Print a warning message.
 ---@vararg any The values to print.
 function plugin:warn (...)
 	local prefix = '\27[33m[' .. self.name .. ']\27[0m '
-	print(prefix .. concatVarArgs('\t', ...))
+	print(getTimePrefix() .. prefix .. concatVarArgs('\t', ...))
 end
 
 ---Include another file.
@@ -271,6 +281,8 @@ hook.add(
 	'ConfigLoaded', 'main.plugins',
 	---@param isReload boolean
 	function (isReload)
+		doPrintsWithoutTime = config.doPrintsWithoutTime
+
 		if not isReload then
 			loadPlugins()
 		else
