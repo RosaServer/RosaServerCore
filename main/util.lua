@@ -292,7 +292,7 @@ end
 ---Convert a phone number ID which might have a dash back to its integer value.
 ---Ex. '256-4096' becomes 2564096.
 ---@param str string The phone number which may or may not have a dash.
----@return integer phoneNumber The integer value of the phone number.
+---@return integer? phoneNumber The integer value of the phone number.
 function undashPhoneNumber (str)
 	str = str:gsub('(%d%d%d)-(%d%d%d%d)', '%1%2')
 	return tonumber(str)
