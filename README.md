@@ -8,7 +8,7 @@ Requires [RosaServer](https://github.com/RosaServer/RosaServer).
 
 ## Configuration
 
-Copy `config.sample.lua` to `config.lua` and modify to your heart's content.
+Copy `config.sample.yml` to `config.yml` and modify to your heart's content.
 
 ## Scripting
 
