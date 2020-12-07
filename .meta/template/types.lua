@@ -199,8 +199,8 @@ do
 	---@field isImmortal boolean Whether they are immune to bullet and physics damage.
 	---@field isOnGround boolean 🔒
 	---@field isStanding boolean 🔒
-	---@field isBleeding boolean 
-	---@field player Player? 🔒 The player controlling this human.
+	---@field isBleeding boolean
+	---@field player Player? The player controlling this human.
 	---@field vehicle Vehicle? The vehicle they are inside.
 	---@field rightHandItem Item? 🔒
 	---@field leftHandItem Item? 🔒
