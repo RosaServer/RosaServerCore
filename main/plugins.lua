@@ -7,7 +7,7 @@ local function getTimePrefix ()
 		return ''
 	end
 
-	return '[' .. os.date('%X') .. '] '
+	return '\27[30;1m[' .. os.date('%X') .. ']\27[0m '
 end
 
 local function printScoped (...)
