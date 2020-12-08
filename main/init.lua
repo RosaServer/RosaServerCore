@@ -4,6 +4,7 @@ require 'main.util'
 require 'main.hook'
 require 'main.gameUtil'
 require 'main.plugins'
+require 'main.http'
 
 local yaml = require 'main.yaml'
 
