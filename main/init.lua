@@ -99,11 +99,20 @@ local function attemptChatCommand (ply, message)
 end
 
 local chatCooldownSeconds
+local consolePlayer = {
+	isConsole = true,
+	name = '',
+	data = {},
+	sendMessage = function (_, message)
+		print('\27[31;1m' .. message .. '\27[0m')
+	end
+}
 
 hook.add(
 	'ConfigLoaded', 'main',
 	function ()
 		chatCooldownSeconds = config.chatCooldownSeconds or 0.5
+		consolePlayer.name = config.consolePlayerName or 'Console'
 	end
 )
 
@@ -128,15 +137,6 @@ hook.add(
 		end
 	end
 )
-
-local consolePlayer = {
-	isConsole = true,
-	name = 'Big Brother',
-	data = {},
-	sendMessage = function (_, message)
-		print('\27[31;1m' .. message .. '\27[0m')
-	end
-}
 
 hook.add(
 	'ConsoleInput', 'main',
