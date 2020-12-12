@@ -195,6 +195,7 @@ function plugin:reload ()
 
 	hook.resetCache()
 
+	self.requireCache = {}
 	self:load(isEnabled, true)
 
 	hook.resetCache()
