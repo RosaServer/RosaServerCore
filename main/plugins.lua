@@ -156,6 +156,17 @@ function plugin:require (modName)
 	return self.requireCache[modName]
 end
 
+---Add a hook, where multiple hooks can be for the same event.
+---@param eventName string The name of the event to be hooked.
+---@param func function The function to be called when the hook runs.
+function plugin:addHook (eventName, func)
+	if not self.polyHooks[eventName] then
+		self.polyHooks[eventName] = {}
+	end
+
+	table.insert(self.polyHooks[eventName], func)
+end
+
 function plugin:setConfig ()
 	self.config = {}
 
@@ -215,6 +226,7 @@ local function newPlugin (nameSpace, stem)
 		author = 'Unknown',
 		description = 'n/a',
 		hooks = {},
+		polyHooks = {},
 		commands = {},
 		defaultConfig = {},
 		config = {},

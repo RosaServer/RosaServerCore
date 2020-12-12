@@ -34,6 +34,15 @@ function hook.resetCache ()
 				end
 				table.insert(_cache[event], hook)
 			end
+
+			for event, hooks in pairs(plugin.polyHooks) do
+				if _cache[event] == nil then
+					_cache[event] = {}
+				end
+				for _, hook in ipairs(hooks) do
+					table.insert(_cache[event], hook)
+				end
+			end
 		end
 	end
 end
