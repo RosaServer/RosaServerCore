@@ -280,6 +280,7 @@ do
 	---@field hasPhysics boolean Whether this item is currently physically simulated.
 	---@field physicsSettled boolean Whether this item is settled by gravity.
 	---@field physicsSettledTimer integer How many ticks the item has been settling. Once it has reached 60, it will be settled.
+	---@field isStatic boolean Whether the item is immovable.
 	---@field rigidBody RigidBody The rigid body representing the physics of this item.
 	---@field grenadePrimer Player? The player who primed this grenade.
 	local Item
