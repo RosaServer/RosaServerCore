@@ -230,9 +230,16 @@ function plugin:reload ()
 		self:callDisableHandlers(true)
 	end
 
+	self.hooks = {}
+	self.polyHooks = {}
+	self.polyEnableHandlers = {}
+	self.polyDisableHandlers = {}
+	self.commands = {}
+	self.defaultConfig = {}
+	self.requireCache = {}
+
 	hook.resetCache()
 
-	self.requireCache = {}
 	self:load(isEnabled, true)
 
 	hook.resetCache()
