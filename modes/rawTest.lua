@@ -4,10 +4,21 @@ mode.name = 'Raw Test'
 mode.author = 'jdb'
 mode.description = 'An empty world where anything is possible.'
 
+mode.defaultConfig = {
+	autoSpawn = true,
+	startingMap = 'versus2',
+	spawnPoints = {
+		round = { 1476, 49.5, 1467 },
+		test2 = { 1628, 69.5, 1482 },
+		versus = { 1552, 25.5, 1566 },
+		versus2 = { 1024, 29.5, 1027 }
+	}
+}
+
 local mapName
 
 function mode.onEnable (isReload)
-	mapName = 'versus2'
+	mapName = mode.config.startingMap
 	if not isReload then
 		server:reset()
 	end
@@ -40,17 +51,21 @@ end
 
 local function clickedEnterCity (ply)
 	if not ply.human then
+		local spawnPoint = Vector(unpack(mode.config.spawnPoints[mapName]))
+
 		ply.suitColor = 1
 		ply.tieColor = 8
 		ply.model = 1
-		if humans.create(Vector(1024, 29.5, 1027), orientations.n, ply) then
+		if humans.create(spawnPoint, orientations.n, ply) then
 			ply:update()
 		end
 	end
 end
 
 function mode.hooks.PlayerActions (ply)
-	if ply.numActions ~= ply.lastNumActions then
+	if not ply.human and mode.config.autoSpawn then
+		clickedEnterCity(ply)
+	elseif ply.numActions ~= ply.lastNumActions then
 		local action = ply:getAction(ply.lastNumActions)
 
 		if action.type == 0 and action.a == 1 and action.b == 1 then
@@ -68,6 +83,7 @@ mode.commands['/map'] = {
 	call = function (_, _, args)
 		assert(#args >= 1, 'usage')
 
+		assert(mode.config.spawnPoints[args[1]], 'Invalid map')
 		mapName = args[1]
 
 		hook.once('Logic', function ()
