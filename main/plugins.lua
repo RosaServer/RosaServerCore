@@ -174,16 +174,16 @@ function plugin:addEnableHandler (func)
 end
 
 function plugin:callEnableHandlers (isReload)
-	self.onEnable(isReload)
 	for _, func in ipairs(self.polyEnableHandlers) do
 		func(isReload)
 	end
+	self.onEnable(isReload)
 end
 
 ---Add a callback for when the plugin is disabled.
 ---@param func fun(isReload: boolean) The function to be called when the plugin is disabled.
 function plugin:addDisableHandler (func)
-	table.insert(self.polyEnableHandlers, func)
+	table.insert(self.polyDisableHandlers, func)
 end
 
 function plugin:callDisableHandlers (isReload)
