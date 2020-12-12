@@ -67,8 +67,8 @@ end
 
 ---Get points on a circle.
 ---@param numPoints integer The number of points to calculate.
----@param radius number? The radius of the circle in units.
----@param angleOffset number? How much to rotate the entire circle (in radians).
+---@param radius? number The radius of the circle in units.
+---@param angleOffset? number How much to rotate the entire circle (in radians).
 ---@return CirclePoint[] points The points on the circle.
 function getCirclePoints (numPoints, radius, angleOffset)
 	numPoints = math.max(numPoints, 1)
