@@ -78,7 +78,7 @@ function plugin:enable (shouldSave)
 	if not self.isEnabled then
 		self.isEnabled = true
 		hook.resetCache()
-		self.onEnable(false)
+		self:callEnableHandlers(false)
 
 		if shouldSave then
 			disabledPluginsMap[self.fileName] = nil
@@ -92,7 +92,7 @@ end
 function plugin:disable (shouldSave)
 	if self.isEnabled then
 		self.isEnabled = false
-		self.onDisable(false)
+		self:callDisableHandlers(false)
 		hook.resetCache()
 
 		if shouldSave then
@@ -167,6 +167,32 @@ function plugin:addHook (eventName, func)
 	table.insert(self.polyHooks[eventName], func)
 end
 
+---Add a callback for when the plugin is enabled.
+---@param func fun(isReload: boolean) The function to be called when the plugin is enabled.
+function plugin:addEnableHandler (func)
+	table.insert(self.polyEnableHandlers, func)
+end
+
+function plugin:callEnableHandlers (isReload)
+	self.onEnable(isReload)
+	for _, func in ipairs(self.polyEnableHandlers) do
+		func(isReload)
+	end
+end
+
+---Add a callback for when the plugin is disabled.
+---@param func fun(isReload: boolean) The function to be called when the plugin is disabled.
+function plugin:addDisableHandler (func)
+	table.insert(self.polyEnableHandlers, func)
+end
+
+function plugin:callDisableHandlers (isReload)
+	self:onDisable(isReload)
+	for _, func in ipairs(self.polyDisableHandlers) do
+		func(isReload)
+	end
+end
+
 function plugin:setConfig ()
 	self.config = {}
 
@@ -193,7 +219,7 @@ function plugin:load (isEnabled, isReload)
 	-- Mark as enabled
 	self.isEnabled = isEnabled
 	if self.isEnabled then
-		self.onEnable(isReload)
+		self:callEnableHandlers(isReload)
 	end
 end
 
@@ -201,7 +227,7 @@ function plugin:reload ()
 	local isEnabled = self.isEnabled
 
 	if isEnabled then
-		self:onDisable(true)
+		self:callDisableHandlers(true)
 	end
 
 	hook.resetCache()
@@ -214,11 +240,11 @@ end
 
 ---Indicate the plugin has been enabled.
 ---@param isReload boolean
-function plugin:onEnable (isReload) end
+function plugin.onEnable (isReload) end
 
 ---Indicate the plugin has been disabled.
 ---@param isReload boolean
-function plugin:onDisable (isReload) end
+function plugin.onDisable (isReload) end
 
 local function newPlugin (nameSpace, stem)
 	return setmetatable({
@@ -227,6 +253,8 @@ local function newPlugin (nameSpace, stem)
 		description = 'n/a',
 		hooks = {},
 		polyHooks = {},
+		polyEnableHandlers = {},
+		polyDisableHandlers = {},
 		commands = {},
 		defaultConfig = {},
 		config = {},
