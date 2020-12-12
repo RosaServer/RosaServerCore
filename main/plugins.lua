@@ -318,10 +318,8 @@ local function loadPlugins ()
 end
 
 local function reloadConfigOfPlugins ()
-	for _, plugs in pairs(hook.plugins) do
-		for _, plug in pairs(plugs) do
-			plug:setConfig()
-		end
+	for _, plug in pairs(hook.plugins) do
+		plug:setConfig()
 	end
 end
 
