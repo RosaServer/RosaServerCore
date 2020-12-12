@@ -156,6 +156,14 @@ plugin.commands['reloadplugin'] = {
 	end
 }
 
+plugin.commands['reloadconfig'] = {
+	info = 'Reload the configuration file.',
+	call = function ()
+		plugin:print('Reloading configuration')
+		loadConfig()
+	end
+}
+
 plugin.commands['listbans'] = {
 	info = 'List all current bans.',
 	call = function ()
