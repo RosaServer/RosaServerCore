@@ -1,4 +1,4 @@
-*.lua
+*
 !/admin/*.lua
 !/banMessages.lua
 !/boards.lua
