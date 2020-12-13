@@ -51,9 +51,9 @@ plugin.commands['/shutdown'] = {
 		if args[1]:lower() == 'now' then
 			if adminLog then
 				adminLog('%s initiated instant shutdown', ply.name)
-				shutdown()
-				return
 			end
+			shutdown()
+			return
 		end
 
 		if shuttingDown then
