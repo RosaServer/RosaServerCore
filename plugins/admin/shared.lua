@@ -1,6 +1,6 @@
 ---@type Plugin
 local plugin = ...
-local module = {}
+local shared = {}
 
 local json = require 'main.json'
 
@@ -10,7 +10,7 @@ local function onResponse (res)
 	end
 end
 
-function module.discordEmbed (embed)
+function shared.discordEmbed (embed)
 	if not plugin.config.webhookEnabled then return end
 
 	if not embed.author then
@@ -30,7 +30,7 @@ function module.discordEmbed (embed)
 end
 
 ---@param args string[]
-function module.autoCompleteAccountFirstArg (args)
+function shared.autoCompleteAccountFirstArg (args)
 	if #args < 1 then return end
 
 	local result = autoCompleteAccount(args[1])
@@ -40,7 +40,7 @@ function module.autoCompleteAccountFirstArg (args)
 end
 
 ---@param args string[]
-function module.autoCompletePlayerFirstArg (args)
+function shared.autoCompletePlayerFirstArg (args)
 	if #args < 1 then return end
 
 	local result = autoCompletePlayer(args[1])
@@ -49,4 +49,4 @@ function module.autoCompletePlayerFirstArg (args)
 	end
 end
 
-return module
+return shared

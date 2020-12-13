@@ -1,6 +1,5 @@
 ---@type Plugin
 local plugin = ...
-local module = {}
 
 local shared = plugin:require('shared')
 local persistence = plugin:require('persistence')
@@ -12,17 +11,17 @@ local visibleModerators
 local awaitConnected
 local hiddenPlayers
 
-function module.onEnable ()
+plugin:addEnableHandler(function ()
 	reminderDisplayTimer = 0
 	visibleModerators = {}
 	awaitConnected = {}
-end
+end)
 
-function module.onDisable ()
+plugin:addDisableHandler(function ()
 	reminderDisplayTimer = nil
 	visibleModerators = nil
 	awaitConnected = nil
-end
+end)
 
 ---Check if a player is a moderator.
 ---@param ply Player The player to check.
@@ -63,28 +62,31 @@ local function displayReminders()
 	end
 end
 
-function module.hookLogic ()
-	for index, _ in pairs(awaitConnected) do
-		local ply = players[index]
-		if ply.isBot then
-			awaitConnected[index] = nil
-		else
-			local con = ply.connection
-			if con then
+plugin:addHook(
+	'Logic',
+	function ()
+		for index, _ in pairs(awaitConnected) do
+			local ply = players[index]
+			if ply.isBot then
 				awaitConnected[index] = nil
-				if isModerator(ply) then
-					con.adminVisible = true
+			else
+				local con = ply.connection
+				if con then
+					awaitConnected[index] = nil
+					if isModerator(ply) then
+						con.adminVisible = true
+					end
 				end
 			end
 		end
-	end
 
-	reminderDisplayTimer = reminderDisplayTimer + 1
-	if reminderDisplayTimer == reminderDisplayEvery then
-		reminderDisplayTimer = 0
-		displayReminders()
+		reminderDisplayTimer = reminderDisplayTimer + 1
+		if reminderDisplayTimer == reminderDisplayEvery then
+			reminderDisplayTimer = 0
+			displayReminders()
+		end
 	end
-end
+)
 
 function plugin.hooks.WebUploadBody ()
 	hiddenPlayers = {}
@@ -263,5 +265,3 @@ plugin.commands['/join'] = {
 		end
 	end
 }
-
-return module

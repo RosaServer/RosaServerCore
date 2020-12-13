@@ -1,6 +1,5 @@
 ---@type Plugin
 local plugin = ...
-local module = {}
 
 local shared = plugin:require('shared')
 local persistence = plugin:require('persistence')
@@ -9,13 +8,13 @@ local warningDisplayEvery = 15 * server.TPS
 
 local warningDisplayTimer
 
-function module.onEnable ()
+plugin:addEnableHandler(function ()
 	warningDisplayTimer = 0
-end
+end)
 
-function module.onDisable ()
+plugin:addDisableHandler(function ()
 	warningDisplayTimer = nil
-end
+end)
 
 local function displayWarnings()
 	local persistentData = persistence.get()
@@ -38,13 +37,16 @@ local function displayWarnings()
 	end
 end
 
-function module.hookLogic ()
-	warningDisplayTimer = warningDisplayTimer + 1
-	if warningDisplayTimer == warningDisplayEvery then
-		warningDisplayTimer = 0
-		displayWarnings()
+plugin:addHook(
+	'Logic',
+	function ()
+		warningDisplayTimer = warningDisplayTimer + 1
+		if warningDisplayTimer == warningDisplayEvery then
+			warningDisplayTimer = 0
+			displayWarnings()
+		end
 	end
-end
+)
 
 plugin.commands['/warn'] = {
 	info = 'Warn a player.',
@@ -114,5 +116,3 @@ plugin.commands['/warned'] = {
 		adminLog('%s (%s) acknowledged their warning: %s', ply.name, dashPhoneNumber(ply.phoneNumber), warning.reason)
 	end
 }
-
-return module

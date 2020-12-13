@@ -1,18 +1,17 @@
 ---@type Plugin
 local plugin = ...
-local module = {}
 
 local flyingMachines
 local disablePhys
 local disableBul
 
-function module.onEnable ()
+plugin:addEnableHandler(function ()
 	flyingMachines = {}
 	disablePhys = false
 	disableBul = false
-end
+end)
 
-function module.onDisable ()
+plugin:addDisableHandler(function ()
 	for id, vcl in pairs(flyingMachines) do
 		local man = humans[id]
 		if isActive(vcl) then
@@ -26,7 +25,7 @@ function module.onDisable ()
 	flyingMachines = nil
 	disablePhys = nil
 	disableBul = nil
-end
+end)
 
 function plugin.hooks.Physics ()
 	if disablePhys then
@@ -130,5 +129,3 @@ plugin.commands['/bullets'] = {
 		adminLog('%s turned bullets %s', ply.name, disableBul and 'off' or 'on')
 	end
 }
-
-return module
