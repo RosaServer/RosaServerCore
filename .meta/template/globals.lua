@@ -381,6 +381,129 @@ function intersections.getAll() end
 ---@return integer count How many StreetIntersection objects there are.
 function intersections.getCount() end
 
+---Library for directly reading and writing any memory.
+memory = {}
+
+---Get the base address of the server executable.
+---@return integer address
+function memory.getBaseAddress() end
+
+---Get the address of a game object.
+---@param object Connection|Account|Player|Human|ItemType|Item|Vehicle|Bullet|Bone|RigidBody|Bond|Action|MenuButton|StreetLane|Street|StreetIntersection
+---@return integer address
+function memory.getAddress(object) end
+
+---Read a signed 1-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readByte(address) end
+
+---Read an unsigned 1-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readUByte(address) end
+
+---Read a signed 2-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readShort(address) end
+
+---Read an unsigned 2-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readUShort(address) end
+
+---Read a signed 4-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readInt(address) end
+
+---Read an unsigned 4-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readUInt(address) end
+
+---Read a signed 8-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readLong(address) end
+
+---Read an unsigned 8-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readULong(address) end
+
+---Read a single-precision floating point number from memory.
+---@param address integer
+---@return number value
+function memory.readFloat(address) end
+
+---Read a double-precision floating point number from memory.
+---@param address integer
+---@return number value
+function memory.readDouble(address) end
+
+---Read many bytes from memory.
+---@param address integer
+---@param count integer The number of bytes to read.
+---@return string bytes
+function memory.readBytes(address, count) end
+
+---Write a signed 1-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeByte(address, value) end
+
+---Write an unsigned 1-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeUByte(address, value) end
+
+---Write a signed 2-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeShort(address, value) end
+
+---Write an unsigned 2-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeUShort(address, value) end
+
+---Write a signed 4-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeInt(address, value) end
+
+---Write an unsigned 4-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeUInt(address, value) end
+
+---Write a signed 8-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeLong(address, value) end
+
+---Write an unsigned 8-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeULong(address, value) end
+
+---Write a single-precision floating point number to memory.
+---@param address integer
+---@param value integer
+function memory.writeFloat(address, value) end
+
+---Write a double-precision floating point number to memory.
+---@param address integer
+---@param value integer
+function memory.writeDouble(address, value) end
+
+---Write many bytes to memory.
+---@param address integer
+---@param bytes string The bytes to write.
+function memory.writeBytes(address, bytes) end
+
 ---@class ListDirectoryEntry
 ---@field isDirectory boolean Whether the entry is a directory.
 ---@field name string The name of the file/directory. Ex. "asphalt2.png".
