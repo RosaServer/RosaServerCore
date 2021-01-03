@@ -107,6 +107,8 @@ Adds some useful console commands.
 - `listplugins` - List all plugins.
 - `enableplugin <plugin>` - Enable a plugin (persists after a restart).
 - `disableplugin <plugin>` - Disable a plugin (persists after a restart).
+- `reloadplugin <plugin>` - Reloads a plugin's code.
+- `reloadconfig` - Reloads config.yml.
 - `listbans` - List all current bans.
 
 ## Help
