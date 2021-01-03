@@ -69,6 +69,9 @@ end
 ---@field defaultConfig table
 ---@field config table
 ---@field isEnabled boolean
+---@field fileName string
+---@field nameSpace string
+---@field entryPath string
 local plugin = {}
 plugin.__index = plugin
 
