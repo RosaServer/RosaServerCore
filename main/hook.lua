@@ -17,30 +17,34 @@ hook.plugins = {}
 
 ---Regenerate the cache of enabled hooks.
 function hook.resetCache ()
+	hook.clear()
 	_cache = {}
 
-	for event, hooks in pairs(_hooks) do
+	for event, funcs in pairs(_hooks) do
+		hook.enable(event)
 		_cache[event] = {}
-		for _, hook in pairs(hooks) do
-			table.insert(_cache[event], hook)
+		for _, func in pairs(funcs) do
+			table.insert(_cache[event], func)
 		end
 	end
 
 	for _, plugin in pairs(hook.plugins) do
 		if plugin.isEnabled then
-			for event, hook in pairs(plugin.hooks) do
+			for event, func in pairs(plugin.hooks) do
 				if _cache[event] == nil then
+					hook.enable(event)
 					_cache[event] = {}
 				end
-				table.insert(_cache[event], hook)
+				table.insert(_cache[event], func)
 			end
 
-			for event, hooks in pairs(plugin.polyHooks) do
+			for event, funcs in pairs(plugin.polyHooks) do
 				if _cache[event] == nil then
+					hook.enable(event)
 					_cache[event] = {}
 				end
-				for _, hook in ipairs(hooks) do
-					table.insert(_cache[event], hook)
+				for _, func in ipairs(funcs) do
+					table.insert(_cache[event], func)
 				end
 			end
 		end

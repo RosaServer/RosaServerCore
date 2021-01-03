@@ -39,6 +39,19 @@ hook = {
 	persistentMode = ''
 }
 
+---Enable a hook for use in Lua.
+---@param eventName string The name of the event to be enabled.
+---@return boolean exists Whether the event exists.
+function hook.enable(eventName) end
+
+---Disable a hook for use in Lua.
+---@param eventName string The name of the event to be disabled.
+---@return boolean exists Whether the event exists.
+function hook.disable(eventName) end
+
+---Disable every hook for use in Lua, until they are enabled again.
+function hook.clear() end
+
 ---Recreate the Lua state completely at the start of the next logic tick.
 ---Runs lua/main.lua again after reset.
 ---@param mode string The string to set to hook.persistentMode in the new state.
