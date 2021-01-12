@@ -79,6 +79,7 @@ function hook.once (eventName, func)
 	end
 
 	table.insert(_tempHooks[eventName], func)
+	hook.enable(eventName)
 end
 
 ---Remove a generic named hook.
@@ -97,9 +98,11 @@ end
 ---@vararg any The arguments to pass to the hook functions.
 ---@return boolean override Whether default behaviour should be overridden, if applicable.
 function hook.run (eventName, ...)
+	local hadTemp = false
+
 	if _tempHooks[eventName] ~= nil then
 		local _tempOverride = false
-		for _, tempHookFunc in pairs(_tempHooks[eventName]) do
+		for _, tempHookFunc in ipairs(_tempHooks[eventName]) do
 			local isOverride = tempHookFunc(...)
 
 			if isOverride then
@@ -111,6 +114,7 @@ function hook.run (eventName, ...)
 		if _tempOverride then
 			return true
 		end
+		hadTemp = true
 	end
 
 	local cache = _cache[eventName]
@@ -125,6 +129,8 @@ function hook.run (eventName, ...)
 				return true
 			end
 		end
+	elseif hadTemp then
+		hook.disable(eventName)
 	end
 
 	return false
