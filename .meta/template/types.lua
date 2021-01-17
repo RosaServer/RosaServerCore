@@ -612,6 +612,7 @@ end
 ---@field primaryGripRotation number In radians.
 ---@field secondaryGripStiffness number
 ---@field secondaryGripRotation number In radians.
+---@field gunHoldingPos Vector The offset of where the item is held if it is a gun.
 ---@field boundsCenter Vector
 ---@field index integer 🔒 The index of the array in memory this is.
 ---@field name string Not networked.
