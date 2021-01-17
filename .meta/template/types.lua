@@ -263,7 +263,7 @@ do
 	---@class Item
 	---@field class string 🔒 "Item"
 	---@field data table A Lua table which persists throughout the lifespan of this object.
-	---@field type integer 💾
+	---@field type ItemType 💾
 	---@field despawnTime integer Ticks remaining until removal.
 	---@field parentSlot integer The slot this item occupies if it has a parent.
 	---@field parentHuman Human? The human this item is mounted to, if any.
@@ -340,7 +340,7 @@ do
 	---@class Vehicle
 	---@field class string 🔒 "Vehicle"
 	---@field data table A Lua table which persists throughout the lifespan of this object.
-	---@field type integer 💾
+	---@field type VehicleType 💾
 	---@field controllableState integer 0 = cannot be controlled, 1 = car, 2 = helicopter.
 	---@field health integer 0-100
 	---@field color integer 💾 0 = black, 1 = red, 2 = blue, 3 = silver, 4 = white, 5 = gold.
@@ -608,10 +608,23 @@ end
 ---@field numHands integer
 ---@field rightHandPos Vector
 ---@field leftHandPos Vector
+---@field primaryGripStiffness number
+---@field primaryGripRotation number In radians.
+---@field secondaryGripStiffness number
+---@field secondaryGripRotation number In radians.
 ---@field boundsCenter Vector
 ---@field index integer 🔒 The index of the array in memory this is.
 ---@field name string Not networked.
 ---@field isGun boolean
+
+---Represents a type of vehicle that exists.
+---@class VehicleType
+---@field class string 🔒 "VehicleType"
+---@field usesExternalModel boolean
+---@field controllableState integer 0 = cannot be controlled, 1 = car, 2 = helicopter.
+---@field name string Not networked.
+---@field price integer How much money is taken when bought.
+---@field mass number In kilograms, kind of.
 
 ---Represents a bullet currently flying through the air.
 ---@class Bullet

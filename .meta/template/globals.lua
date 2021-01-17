@@ -294,14 +294,14 @@ function items.getAll() end
 function items.getCount() end
 
 ---Create a new item.
----@param type integer The type of the item.
+---@param type ItemType The type of the item.
 ---@param position Vector The position of the item.
 ---@param rotation RotMatrix The rotation of the item.
 ---@return Item? item The created item, or nil on failure.
 function items.create(type, position, rotation) end
 
 ---Create a new item.
----@param type integer The type of the item.
+---@param type ItemType The type of the item.
 ---@param position Vector The position of the item.
 ---@param velocity Vector The initial velocity of the item.
 ---@param rotation RotMatrix The rotation of the item.
@@ -314,6 +314,18 @@ function items.create(type, position, velocity, rotation) end
 ---@return Item? item The created item, or nil on failure.
 ---@deprecated
 function items.createRope(position, rotation) end
+
+---Library for managing VehicleType objects.
+---vehicleTypes[index: integer] -> VehicleType
+vehicleTypes = {}
+
+---Get all vehicle types.
+---@return VehicleType[] vehicleTypes A list of all VehicleType objects.
+function vehicleTypes.getAll() end
+
+---Get the number of vehicle types.
+---@return integer count How many VehicleType objects there are.
+function vehicleTypes.getCount() end
 
 ---Library for managing Vehicle objects.
 ---vehicles[index: integer] -> Vehicle
@@ -328,7 +340,7 @@ function vehicles.getAll() end
 function vehicles.getCount() end
 
 ---Create a new vehicle.
----@param type integer The type of the vehicle.
+---@param type VehicleType The type of the vehicle.
 ---@param position Vector The position of the vehicle.
 ---@param rotation RotMatrix The rotation of the vehicle.
 ---@param color integer The color of the vehicle.

@@ -92,11 +92,11 @@ plugin.commands['/fly'] = {
 
 		if flyingMachines[man.index] then error('Already flying') end
 
-		local vcl = vehicles.create(69, man.pos, orientations.n, 0)
+		local vcl = vehicles.create(vehicleTypes[13], man.pos, orientations.n, 0)
 		if vcl then
-			vcl.type = 5
+			vcl.type = vehicleTypes[5]
 			vcl:updateType()
-			vcl.type = 69
+			vcl.type = vehicleTypes[13]
 
 			flyingMachines[man.index] = vcl
 			vcl.rigidBody.isSettled = true
