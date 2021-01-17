@@ -130,6 +130,13 @@ function event.sound(soundType, position) end
 ---@param position Vector The position to show the explosion at.
 function event.explosion(position) end
 
+---Display a bullet with a sound, tracer, and optionally a muzzle flash and casing.
+---@param bulletType integer The type of bullet.
+---@param position Vector The initial position the bullet.
+---@param velocity Vector The initial velocity of the bullet.
+---@param item? Item The item the bullet came from.
+function event.bullet(bulletType, position, velocity, item) end
+
 ---Indicate a bullet has hit a person or thing.
 ---@param hitType integer The type of hit. 0 = bullet hole (stays until round reset), 1 = human hit (blood), 2 = car hit (metal), 3 = blood drip (bleeding).
 ---@param position Vector The position the bullet hit.
@@ -281,6 +288,11 @@ function itemTypes.getAll() end
 ---@return integer count How many ItemType objects there are.
 function itemTypes.getCount() end
 
+---Get an item type by its name.
+---@param name string The exact name of the item type to search for. Case sensitive.
+---@return ItemType? itemType The found item type, or nil.
+function itemTypes.getByName(name) end
+
 ---Library for managing Item objects.
 ---items[index: integer] -> Item
 items = {}
@@ -327,6 +339,11 @@ function vehicleTypes.getAll() end
 ---@return integer count How many VehicleType objects there are.
 function vehicleTypes.getCount() end
 
+---Get a vehicle type by its name.
+---@param name string The exact name of the vehicle type to search for. Case sensitive.
+---@return VehicleType? vehicleType The found vehicle type, or nil.
+function vehicleTypes.getByName(name) end
+
 ---Library for managing Vehicle objects.
 ---vehicles[index: integer] -> Vehicle
 vehicles = {}
@@ -357,6 +374,14 @@ function bullets.getAll() end
 ---Get the number of bullets.
 ---@return integer count How many Bullet objects there are.
 function bullets.getCount() end
+
+---Create a bullet.
+---@param bulletType integer The type of bullet.
+---@param position Vector The initial position of the bullet.
+---@param velocity Vector The initial velocity of the bullet.
+---@param player? Player The player who fired this bullet.
+---@return Bullet? bullet The created bullet, or nil on failure.
+function bullets.create(bulletType, position, velocity, player) end
 
 ---Library for managing RigidBody objects.
 ---rigidBodies[index: integer] -> RigidBody

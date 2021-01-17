@@ -5,7 +5,25 @@ do
 	---@field TPS integer 🔒 How many ticks are in 1 second according to in-game timers (60).
 	---@field port integer 🔒
 	---@field name string Name shown on the server list, max length of 31.
+	---@field adminPassword string The admin password used in the /admin command.
 	---@field password string Empty string for no password, otherwise people will need to type this to join.
+	---@field maxBytesPerSecond integer
+	---@field worldTraffic integer How many traffic cars there should be in world mode.
+	---@field worldStartCash integer
+	---@field worldMinCash integer
+	---@field worldShowJoinExit boolean
+	---@field worldRespawnTeam boolean
+	---@field worldCrimeCivCiv integer
+	---@field worldCrimeCivTeam integer
+	---@field worldCrimeTeamCiv integer
+	---@field worldCrimeTeamTeam integer
+	---@field worldCrimeTeamTeamInBase integer
+	---@field worldCrimeNoSpawn integer
+	---@field roundRoundTime integer How long rounds are in round mode, in minutes.
+	---@field roundStartCash integer
+	---@field roundIsWeekly boolean
+	---@field roundHasBonusRatio boolean
+	---@field roundTeamDamage integer
 	---@field type integer Gamemode number.
 	---@field loadedLevel string 🔒 Name of the currently loaded map.
 	---@field levelToLoad string
@@ -282,6 +300,7 @@ do
 	---@field physicsSettledTimer integer How many ticks the item has been settling. Once it has reached 60, it will be settled.
 	---@field isStatic boolean Whether the item is immovable.
 	---@field rigidBody RigidBody The rigid body representing the physics of this item.
+	---@field vehicle Vehicle? The vehicle which this item is a key for.
 	---@field grenadePrimer Player? The player who primed this grenade.
 	local Item
 
@@ -341,6 +360,7 @@ do
 	---@field class string 🔒 "Vehicle"
 	---@field data table A Lua table which persists throughout the lifespan of this object.
 	---@field type VehicleType 💾
+	---@field isLocked boolean Whether or not this has a key and is locked.
 	---@field controllableState integer 0 = cannot be controlled, 1 = car, 2 = helicopter.
 	---@field health integer 0-100
 	---@field color integer 💾 0 = black, 1 = red, 2 = blue, 3 = silver, 4 = white, 5 = gold.
