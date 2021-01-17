@@ -193,8 +193,26 @@ plugin.commands['listitemtypes'] = {
 			table.insert(rows, {
 				type.index,
 				type.numHands,
-				type.price,
-				type.mass,
+				'$' .. commaNumber(type.price),
+				commaNumber(type.mass) .. 'kg',
+				type.name
+			})
+		end
+		drawTable(rows)
+	end
+}
+
+plugin.commands['listvehicletypes'] = {
+	info = 'List all vehicle types.',
+	call = function ()
+		local rows = {
+			{ 'Index', 'Price', 'Mass', 'Name' }
+		}
+		for _, type in pairs(vehicleTypes.getAll()) do
+			table.insert(rows, {
+				type.index,
+				'$' .. commaNumber(type.price),
+				commaNumber(type.mass) .. 'kg',
 				type.name
 			})
 		end
@@ -211,7 +229,7 @@ plugin.commands['listitems'] = {
 		for _, item in pairs(items.getAll()) do
 			table.insert(rows, {
 				item.index,
-				itemTypes[item.type].name
+				item.type.name
 			})
 		end
 		drawTable(rows)
