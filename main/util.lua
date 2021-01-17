@@ -377,3 +377,23 @@ function drawTable (rows)
 		print(line)
 	end
 end
+
+---Get a function to lazily stagger over a table-generating function.
+---For example, `staggerRoutine(humans.getAll, 10, function (human) ... end)` will generate a function which might be used as a hook for doing some logic on humans in 10 groups.
+---@param listGenerator fun(): any[] A function which returns a table to stagger over.
+---@param numDivisions integer How many different divisions to cycle through. Every entry in a generated list will be handled every N calls to the returned function. Lower values will handle entries more frequently at the cost of performance.
+---@param handler fun(entry: any, ...) The function to be run for every covered entry during a call.
+---@return fun(...) routine The function which can be called to get the table and cycle one group. Arguments are passed to `handler`.
+function staggerRoutine (listGenerator, numDivisions, handler)
+	local counter = 1
+
+	return function (...)
+		local list = listGenerator()
+
+		for index = counter, #list, numDivisions do
+			handler(list[index], ...)
+		end
+
+		counter = (counter % numDivisions) + 1
+	end
+end
