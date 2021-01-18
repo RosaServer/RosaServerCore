@@ -594,6 +594,7 @@ do
 end
 
 ---Represents an active client network connection.
+---Connections can be moved around in memory every tick, so don't hold onto references.
 ---@class Connection
 ---@field class string 🔒 "Connection"
 ---@field port integer
