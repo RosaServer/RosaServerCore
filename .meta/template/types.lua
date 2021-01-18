@@ -648,6 +648,7 @@ end
 ---@field mass number In kilograms, kind of.
 
 ---Represents a bullet currently flying through the air.
+---Bullets can be moved around in memory every tick, so don't hold onto references.
 ---@class Bullet
 ---@field class string 🔒 "Bullet"
 ---@field type integer
