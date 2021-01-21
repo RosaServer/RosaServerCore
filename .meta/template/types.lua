@@ -201,6 +201,7 @@ do
 	---@field rightArmHP integer
 	---@field leftLegHP integer
 	---@field rightLegHP integer
+	---@field progressBar integer Progress bar displayed in the center of the screen, 0-255. 0 = disabled.
 	---@field gender integer See Player.gender.
 	---@field head integer See Player.head.
 	---@field skinColor integer See Player.skinColor.
@@ -444,6 +445,26 @@ do
 	---@param index integer The index between 0 and numLanes-1.
 	---@return StreetLane lane The desired lane.
 	function Street:getLane(index) end
+end
+
+do
+	---Represents a special building.
+	---@class Building
+	---@field class string 🔒 "Building"
+	---@field type integer The type of building. 1 = base, 3 = car shop, 4 = laboratory, 5 = cosmetics shop, 6 = bank, 8 = gun shop, 9 = burger shop.
+	---@field pos Vector The origin point of the building. May not be inside.
+	---@field spawnRot RotMatrix The rotation which this building spawns things (players in a base, cars in a car shop, etc.)
+	---@field interiorCuboidA Vector The first corner of a cuboid, where the interior of the building is contained inside.
+	---@field interiorCuboidB Vector The second corner of a cuboid, where the interior of the building is contained inside.
+	---@field numShopCars integer How many cars are for sale at this car shop.
+	---@field shopCarSales integer How many cars have been sold at this car shop.
+	---@field index integer 🔒 The index of the array in memory this is.
+	local Building = {}
+
+	---Get a car slot at this car shop.
+	---@param index integer The index between 0 and 15.
+	---@return ShopCar shopCar The desired shop car.
+	function Building:getShopCar(index) end
 end
 
 do
@@ -716,3 +737,10 @@ end
 ---@field streetSouth Street? 🔒 The street connected to the south, if any.
 ---@field streetWest Street? 🔒 The street connected to the west, if any.
 ---@field streetNorth Street? 🔒 The street connected to the north, if any.
+
+---Represents a car for sale at a car shop.
+---@class ShopCar
+---@field class string 🔒 "ShopCar"
+---@field price integer How much money is taken when bought. Note that if the key is sold, the price of the VehicleType is used for refunds.
+---@field color integer The color of the car.
+---@field type VehicleType The type of the car.

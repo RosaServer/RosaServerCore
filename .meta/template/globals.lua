@@ -431,6 +431,18 @@ function intersections.getAll() end
 ---@return integer count How many StreetIntersection objects there are.
 function intersections.getCount() end
 
+---Library for managing Building objects.
+---buildings[index: integer] -> Building
+buildings = {}
+
+---Get all buildings.
+---@return Building[] buildings A list of all Building objects.
+function buildings.getAll() end
+
+---Get the number of buildings.
+---@return integer count How many Building objects there are.
+function buildings.getCount() end
+
 ---Library for directly reading and writing any memory.
 memory = {}
 
