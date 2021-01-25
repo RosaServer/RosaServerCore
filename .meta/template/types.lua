@@ -665,6 +665,7 @@ end
 ---@field class string 🔒 "VehicleType"
 ---@field usesExternalModel boolean
 ---@field controllableState integer 0 = cannot be controlled, 1 = car, 2 = helicopter.
+---@field index integer 🔒 The index of the array in memory this is.
 ---@field name string Not networked.
 ---@field price integer How much money is taken when bought.
 ---@field mass number In kilograms, kind of.
