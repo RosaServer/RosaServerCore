@@ -383,7 +383,7 @@ do
 
 	---Fire a network event to make a part appear to break.
 	---Also used to visually toggle train doors.
-	---@param kind integer The kind of part. 0 = window, 1 = tire, 2 = entire body.
+	---@param kind integer The kind of part. 0 = window, 1 = tire, 2 = entire body, 6 = repair window.
 	---@param position Vector The global position of the destruction.
 	---@param normal Vector The normal of the destruction.
 	function Vehicle:updateDestruction(kind, partIndex, position, normal) end
