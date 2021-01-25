@@ -33,6 +33,11 @@ function mode.hooks.ResetGame ()
 	server.levelToLoad = mapName
 end
 
+function mode.hooks.PostResetGame ()
+	server.state = STATE_GAME
+	server.time = 600
+end
+
 function mode.hooks.SendPacket ()
 	for _, ply in ipairs(players.getNonBots()) do
 		if not ply.human then
