@@ -372,6 +372,7 @@ do
 	---@field gearY number Forward to back stick shift position, -1 to 1.
 	---@field steerControl number Left to right wheel position, -0.75 to 0.75.
 	---@field gasControl number Brakes to full gas, -1 to 1.
+	---@field engineRPM integer The RPM of the engine to be networked, 0 to 8191.
 	---@field index integer 🔒 The index of the array in memory this is (0-511).
 	---@field isActive boolean Whether or not this exists, only change if you know what you are doing.
 	---@field lastDriver Player? 🔒 The last person to drive the vehicle.
@@ -622,6 +623,7 @@ end
 ---@field timeoutTime integer How many ticks the connection has not responded, will be deleted after 30 seconds.
 ---@field address string 🔒 IPv4 address ("x.x.x.x")
 ---@field adminVisible boolean Whether this connection is sent admin only events (admin messages).
+---@field spectatingHuman Human? The human this connection is currently spectating, if any.
 
 ---Represents a persistent player account stored on the server.
 ---@class Account
