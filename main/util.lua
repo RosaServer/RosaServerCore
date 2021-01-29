@@ -40,6 +40,25 @@ function rollToRotMatrix (roll)
 	)
 end
 
+---Convert an axis-angle rotation to a RotMatrix.
+---@param axis Vector The axis unit vector.
+---@param angle number The rotation angle (in radians).
+function axisAngleToRotMatrix (axis, angle)
+	local s = math.sin(angle)
+	local c = math.cos(angle)
+	local C = 1 - c
+
+	local x = axis.x
+	local y = axis.y
+	local z = axis.z
+
+	return RotMatrix(
+		x*x*C + c, x*y*C - z*s, x*z*C + y*s,
+		y*x*C + z*s, y*y*C + c, y*z*C - x*s,
+		z*x*C - y*s, z*y*C + x*s, z*z*C + c
+	)
+end
+
 ---Table of useful compass orientations.
 orientations = {
 	n = yawToRotMatrix(0),
