@@ -615,6 +615,14 @@ do
 	function Image:getPNG() end
 end
 
+---Represents a real number used in hooks whose value can be changed before its parent is called.
+---@class HookFloat
+---@field value number The underlying float value.
+
+---Represents a 32-bit integer used in hooks whose value can be changed before its parent is called.
+---@class HookInteger
+---@field value integer The underlying int value.
+
 ---Represents an active client network connection.
 ---Connections can be moved around in memory every tick, so don't hold onto references.
 ---@class Connection
