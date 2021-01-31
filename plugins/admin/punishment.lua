@@ -4,6 +4,34 @@ local plugin = ...
 local shared = plugin:require('shared')
 local persistence = plugin:require('persistence')
 
+---@param minutes integer
+---@return string
+local function getCleanReadableTime (minutes)
+	local str = ''
+
+	local hours = math.floor(minutes / 60)
+	if hours > 0 then
+		minutes = minutes - (hours * 60)
+
+		local days = math.floor(hours / 24)
+		if days > 0 then
+			hours = hours - (days * 24)
+
+			str = str .. days .. 'd '
+		end
+
+		if hours > 0 then
+			str = str .. hours .. 'h '
+		end
+	end
+
+	if minutes > 0 then
+		str = str .. minutes .. 'm'
+	end
+
+	return str
+end
+
 plugin.commands['/kick'] = {
 	info = 'Kick a player.',
 	usage = '/kick <phoneNumber/name> [reason]',
@@ -90,12 +118,12 @@ plugin.commands['/punish'] = {
 			title = 'Player Banned',
 			color = 0xD32F2F,
 			description = string.format(
-				'**%s** added %s to **%s** (%s), ban set at **%im**',
+				'**%s** added %s to **%s** (%s), ban set at **%s**',
 				ply.name,
 				countString,
 				acc.name,
 				dashPhoneNumber(acc.phoneNumber),
-				banMinutes
+				getCleanReadableTime(banMinutes)
 			),
 			fields = {
 				{
@@ -152,12 +180,12 @@ plugin.commands['/unpunish'] = {
 			title = 'Player Unbanned',
 			color = 0x388E3C,
 			description = string.format(
-				'**%s** removed %s from **%s** (%s), deducted **%im**',
+				'**%s** removed %s from **%s** (%s), deducted **%s**',
 				ply.name,
 				countString,
 				acc.name,
 				dashPhoneNumber(acc.phoneNumber),
-				banMinutes
+				getCleanReadableTime(banMinutes)
 			),
 			fields = {
 				{
@@ -193,7 +221,13 @@ plugin.commands['/ban'] = {
 		shared.discordEmbed({
 			title = 'Player Banned',
 			color = 0xD32F2F,
-			description = string.format('**%s** manually banned **%s** (%s) for **%imin**', ply.name, acc.name, dashPhoneNumber(acc.phoneNumber), banTime),
+			description = string.format(
+				'**%s** manually banned **%s** (%s) for **%s**',
+				ply.name,
+				acc.name,
+				dashPhoneNumber(acc.phoneNumber),
+				getCleanReadableTime(banTime)
+			),
 			fields = {
 				{
 					name = 'Reason',
