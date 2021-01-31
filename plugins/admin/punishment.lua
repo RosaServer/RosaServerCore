@@ -99,7 +99,7 @@ plugin.commands['/punish'] = {
 		end
 
 		table.insert(persistentData.warnings[phoneString], {
-			reason = 'Banned for ' .. banMinutes .. 'm: ' .. reason,
+			reason = 'Banned for ' .. getCleanReadableTime(banMinutes) .. ': ' .. reason,
 			time = os.time()
 		})
 
