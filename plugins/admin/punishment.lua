@@ -39,7 +39,7 @@ plugin.commands['/kick'] = {
 
 plugin.commands['/punish'] = {
 	info = 'Ban an account based on previous bans.',
-	usage = '/punish <phoneNumber/name> [reason]',
+	usage = '/punish <phoneNumber/name> [reason] [count]',
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
@@ -47,16 +47,24 @@ plugin.commands['/punish'] = {
 	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
-		local acc = findOneAccount(table.remove(args, 1))
+		local acc = findOneAccount(args[1])
 
 		local phoneString = tostring(acc.phoneNumber)
-		local reason = #args > 0 and table.concat(args, ' ') or 'No reason specified.'
+		local reason = args[2] or 'No reason specified.'
+
+		local count = assert(tonumber(args[3] or 1), 'Count is not a number')
+		count = math.floor(count)
+		assert(count >= 1, 'Invalid count')
 
 		local persistentData = persistence.get()
 
 		persistentData.punishments[phoneString] = persistentData.punishments[phoneString] or 0
-		local banMinutes = 45 * (2 ^ persistentData.punishments[phoneString])
-		persistentData.punishments[phoneString] = persistentData.punishments[phoneString] + 1
+
+		local banMinutes = 0
+		for _ = 1, count do
+			banMinutes = banMinutes + (45 * (2 ^ persistentData.punishments[phoneString]))
+			persistentData.punishments[phoneString] = persistentData.punishments[phoneString] + 1
+		end
 
 		if not persistentData.warnings[phoneString] then
 			persistentData.warnings[phoneString] = {}
@@ -71,12 +79,24 @@ plugin.commands['/punish'] = {
 
 		acc.banTime = acc.banTime + banMinutes
 
-		adminLog('%s punished %s (%s) @ %im, reason: %s', ply.name, acc.name, dashPhoneNumber(acc.phoneNumber), banMinutes, reason)
+		adminLog('%s punished %s (%s) @ %im (x%d), reason: %s', ply.name, acc.name, dashPhoneNumber(acc.phoneNumber), banMinutes, count, reason)
+
+		local countString = 'a punishment'
+		if count > 1 then
+			countString = count .. ' punishments'
+		end
 
 		shared.discordEmbed({
 			title = 'Player Banned',
 			color = 0xD32F2F,
-			description = string.format('**%s** added a punishment to **%s** (%s), ban set at **%im**', ply.name, acc.name, dashPhoneNumber(acc.phoneNumber), banMinutes),
+			description = string.format(
+				'**%s** added %s to **%s** (%s), ban set at **%im**',
+				ply.name,
+				countString,
+				acc.name,
+				dashPhoneNumber(acc.phoneNumber),
+				banMinutes
+			),
 			fields = {
 				{
 					name = 'Reason',
@@ -88,8 +108,8 @@ plugin.commands['/punish'] = {
 }
 
 plugin.commands['/unpunish'] = {
-	info = 'Remove a punishment from an account.',
-	usage = '/unpunish <phoneNumber/name> [reason]',
+	info = 'Remove punishments from an account.',
+	usage = '/unpunish <phoneNumber/name> [reason] [count]',
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
@@ -97,27 +117,48 @@ plugin.commands['/unpunish'] = {
 	call = function (ply, _, args)
 		assert(#args >= 1, 'usage')
 
-		local acc = findOneAccount(table.remove(args, 1))
+		local acc = findOneAccount(args[1])
 
 		local phoneString = tostring(acc.phoneNumber)
-		local reason = #args > 0 and table.concat(args, ' ') or 'No reason specified.'
+		local reason = args[2] or 'No reason specified.'
+
+		local count = assert(tonumber(args[3] or 1), 'Count is not a number')
+		count = math.floor(count)
+		assert(count >= 1, 'Invalid count')
 
 		local persistentData = persistence.get()
 
-		if not persistentData.punishments[phoneString] or persistentData.punishments[phoneString] < 1 then error('Account has no punishment') end
+		assert(persistentData.punishments[phoneString] and persistentData.punishments[phoneString] >= 1, 'Account has no punishments')
+		assert(persistentData.punishments[phoneString] >= count, 'Count is too high')
 
-		local banMinutes = 45 * (2 ^ (persistentData.punishments[phoneString] - 1))
-		persistentData.punishments[phoneString] = persistentData.punishments[phoneString] - 1
+		local banMinutes = 0
+		for _ = 1, count do
+			banMinutes = banMinutes + 45 * (2 ^ (persistentData.punishments[phoneString] - 1))
+			persistentData.punishments[phoneString] = persistentData.punishments[phoneString] - 1
+		end
+
 		persistence.save()
 
 		acc.banTime = math.max(0, acc.banTime - banMinutes)
 
-		adminLog('%s unpunished %s (%s) @ %im, reason: %s', ply.name, acc.name, dashPhoneNumber(acc.phoneNumber), banMinutes, reason)
+		adminLog('%s unpunished %s (%s) @ %im (x%d), reason: %s', ply.name, acc.name, dashPhoneNumber(acc.phoneNumber), banMinutes, count, reason)
+
+		local countString = 'a punishment'
+		if count > 1 then
+			countString = count .. ' punishments'
+		end
 
 		shared.discordEmbed({
 			title = 'Player Unbanned',
 			color = 0x388E3C,
-			description = string.format('**%s** removed a punishment from **%s** (%s), deducted **%im**', ply.name, acc.name, dashPhoneNumber(acc.phoneNumber), banMinutes),
+			description = string.format(
+				'**%s** removed %s from **%s** (%s), deducted **%im**',
+				ply.name,
+				countString,
+				acc.name,
+				dashPhoneNumber(acc.phoneNumber),
+				banMinutes
+			),
 			fields = {
 				{
 					name = 'Reason',
