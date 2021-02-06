@@ -1,5 +1,10 @@
 local json = require 'main.json'
 
+local PLUGIN_WATCHER = FileWatcher.new()
+
+local POLL_EVERY = math.ceil(server.TPS / 4)
+local pollCounter = 0
+
 local doPrintsWithoutTime
 
 local function getTimePrefix ()
@@ -70,6 +75,7 @@ end
 ---@field config table
 ---@field isEnabled boolean
 ---@field fileName string
+---@field doAutoReload boolean
 ---@field nameSpace string
 ---@field entryPath string
 local plugin = {}
@@ -271,7 +277,8 @@ local function newPlugin (nameSpace, stem)
 		isEnabled = true,
 		requireCache = {},
 		nameSpace = nameSpace,
-		fileName = stem
+		fileName = stem,
+		doAutoReload = false
 	}, plugin)
 end
 
@@ -286,8 +293,10 @@ local function loadPluginNameSpace (nameSpace, isEnabledFunc)
 
 			if entry.isDirectory then
 				plug.entryPath = nameSpace .. '/' .. entry.stem ..'/init.lua'
+				PLUGIN_WATCHER:addWatch(nameSpace .. '/' .. entry.stem, FILE_WATCH_MODIFY)
 			else
 				plug.entryPath = nameSpace .. '/' .. entry.name
+				plug.fullFileName = entry.name
 			end
 
 			hook.plugins[entry.stem] = plug
@@ -302,6 +311,8 @@ local function loadPluginNameSpace (nameSpace, isEnabledFunc)
 	end
 
 	printScoped('Loaded ' .. numLoaded .. ' ' .. nameSpace)
+
+	PLUGIN_WATCHER:addWatch(nameSpace, FILE_WATCH_MODIFY)
 end
 
 local function loadPlugins ()
@@ -336,6 +347,46 @@ hook.add(
 			loadPlugins()
 		else
 			reloadConfigOfPlugins()
+		end
+	end
+)
+
+---@param descriptor string
+---@param fullFileName string
+---@return Plugin?
+local function findModifiedPlugin (descriptor, fullFileName)
+	for _, plug in pairs(hook.plugins) do
+		if plug.nameSpace == descriptor and plug.fullFileName == fullFileName then
+			return plug
+		end
+
+		if plug.nameSpace .. '/' .. plug.fileName == descriptor then
+			return plug
+		end
+	end
+	return nil
+end
+
+local function pollEvents ()
+	while true do
+		local event = PLUGIN_WATCHER:receiveEvent()
+		if not event then return end
+
+		local plug = findModifiedPlugin(event.descriptor, event.name)
+		if plug and plug.doAutoReload then
+			printScoped(('Watched plugin %s has changed! Reloading...'):format(plug.name))
+			plug:reload()
+		end
+	end
+end
+
+hook.add(
+	'Logic', 'main.plugins',
+	function ()
+		pollCounter = pollCounter + 1
+		if pollCounter > POLL_EVERY then
+			pollCounter = 0
+			pollEvents()
 		end
 	end
 )
