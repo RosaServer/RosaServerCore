@@ -33,6 +33,53 @@ TYPE_COOP = 6
 ---Versus mode.
 TYPE_VERSUS = 7
 
+---File was accessed.
+FILE_WATCH_ACCESS = 0
+---Metadata changed.
+FILE_WATCH_ATTRIB = 0
+---Writable file was closed.
+FILE_WATCH_CLOSE_WRITE = 0
+---Unwritable file closed.
+FILE_WATCH_CLOSE_NOWRITE = 0
+---Subfile was created.
+FILE_WATCH_CREATE = 0
+---Subfile was deleted.
+FILE_WATCH_DELETE = 0
+---Self was deleted.
+FILE_WATCH_DELETE_SELF = 0
+---File was modified.
+FILE_WATCH_MODIFY = 0
+---Self was moved.
+FILE_WATCH_MOVE_SELF = 0
+---File was moved from X.
+FILE_WATCH_MOVED_FROM = 0
+---File was moved to Y.
+FILE_WATCH_MOVED_TO = 0
+---File was opened.
+FILE_WATCH_OPEN = 0
+---Moves.
+FILE_WATCH_MOVE = 0
+---Closes.
+FILE_WATCH_CLOSE = 0
+---Do not follow a sym link.
+FILE_WATCH_DONT_FOLLOW = 0
+---Exclude events on unlinked objects.
+FILE_WATCH_EXCL_UNLINK = 0
+---Add to the mask of an already existing watch.
+FILE_WATCH_MASK_ADD = 0
+---Only send event once.
+FILE_WATCH_ONESHOT = 0
+---Only watch the path if it is a directory.
+FILE_WATCH_ONLYDIR = 0
+---File was ignored.
+FILE_WATCH_IGNORED = 0
+---Event occurred against a directory.
+FILE_WATCH_ISDIR = 0
+---Event queue overflowed.
+FILE_WATCH_Q_OVERFLOW = 0
+---Backing fs was unmounted.
+FILE_WATCH_UNMOUNT = 0
+
 ---The hook library which hooked events will call upon.
 ---The hook.run function must be defined to use hooks.
 hook = {

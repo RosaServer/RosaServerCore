@@ -109,6 +109,18 @@ do
 	---Create a copy of self.
 	---@return RotMatrix clone The created copy.
 	function RotMatrix:clone() end
+
+	---Get a normal vector pointing in the rotation's +X direction.
+	---@return Vector forward The normal vector.
+	function RotMatrix:getForward() end
+
+	---Get a normal vector pointing in the rotation's +Y direction.
+	---@return Vector up The normal vector.
+	function RotMatrix:getUp() end
+
+	---Get a normal vector pointing in the rotation's +Z direction.
+	---@return Vector right The normal vector.
+	function RotMatrix:getRight() end
 end
 
 do
@@ -613,6 +625,35 @@ do
 	---Get the PNG representation of an image.
 	---@return string png The buffer of a PNG file representing the image.
 	function Image:getPNG() end
+end
+
+do
+	---An object which can listen for file system events.
+	---@class FileWatcher
+	FileWatcher = {}
+
+	---Create a new FileWatcher.
+	---@return FileWatcher fileWatcher The created FileWatcher.
+	function FileWatcher.new() end
+
+	---Add a new directory/file to watch.
+	---@param path string The path to watch.
+	---@param mask integer The flags for the watch. See FILE_WATCH_* constants.
+	function FileWatcher:addWatch(path, mask) end
+
+	---Remove a watch if it exists.
+	---@param path string The path to remove.
+	---@return boolean success Whether the path was an existing watch.
+	function FileWatcher:removeWatch(path) end
+
+	---@class FileWatchEvent
+	---@field descriptor string The path of the watch the event was for.
+	---@field mask integer The flags for the event. See FILE_WATCH_* constants.
+	---@field name string The name of the directory/file where the event took place.
+
+	---Read the next event.
+	---@return FileWatchEvent? event The next event, or nil if there was no event.
+	function FileWatcher:receiveEvent() end
 end
 
 ---Represents a real number used in hooks whose value can be changed before its parent is called.
