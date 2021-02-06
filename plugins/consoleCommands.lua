@@ -156,6 +156,27 @@ plugin.commands['reloadplugin'] = {
 	end
 }
 
+plugin.commands['watchplugin'] = {
+	info = "Toggle auto-reloading for a plugin when it's modified.",
+	usage = 'watchplugin <plugin>',
+	autoComplete = autoCompletePluginOrModeArg,
+	---@param args string[]
+	call = function (args)
+		assert(#args >= 1, 'usage')
+
+		local foundPlugin = hook.getPluginByName(args[1])
+		assert(foundPlugin, 'Invalid plugin')
+
+		foundPlugin.doAutoReload = not foundPlugin.doAutoReload
+		plugin:print(string.format(
+			'%s watching the %s plugin by %s',
+			foundPlugin.doAutoReload and 'Now' or 'No longer',
+			foundPlugin.name,
+			foundPlugin.author
+		))
+	end
+}
+
 plugin.commands['reloadconfig'] = {
 	info = 'Reload the configuration file.',
 	call = function ()
