@@ -27,7 +27,8 @@ local function onResponse (res)
 	plugin:print('Posted')
 end
 
-function plugin.hooks.PostResetGame ()
+---Build and post boards to a web server.
+function postBoards ()
 	local boards = {}
 
 	if hook.run('BuildBoards', boards) then
@@ -50,3 +51,5 @@ function plugin.hooks.PostResetGame ()
 	local cfg = plugin.config
 	http.post(cfg.host, cfg.path, {}, postString, 'application/json', onResponse)
 end
+
+plugin.hooks.PostResetGame = postBoards
