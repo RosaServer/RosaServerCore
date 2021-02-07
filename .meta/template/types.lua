@@ -7,6 +7,7 @@ do
 	---@field name string Name shown on the server list, max length of 31.
 	---@field adminPassword string The admin password used in the /admin command.
 	---@field password string Empty string for no password, otherwise people will need to type this to join.
+	---@field maxPlayers integer
 	---@field maxBytesPerSecond integer
 	---@field worldTraffic integer How many traffic cars there should be in world mode.
 	---@field worldStartCash integer
