@@ -105,10 +105,12 @@ function hook.clear() end
 function flagStateForReset(mode) end
 
 ---Create a new Vector with 0 for every coordinate.
+---Available in worker threads.
 ---@return Vector vector The created vector.
 function Vector() end
 
 ---Create a new Vector with given coordinates.
+---Available in worker threads.
 ---@param x number
 ---@param y number
 ---@param z number
@@ -116,6 +118,7 @@ function Vector() end
 function Vector(x, y, z) end
 
 ---Create a new RotMatrix.
+---Available in worker threads.
 ---@param x1 number
 ---@param y1 number
 ---@param z1 number
@@ -141,6 +144,7 @@ http = {}
 ---@field headers table<string, string> The response headers.
 
 ---Send an HTTP(S) GET request synchronously.
+---Available in worker threads.
 ---Not recommended to use this on the main thread.
 ---@param scheme string The hostname of the server to send the request to, with optional protocol and port. Ex. google.com, https://google.com, https://google.com:443
 ---@param path string The path to request from the server.
@@ -149,6 +153,7 @@ http = {}
 function http.getSync(scheme, path, headers) end
 
 ---Send an HTTP(S) POST request synchronously.
+---Available in worker threads.
 ---Not recommended to use this on the main thread.
 ---@param scheme string The hostname of the server to send the request to, with optional protocol and port. Ex. google.com, https://google.com, https://google.com:443
 ---@param path string The path to request from the server.
@@ -633,15 +638,18 @@ function memory.writeBytes(address, bytes) end
 ---@field extension string The extension of the filename if this is a file. Ex. ".png".
 
 ---Get the contents of a directory.
+---Available in worker threads.
 ---@param path string The path to the directory to scan.
 ---@return ListDirectoryEntry[] entries A list of all entries in the directory.
 function os.listDirectory(path) end
 
 ---Create a directory if it does not already exist.
+---Available in worker threads.
 ---@param path string The path of the directory.
 ---@return boolean created Whether the directory was created.
 function os.createDirectory(path) end
 
 ---Get an accurate clock value counting up in real seconds.
+---Available in worker threads.
 ---@return number seconds The number of seconds elapsed, with millisecond precision.
 function os.realClock() end

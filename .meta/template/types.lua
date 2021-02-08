@@ -53,6 +53,7 @@ end
 
 do
 	---Represents a 3D point in the level.
+	---Available in worker threads.
 	---@class Vector
 	---@field class string 🔒 "Vector"
 	---@field x number
@@ -96,6 +97,7 @@ end
 
 do
 	---Represents the rotation of an object as a 3x3 matrix.
+	---Available in worker threads.
 	---@class RotMatrix
 	---@field class string 🔒 "RotMatrix"
 	---@field x1 number
@@ -575,6 +577,7 @@ end
 
 do
 	---Represents a raster image.
+	---Available in worker threads.
 	---@class Image
 	---@field width integer 🔒 The width in pixels.
 	---@field height integer 🔒 The height in pixels.
@@ -642,6 +645,7 @@ end
 
 do
 	---An object which can listen for file system events.
+	---Available in worker threads.
 	---@class FileWatcher
 	FileWatcher = {}
 
