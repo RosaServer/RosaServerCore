@@ -86,6 +86,12 @@ do
 	---@param other Vector The vector to calculate distance to.
 	---@return number distanceSquared The distance in units, squared.
 	function Vector:distSquare(other) end
+
+	---Get the coordinates of the block the vector is in.
+	---@return integer blockX
+	---@return integer blockY
+	---@return integer blockZ
+	function Vector:getBlockPos() end
 end
 
 do

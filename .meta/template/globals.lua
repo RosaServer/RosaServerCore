@@ -239,6 +239,19 @@ function physics.lineIntersectTriangle(outPosition, normal, posA, posB, triA, tr
 ---May shift bullets in memory if any are removed.
 function physics.garbageCollectBullets() end
 
+---Create a collidable block in the level.
+---@param blockX integer
+---@param blockY integer
+---@param blockZ integer
+---@param flags integer
+function physics.createBlock(blockX, blockY, blockZ, flags) end
+
+---Delete a collidable block in the level.
+---@param blockX integer
+---@param blockY integer
+---@param blockZ integer
+function physics.deleteBlock(blockX, blockY, blockZ) end
+
 ---Library for sending chat messages.
 chat = {}
 
