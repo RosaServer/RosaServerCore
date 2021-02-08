@@ -2,7 +2,6 @@ local json = require 'main.json'
 
 local workers = {}
 
-local callbackCounter = 0
 local callbacks = {}
 
 ---@param count integer
@@ -25,12 +24,20 @@ local function getFreeWorker ()
 	return workers[math.random(#workers)]
 end
 
+local function getFreeCallbackIndex ()
+	local callbackIndex = 1
+	while callbacks[callbackIndex] do
+		callbackIndex = callbackIndex + 1
+	end
+	return callbackIndex
+end
+
 ---@param data table
 ---@param callback fun(response?: HTTPResponse)
 local function request (data, callback)
-	callbackCounter = callbackCounter + 1
-	callbacks[callbackCounter] = callback
-	data.callback = callbackCounter
+	local callbackIndex = getFreeCallbackIndex()
+	callbacks[callbackIndex] = callback
+	data.callback = callbackIndex
 
 	local worker = getFreeWorker()
 	worker.thread:sendMessage(json.encode(data))
