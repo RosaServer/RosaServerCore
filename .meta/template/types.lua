@@ -364,6 +364,12 @@ do
 	---@param text string The text to set the line to. Max 63 characters.
 	function Item:computerSetLine(lineIndex, text) end
 
+	---Set the colors to display on a line. Does not immediately network.
+	---Only works if this item is a computer.
+	---@param lineIndex integer Which line to edit.
+	---@param colors string The colors to set the line to, where every character represents a color value from 0x00 to 0xFF. Max 63 characters.
+	function Item:computerSetLineColors(lineIndex, colors) end
+
 	---Set the color of a character on screen. Does not immediately network.
 	---Only works if this item is a computer.
 	---Uses the 16 CGA colors for foreground and background separately.
