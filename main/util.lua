@@ -1,9 +1,20 @@
+local mathSin = math.sin
+local mathCos = math.cos
+local mathMax = math.max
+local mathMin = math.min
+local mathRandom = math.random
+local tostring = tostring
+local pairs = pairs
+local ipairs = ipairs
+local RotMatrix = RotMatrix
+local Vector = Vector
+
 ---Convert a pitch angle to a RotMatrix.
 ---@param pitch number The pitch angle (in radians).
 ---@return RotMatrix The converted rotation matrix.
 function pitchToRotMatrix (pitch)
-	local s = math.sin(pitch)
-	local c = math.cos(pitch)
+	local s = mathSin(pitch)
+	local c = mathCos(pitch)
 
 	return RotMatrix(
 		1, 0, 0,
@@ -16,8 +27,8 @@ end
 ---@param yaw number The yaw angle (in radians).
 ---@return RotMatrix The converted rotation matrix.
 function yawToRotMatrix (yaw)
-	local s = math.sin(yaw)
-	local c = math.cos(yaw)
+	local s = mathSin(yaw)
+	local c = mathCos(yaw)
 
 	return RotMatrix(
 		c, 0, s,
@@ -30,8 +41,8 @@ end
 ---@param roll number The roll angle (in radians).
 ---@return RotMatrix The converted rotation matrix.
 function rollToRotMatrix (roll)
-	local s = math.sin(roll)
-	local c = math.cos(roll)
+	local s = mathSin(roll)
+	local c = mathCos(roll)
 
 	return RotMatrix(
 		c, -s, 0,
@@ -44,8 +55,8 @@ end
 ---@param axis Vector The axis unit vector.
 ---@param angle number The rotation angle (in radians).
 function axisAngleToRotMatrix (axis, angle)
-	local s = math.sin(angle)
-	local c = math.cos(angle)
+	local s = mathSin(angle)
+	local c = mathCos(angle)
 	local C = 1 - c
 
 	local x = axis.x
@@ -77,7 +88,7 @@ orientations = {
 ---@return number x The X coordinate on the circle.
 ---@return number y The Y coordinate on the circle.
 function getCirclePoint (radius, angle)
-	return radius * math.cos(angle), radius * math.sin(angle)
+	return radius * mathCos(angle), radius * mathSin(angle)
 end
 
 ---@class CirclePoint
@@ -90,7 +101,7 @@ end
 ---@param angleOffset? number How much to rotate the entire circle (in radians).
 ---@return CirclePoint[] points The points on the circle.
 function getCirclePoints (numPoints, radius, angleOffset)
-	numPoints = math.max(numPoints, 1)
+	numPoints = mathMax(numPoints, 1)
 	radius = radius or 1
 	angleOffset = angleOffset or 0
 
@@ -98,8 +109,8 @@ function getCirclePoints (numPoints, radius, angleOffset)
 	for i = 1, numPoints do
 		local angle = (i/numPoints * math.pi*2) + angleOffset
 		points[i] = {
-			x = radius * math.cos(angle),
-			y = radius * math.sin(angle)
+			x = radius * mathCos(angle),
+			y = radius * mathSin(angle)
 		}
 	end
 
@@ -111,7 +122,7 @@ end
 ---@return any[] tbl The shuffled table.
 function table.shuffle (tbl)
 	for i = #tbl, 2, -1 do
-		local j = math.random(i)
+		local j = mathRandom(i)
 		tbl[i], tbl[j] = tbl[j], tbl[i]
 	end
 	return tbl
@@ -159,7 +170,7 @@ end
 ---@return number clamped The clamped value.
 function math.clamp (val, lower, upper)
 	if lower > upper then lower, upper = upper, lower end
-	return math.max(lower, math.min(upper, val))
+	return mathMax(lower, mathMin(upper, val))
 end
 
 ---Round a number to a fixed number of decimal places.
@@ -176,7 +187,7 @@ end
 ---@param upper number The upper bound.
 ---@return number randomFloat The randomly generated float.
 function math.randomFloat (lower, upper)
-	return lower + math.random() * (upper - lower)
+	return lower + mathRandom() * (upper - lower)
 end
 
 ---Get the lower and higher of two values.
