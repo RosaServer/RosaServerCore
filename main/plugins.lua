@@ -228,6 +228,7 @@ function plugin:load (isEnabled, isReload)
 	-- Mark as enabled
 	self.isEnabled = isEnabled
 	if self.isEnabled then
+		hook.resetCache()
 		self:callEnableHandlers(isReload)
 	end
 end
