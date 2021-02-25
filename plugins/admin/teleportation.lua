@@ -13,8 +13,11 @@ local function teleportHumanWithItems(man, pos)
 	difference:add(oldPos)
 
 	man:teleport(pos)
-	for _, item in pairs({ man.leftHandItem, man.rightHandItem }) do
-		moveItem(item, difference)
+	for i = 0, 1 do
+		local item = man:getInventorySlot(i).primaryItem
+		if item then
+			moveItem(item, difference)
+		end
 	end
 end
 
