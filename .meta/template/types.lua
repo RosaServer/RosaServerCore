@@ -242,8 +242,6 @@ do
 	---@field isBleeding boolean
 	---@field player Player? The player controlling this human.
 	---@field vehicle Vehicle? The vehicle they are inside.
-	---@field rightHandItem Item? 🔒
-	---@field leftHandItem Item? 🔒
 	---@field rightHandGrab Human? 🔒
 	---@field leftHandGrab Human? 🔒
 	---@field isAppearanceDirty boolean Whether the appearance fields (model, gender, etc.) are dirty and need to be networked.
