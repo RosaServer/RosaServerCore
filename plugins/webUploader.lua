@@ -19,9 +19,10 @@ local lastCheckTime
 local lastPostTime
 local lastPostString
 
-function plugin.onEnable ()
+---@param isReload boolean
+function plugin.onEnable (isReload)
 	mute400 = false
-	ready = false
+	ready = isReload
 	lastCheckTime = 0
 	lastPostTime = 0
 	lastPostString = ''
@@ -36,7 +37,7 @@ function plugin.onDisable ()
 end
 
 function plugin.hooks.PostResetGame ()
-	if not ready then ready = true end
+	ready = true
 end
 
 local function onResponse (res)
