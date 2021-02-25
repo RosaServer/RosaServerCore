@@ -697,6 +697,7 @@ end
 ---Represents a persistent player account stored on the server.
 ---@class Account
 ---@field class string 🔒 "Account"
+---@field data table A Lua table which persists throughout the duration of the server.
 ---@field subRosaID integer Unique account index given by the master server, should not be used.
 ---@field phoneNumber integer Unique public ID tied to the account, ex. 2560001
 ---@field money integer
