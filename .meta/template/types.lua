@@ -276,6 +276,11 @@ do
 	---@return RigidBody rigidBody The desired rigid body.
 	function Human:getRigidBody(index) end
 
+	---Get a specific inventory slot.
+	---@param index integer The index between 0 and 6.
+	---@return InventorySlot inventorySlot The desired inventory slot.
+	function Human:getInventorySlot(index) end
+
 	---Set the velocity of every rigid body.
 	---@param velocity Vector The velocity to set.
 	function Human:setVelocity(velocity) end
@@ -712,6 +717,7 @@ end
 ---@field price integer How much money is taken when bought. Not networked.
 ---@field mass number In kilograms, kind of.
 ---@field fireRate integer How many ticks between two shots.
+---@field magazineAmmo integer
 ---@field bulletType integer
 ---@field bulletVelocity number
 ---@field bulletSpread number
@@ -754,6 +760,11 @@ end
 ---@field class string 🔒 "Bone"
 ---@field pos Vector Position.
 ---@field pos2 Vector Second position.
+
+---@class InventorySlot
+---@field class string 🔒 "InventorySlot"
+---@field primaryItem Item? 🔒 The first item in the slot, if any.
+---@field secondaryItem Item? 🔒 The second item in the slot, if any.
 
 ---Represents a bond between one or two rigid bodies.
 ---@class Bond
