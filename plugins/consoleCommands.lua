@@ -177,6 +177,15 @@ plugin.commands['watchplugin'] = {
 	end
 }
 
+plugin.commands['discoverplugins'] = {
+	info = "Discover and load any plugins that weren't present at startup.",
+	call = function ()
+		if discoverNewPlugins() == 0 then
+			plugin:print('No new plugins discovered')
+		end
+	end
+}
+
 plugin.commands['reloadconfig'] = {
 	info = 'Reload the configuration file.',
 	call = function ()

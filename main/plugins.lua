@@ -283,13 +283,13 @@ local function newPlugin (nameSpace, stem)
 	}, plugin)
 end
 
-local function loadPluginNameSpace (nameSpace, isEnabledFunc)
-	printScoped('Loading ' .. nameSpace .. '...')
+local function discoverInNameSpace (nameSpace, isEnabledFunc)
 	local numLoaded = 0
 
 	local entries = os.listDirectory(nameSpace)
 	for _, entry in ipairs(entries) do
-		if entry.isDirectory or entry.extension == '.lua' then
+		if (entry.isDirectory or entry.extension == '.lua')
+		and not hook.plugins[entry.stem] then
 			local plug = newPlugin(nameSpace, entry.stem)
 
 			if entry.isDirectory then
@@ -311,9 +311,24 @@ local function loadPluginNameSpace (nameSpace, isEnabledFunc)
 		end
 	end
 
+	return numLoaded
+end
+
+local function loadPluginNameSpace (nameSpace, isEnabledFunc)
+	printScoped('Loading ' .. nameSpace .. '...')
+
+	local numLoaded = discoverInNameSpace(nameSpace, isEnabledFunc)
 	printScoped('Loaded ' .. numLoaded .. ' ' .. nameSpace)
 
 	PLUGIN_WATCHER:addWatch(nameSpace, FILE_WATCH_MODIFY)
+end
+
+local function shouldStartPluginEnabled (plug)
+	return not disabledPluginsMap[plug.fileName]
+end
+
+local function shouldStartModeEnabled (plug)
+	return plug.fileName == hook.persistentMode
 end
 
 local function loadPlugins ()
@@ -321,15 +336,17 @@ local function loadPlugins ()
 		hook.persistentMode = config.defaultGameMode
 	end
 
-	loadPluginNameSpace('plugins', function (plug)
-		return not disabledPluginsMap[plug.fileName]
-	end)
-
-	loadPluginNameSpace('modes', function (plug)
-		return plug.fileName == hook.persistentMode
-	end)
+	loadPluginNameSpace('plugins', shouldStartPluginEnabled)
+	loadPluginNameSpace('modes', shouldStartModeEnabled)
 
 	hook.resetCache()
+end
+
+---Discover and load any plugins that weren't present at startup.
+---@return integer numLoaded
+function discoverNewPlugins ()
+	return discoverInNameSpace('plugins', shouldStartPluginEnabled)
+	+ discoverInNameSpace('modes', shouldStartModeEnabled)
 end
 
 local function reloadConfigOfPlugins ()
