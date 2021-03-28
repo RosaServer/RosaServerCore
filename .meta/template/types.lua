@@ -149,6 +149,8 @@ do
 	---@field stocks integer 💲 The amount of shares they own in their company.
 	---@field spawnTimer integer How long this person has to wait to spawn in, in seconds.
 	---@field menuTab integer What tab in the menu they are currently in.
+	---@field numActions integer
+	---@field lastNumActions integer
 	---@field gender integer 💾 0 = female, 1 = male.
 	---@field skinColor integer 💾 Starts at 0.
 	---@field hairColor integer 💾
@@ -242,8 +244,6 @@ do
 	---@field isBleeding boolean
 	---@field player Player? The player controlling this human.
 	---@field vehicle Vehicle? The vehicle they are inside.
-	---@field rightHandGrab Human? 🔒
-	---@field leftHandGrab Human? 🔒
 	---@field isAppearanceDirty boolean Whether the appearance fields (model, gender, etc.) are dirty and need to be networked.
 	local Human
 
@@ -433,6 +433,7 @@ do
 	---@field pos Vector Position.
 	---@field vel Vector Velocity.
 	---@field rot RotMatrix Rotation.
+	---@field rotVel RotMatrix Rotational velocity.
 	---@field index integer 🔒 The index of the array in memory this is (0-8191).
 	---@field isActive boolean Whether or not this exists, only change if you know what you are doing.
 	---@field isSettled boolean Whether this rigid body is settled by gravity.
