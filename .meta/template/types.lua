@@ -235,6 +235,7 @@ do
 	---@field suitColor integer See Player.suitColor.
 	---@field tieColor integer See Player.tieColor.
 	---@field necklace integer See Player.necklace.
+	---@field lastUpdatedWantedGroup integer 0 = white, 1 = yellow, 2 = red. Change to a different value (ex. -1) to re-network appearance fields (model, gender, etc.)
 	---@field index integer 🔒 The index of the array in memory this is (0-255).
 	---@field isActive boolean Whether or not this exists, only change if you know what you are doing.
 	---@field isAlive boolean
@@ -244,7 +245,6 @@ do
 	---@field isBleeding boolean
 	---@field player Player? The player controlling this human.
 	---@field vehicle Vehicle? The vehicle they are inside.
-	---@field isAppearanceDirty boolean Whether the appearance fields (model, gender, etc.) are dirty and need to be networked.
 	local Human
 
 	---Remove self safely and fire a network event.
@@ -299,6 +299,41 @@ do
 	function Human:applyDamage(boneIndex, damage) end
 end
 
+do
+	---Represents a type of item that exists.
+	---@class ItemType
+	---@field class string 🔒 "ItemType"
+	---@field price integer How much money is taken when bought. Not networked.
+	---@field mass number In kilograms, kind of.
+	---@field fireRate integer How many ticks between two shots.
+	---@field magazineAmmo integer
+	---@field bulletType integer
+	---@field bulletVelocity number
+	---@field bulletSpread number
+	---@field numHands integer
+	---@field rightHandPos Vector
+	---@field leftHandPos Vector
+	---@field primaryGripStiffness number
+	---@field primaryGripRotation number In radians.
+	---@field secondaryGripStiffness number
+	---@field secondaryGripRotation number In radians.
+	---@field gunHoldingPos Vector The offset of where the item is held if it is a gun.
+	---@field boundsCenter Vector
+	---@field index integer 🔒 The index of the array in memory this is.
+	---@field name string Not networked.
+	---@field isGun boolean
+	local ItemType = {}
+
+	---Get whether this type can be mounted to another type.
+	---@param parent ItemType
+	---@return boolean canMount
+	function ItemType:getCanMountTo(parent) end
+
+	---Set whether this type can be mounted to another type.
+	---@param parent ItemType
+	---@param canMount boolean
+	function ItemType:setCanMountTo(parent, canMount) end
+end
 
 do
 	---Represents an item in the world or someone's inventory.
@@ -421,6 +456,16 @@ do
 
 	---Remove self safely and fire a network event.
 	function Vehicle:remove() end
+
+	---Get whether a specific window is broken.
+	---@param index integer The index between 0 and 7.
+	---@return boolean isWindowBroken
+	function Vehicle:getIsWindowBroken(index) end
+
+	---Set whether a specific window is broken.
+	---@param index integer The index between 0 and 7.
+	---@param isWindowBroken boolean
+	function Vehicle:setIsWindowBroken(index, isWindowBroken) end
 end
 
 do
@@ -710,29 +755,6 @@ end
 ---@field index integer 🔒 The index of the array in memory this is (0-255).
 ---@field name string 🔒 Last known player name.
 ---@field steamID string 🔒 SteamID64
-
----Represents a type of item that exists.
----@class ItemType
----@field class string 🔒 "ItemType"
----@field price integer How much money is taken when bought. Not networked.
----@field mass number In kilograms, kind of.
----@field fireRate integer How many ticks between two shots.
----@field magazineAmmo integer
----@field bulletType integer
----@field bulletVelocity number
----@field bulletSpread number
----@field numHands integer
----@field rightHandPos Vector
----@field leftHandPos Vector
----@field primaryGripStiffness number
----@field primaryGripRotation number In radians.
----@field secondaryGripStiffness number
----@field secondaryGripRotation number In radians.
----@field gunHoldingPos Vector The offset of where the item is held if it is a gun.
----@field boundsCenter Vector
----@field index integer 🔒 The index of the array in memory this is.
----@field name string Not networked.
----@field isGun boolean
 
 ---Represents a type of vehicle that exists.
 ---@class VehicleType
