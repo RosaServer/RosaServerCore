@@ -167,6 +167,7 @@ do
 	---@field isAdmin boolean
 	---@field isReady boolean
 	---@field isBot boolean 💾
+	---@field isZombie boolean 💾
 	---@field human Human? 💾 The human they currently control.
 	---@field connection Connection? 🔒 Their network connection.
 	---@field account Account Their account.
