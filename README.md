@@ -8,7 +8,7 @@ Requires [RosaServer](https://github.com/RosaServer/RosaServer).
 
 ## Configuration
 
-Copy `config.sample.lua` to `config.lua` and modify to your heart's content.
+Copy `config.sample.yml` to `config.yml` and modify to your heart's content.
 
 ## Scripting
 
@@ -107,6 +107,8 @@ Adds some useful console commands.
 - `listplugins` - List all plugins.
 - `enableplugin <plugin>` - Enable a plugin (persists after a restart).
 - `disableplugin <plugin>` - Disable a plugin (persists after a restart).
+- `reloadplugin <plugin>` - Reload a plugin.
+- `reloadconfig` - Reload the configuration file.
 - `listbans` - List all current bans.
 
 ## Help

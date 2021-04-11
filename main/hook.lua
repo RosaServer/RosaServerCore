@@ -17,22 +17,35 @@ hook.plugins = {}
 
 ---Regenerate the cache of enabled hooks.
 function hook.resetCache ()
+	hook.clear()
 	_cache = {}
 
-	for event, hooks in pairs(_hooks) do
+	for event, funcs in pairs(_hooks) do
+		hook.enable(event)
 		_cache[event] = {}
-		for _, hook in pairs(hooks) do
-			table.insert(_cache[event], hook)
+		for _, func in pairs(funcs) do
+			table.insert(_cache[event], func)
 		end
 	end
 
 	for _, plugin in pairs(hook.plugins) do
 		if plugin.isEnabled then
-			for event, hook in pairs(plugin.hooks) do
+			for event, func in pairs(plugin.hooks) do
 				if _cache[event] == nil then
+					hook.enable(event)
 					_cache[event] = {}
 				end
-				table.insert(_cache[event], hook)
+				table.insert(_cache[event], func)
+			end
+
+			for event, funcs in pairs(plugin.polyHooks) do
+				if _cache[event] == nil then
+					hook.enable(event)
+					_cache[event] = {}
+				end
+				for _, func in ipairs(funcs) do
+					table.insert(_cache[event], func)
+				end
 			end
 		end
 	end
@@ -66,6 +79,7 @@ function hook.once (eventName, func)
 	end
 
 	table.insert(_tempHooks[eventName], func)
+	hook.enable(eventName)
 end
 
 ---Remove a generic named hook.
@@ -84,9 +98,11 @@ end
 ---@vararg any The arguments to pass to the hook functions.
 ---@return boolean override Whether default behaviour should be overridden, if applicable.
 function hook.run (eventName, ...)
+	local hadTemp = false
+
 	if _tempHooks[eventName] ~= nil then
 		local _tempOverride = false
-		for _, tempHookFunc in pairs(_tempHooks[eventName]) do
+		for _, tempHookFunc in ipairs(_tempHooks[eventName]) do
 			local isOverride = tempHookFunc(...)
 
 			if isOverride then
@@ -98,6 +114,7 @@ function hook.run (eventName, ...)
 		if _tempOverride then
 			return true
 		end
+		hadTemp = true
 	end
 
 	local cache = _cache[eventName]
@@ -112,6 +129,8 @@ function hook.run (eventName, ...)
 				return true
 			end
 		end
+	elseif hadTemp then
+		hook.disable(eventName)
 	end
 
 	return false

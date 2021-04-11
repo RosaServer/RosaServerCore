@@ -1,50 +1,56 @@
 ---@type Plugin
 local plugin = ...
-local module = {}
 
 local shared = plugin:require('shared')
 local persistence = plugin:require('persistence')
 
-local warningDisplayEvery = 15 * server.TPS
+local DISPLAY_FREQUENCY_SECONDS = 15
+local STAGGER_DIVISIONS = 30
+local DIVIDER_LENGTH = 48
 
-local warningDisplayTimer
+local function displayWarning (ply, warning)
+	local line = ('-'):rep(DIVIDER_LENGTH)
+	local dateString = os.date('%B %d at %I:%M %p %Z', warning.time)
 
-function module.onEnable ()
-	warningDisplayTimer = 0
+	ply:sendMessage(line)
+	messagePlayerWrap(ply, 'You have a warning from ' .. dateString .. ':')
+	messagePlayerWrap(ply, warning.reason)
+	ply:sendMessage('Type /warned to acknowledge.')
+	ply:sendMessage(line)
 end
 
-function module.onDisable ()
-	warningDisplayTimer = nil
-end
-
-local function displayWarnings()
-	local persistentData = persistence.get()
-
-	for _, ply in ipairs(players.getNonBots()) do
+local displayRoutine = staggerRoutine(
+	players.getNonBots,
+	STAGGER_DIVISIONS,
+	---@param ply Player
+	---@param persistentData table
+	---@param now number
+	function (ply, persistentData, now)
 		local phoneString = tostring(ply.phoneNumber)
 		local warnings = persistentData.warnings[phoneString]
 
 		if warnings then
-			local line = ('-'):rep(48)
 			local warning = warnings[1]
-			local dateString = os.date('%B %d at %I:%M %p %Z')
 
-			ply:sendMessage(line)
-			messagePlayerWrap(ply, 'You have a warning from ' .. dateString .. ':')
-			messagePlayerWrap(ply, warning.reason)
-			ply:sendMessage('Type /warned to acknowledge.')
-			ply:sendMessage(line)
+			if warning then
+				local data = ply.data
+				if data.adminLastWarningDisplayTime
+				and now - data.adminLastWarningDisplayTime < DISPLAY_FREQUENCY_SECONDS then
+					return
+				end
+
+				data.adminLastWarningDisplayTime = now
+				displayWarning(ply, warning)
+			end
 		end
 	end
-end
+)
 
-function module.hookLogic ()
-	warningDisplayTimer = warningDisplayTimer + 1
-	if warningDisplayTimer == warningDisplayEvery then
-		warningDisplayTimer = 0
-		displayWarnings()
-	end
-end
+plugin:addHook('Logic', function ()
+	local persistentData = persistence.get()
+	local now = os.realClock()
+	displayRoutine(persistentData, now)
+end)
 
 plugin.commands['/warn'] = {
 	info = 'Warn a player.',
@@ -114,5 +120,3 @@ plugin.commands['/warned'] = {
 		adminLog('%s (%s) acknowledged their warning: %s', ply.name, dashPhoneNumber(ply.phoneNumber), warning.reason)
 	end
 }
-
-return module

@@ -27,7 +27,7 @@ local infoCounter
 
 function plugin.onEnable ()
 	sampleCounter = 0
-	lastSampleTime = os.clock()
+	lastSampleTime = os.realClock()
 	recentFiveSec = 62.5
 	recentOne = 62.5
 	recentFive = 62.5
@@ -58,7 +58,7 @@ function plugin.hooks.Logic ()
 	if sampleCounter == sampleInterval then
 		sampleCounter = 0
 
-		local now = os.clock()
+		local now = os.realClock()
 		local tps = 1 / (now - lastSampleTime) * sampleInterval
 
 		recentFiveSec = calcTPS(recentFiveSec, expFiveSec, tps)

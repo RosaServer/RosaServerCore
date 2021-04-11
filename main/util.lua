@@ -1,9 +1,20 @@
+local mathSin = math.sin
+local mathCos = math.cos
+local mathMax = math.max
+local mathMin = math.min
+local mathRandom = math.random
+local tostring = tostring
+local pairs = pairs
+local ipairs = ipairs
+local RotMatrix = RotMatrix
+local Vector = Vector
+
 ---Convert a pitch angle to a RotMatrix.
 ---@param pitch number The pitch angle (in radians).
 ---@return RotMatrix The converted rotation matrix.
 function pitchToRotMatrix (pitch)
-	local s = math.sin(pitch)
-	local c = math.cos(pitch)
+	local s = mathSin(pitch)
+	local c = mathCos(pitch)
 
 	return RotMatrix(
 		1, 0, 0,
@@ -16,8 +27,8 @@ end
 ---@param yaw number The yaw angle (in radians).
 ---@return RotMatrix The converted rotation matrix.
 function yawToRotMatrix (yaw)
-	local s = math.sin(yaw)
-	local c = math.cos(yaw)
+	local s = mathSin(yaw)
+	local c = mathCos(yaw)
 
 	return RotMatrix(
 		c, 0, s,
@@ -30,13 +41,32 @@ end
 ---@param roll number The roll angle (in radians).
 ---@return RotMatrix The converted rotation matrix.
 function rollToRotMatrix (roll)
-	local s = math.sin(roll)
-	local c = math.cos(roll)
+	local s = mathSin(roll)
+	local c = mathCos(roll)
 
 	return RotMatrix(
 		c, -s, 0,
 		s, c, 0,
 		0, 0, 1
+	)
+end
+
+---Convert an axis-angle rotation to a RotMatrix.
+---@param axis Vector The axis unit vector.
+---@param angle number The rotation angle (in radians).
+function axisAngleToRotMatrix (axis, angle)
+	local s = mathSin(angle)
+	local c = mathCos(angle)
+	local C = 1 - c
+
+	local x = axis.x
+	local y = axis.y
+	local z = axis.z
+
+	return RotMatrix(
+		x*x*C + c, x*y*C - z*s, x*z*C + y*s,
+		y*x*C + z*s, y*y*C + c, y*z*C - x*s,
+		z*x*C - y*s, z*y*C + x*s, z*z*C + c
 	)
 end
 
@@ -52,20 +82,13 @@ orientations = {
 	nw = yawToRotMatrix(math.pi * 7 / 4)
 }
 
----Check if an object is active.
----@param object userdata? The object to check.
----@return boolean isActive Whether the parameter is an active object.
-function isActive (object)
-	return object and object.isActive
-end
-
 ---Get a point on a circle.
 ---@param radius number Radius in units.
 ---@param angle number Angle in radians.
 ---@return number x The X coordinate on the circle.
 ---@return number y The Y coordinate on the circle.
 function getCirclePoint (radius, angle)
-	return radius * math.cos(angle), radius * math.sin(angle)
+	return radius * mathCos(angle), radius * mathSin(angle)
 end
 
 ---@class CirclePoint
@@ -74,20 +97,20 @@ end
 
 ---Get points on a circle.
 ---@param numPoints integer The number of points to calculate.
----@param radius number? The radius of the circle in units.
----@param angleOffset number? How much to rotate the entire circle (in radians).
+---@param radius? number The radius of the circle in units.
+---@param angleOffset? number How much to rotate the entire circle (in radians).
 ---@return CirclePoint[] points The points on the circle.
 function getCirclePoints (numPoints, radius, angleOffset)
-	numPoints = math.max(numPoints, 1)
+	numPoints = mathMax(numPoints, 1)
 	radius = radius or 1
 	angleOffset = angleOffset or 0
-	
+
 	local points = {}
 	for i = 1, numPoints do
 		local angle = (i/numPoints * math.pi*2) + angleOffset
 		points[i] = {
-			x = radius * math.cos(angle),
-			y = radius * math.sin(angle)
+			x = radius * mathCos(angle),
+			y = radius * mathSin(angle)
 		}
 	end
 
@@ -99,7 +122,7 @@ end
 ---@return any[] tbl The shuffled table.
 function table.shuffle (tbl)
 	for i = #tbl, 2, -1 do
-		local j = math.random(i)
+		local j = mathRandom(i)
 		tbl[i], tbl[j] = tbl[j], tbl[i]
 	end
 	return tbl
@@ -147,7 +170,7 @@ end
 ---@return number clamped The clamped value.
 function math.clamp (val, lower, upper)
 	if lower > upper then lower, upper = upper, lower end
-	return math.max(lower, math.min(upper, val))
+	return mathMax(lower, mathMin(upper, val))
 end
 
 ---Round a number to a fixed number of decimal places.
@@ -164,7 +187,7 @@ end
 ---@param upper number The upper bound.
 ---@return number randomFloat The randomly generated float.
 function math.randomFloat (lower, upper)
-	return lower + math.random() * (upper - lower)
+	return lower + mathRandom() * (upper - lower)
 end
 
 ---Get the lower and higher of two values.
@@ -272,38 +295,6 @@ function string:trim ()
 	return self:gsub('^%s*(.-)%s*$', '%1')
 end
 
----Announce a chat message with word wrapping on long strings.
----@param str string The message to announce.
-function chat.announceWrap (str)
-	local lines = str:splitMaxLen(63)
-	for _, line in ipairs(lines) do
-		chat.announce(line)
-	end
-end
-
----Announce a chat message to admins with word wrapping on long strings.
----@param str string The message to announce.
-function chat.tellAdminsWrap (str)
-	local lines = str:splitMaxLen(63)
-	for _, line in ipairs(lines) do
-		chat.tellAdmins(line)
-	end
-end
-
----Send a message to a player with word wrapping on long strings.
----@param ply Player The player to send the message to.
----@param str string The message to announce.
-function messagePlayerWrap (ply, str)
-	if ply.isConsole then
-		ply:sendMessage(str)
-	else
-		local lines = str:splitMaxLen(63)
-		for _, line in ipairs(lines) do
-			ply:sendMessage(line)
-		end
-	end
-end
-
 ---Format a number with a comma every 3 spaces.
 ---Ex. 1234567 becomes '1,234,567'.
 ---@param amount number The number to format.
@@ -319,29 +310,6 @@ function commaNumber (amount)
 	return formatted
 end
 
----Get two points representing a human's line of sight.
----@param man Human The human to get the eye line of.
----@param distance number The distance in units the line should be.
----@return Vector posA The first point of the line.
----@return Vector posB The second point of the line.
-function getEyeLine (man, distance)
-	local body = man:getRigidBody(3)
-	local posA = body.pos:clone()
-
-	local yaw = man.viewYaw - math.pi/2
-	local pitch = -man.viewPitch
-
-	local posB = Vector(
-		math.cos(yaw) * math.cos(pitch),
-		math.sin(pitch),
-		math.sin(yaw) * math.cos(pitch)
-	)
-	posB:mult(distance)
-	posB:add(posA)
-
-	return posA, posB
-end
-
 ---Format a phone number ID with a dash.
 ---Ex. 2564096 becomes '256-4096'.
 ---@param phoneNumber integer|string The phone number to format.
@@ -354,120 +322,10 @@ end
 ---Convert a phone number ID which might have a dash back to its integer value.
 ---Ex. '256-4096' becomes 2564096.
 ---@param str string The phone number which may or may not have a dash.
----@return integer phoneNumber The integer value of the phone number.
+---@return integer? phoneNumber The integer value of the phone number.
 function undashPhoneNumber (str)
 	str = str:gsub('(%d%d%d)-(%d%d%d%d)', '%1%2')
 	return tonumber(str)
-end
-
----Find a single player represented by an input.
----Meant to be used in commands. Throws errors.
----@param input string Part of a player name or a phone number (with or without a dash).
----@return Player player The only player represented by the input.
-function findOnePlayer (input)
-	local allPlayers = players.getNonBots()
-
-	local phoneNumber = undashPhoneNumber(input)
-	if phoneNumber then
-		for _, ply in ipairs(allPlayers) do
-			if ply.phoneNumber == phoneNumber then
-				return ply
-			end
-		end
-	end
-
-	local lastFound
-	input = input:lower()
-
-	for _, ply in ipairs(allPlayers) do
-		if ply.name:lower():find(input) then
-			if lastFound ~= nil then
-				error('Multiple players found, be more specific')
-			end
-			lastFound = ply
-		end
-	end
-
-	if lastFound then
-		return lastFound
-	end
-
-	error('Player not found')
-end
-
----Find a single account represented by an input.
----Meant to be used in commands. Throws errors.
----@param input string Part of a player name or a phone number (with or without a dash).
----@return Account account The only account represented by the input.
-function findOneAccount (input)
-	local allAccounts = accounts.getAll()
-
-	local phoneNumber = undashPhoneNumber(input)
-	if phoneNumber then
-		for _, acc in ipairs(allAccounts) do
-			if acc.phoneNumber == phoneNumber then
-				return acc
-			end
-		end
-	end
-
-	local lastFound
-	input = input:lower()
-
-	for _, acc in ipairs(allAccounts) do
-		if acc.name:lower():find(input) then
-			if lastFound ~= nil then
-				error('Multiple accounts found, be more specific')
-			end
-			lastFound = acc
-		end
-	end
-
-	if lastFound then
-		return lastFound
-	end
-
-	error('Account not found')
-end
-
----Auto complete a matching account by a name or phone number.
----@param input string The name or phone number to auto complete.
----@return string? result The name or dashed phone number of the found account, if any.
----@return Account? account The found account, if any.
-function autoCompleteAccount (input)
-	input = input:lower()
-
-	for _, acc in ipairs(accounts.getAll()) do
-		if tostring(acc.phoneNumber):find(input) then
-			return dashPhoneNumber(acc.phoneNumber), acc
-		end
-
-		if acc.name:lower():find(input) then
-			return acc.name, acc
-		end
-	end
-
-	return nil, nil
-end
-
----Auto complete a matching player by a name or phone number.
----@param input string The name or phone number to auto complete.
----@return string? result The name or dashed phone number of the found player, if any.
----@return Player? player The found player, if any.
-function autoCompletePlayer (input)
-	input = input:lower()
-
-	for _, ply in ipairs(players.getAll()) do
-		if tostring(ply.phoneNumber):find(input) then
-			return dashPhoneNumber(ply.phoneNumber), ply
-		end
-
-		if ply.name:lower():find(input) then
-			return ply.name, ply
-		end
-	end
-
-	return nil, nil
 end
 
 ---Convert all arguments to strings and concatenate.
@@ -493,23 +351,11 @@ function concatVarArgs (separator, ...)
 	return str
 end
 
---[[
-
-+--------------+-----------------+
-| Phone Number | Name            |
-+--------------+-----------------+
-| 256-3956     | jdb             |
-+--------------+-----------------+
-| 256-6393     | Credulous Crumb |
-+--------------+-----------------+
-
-]]
-
 ---@param columnWidths integer[]
 ---@param padding integer
 local function getHorizontalLine (columnWidths, padding)
 	local line = '+'
-	
+
 	for _, width in ipairs(columnWidths) do
 		line = line .. ('-'):rep(width + padding * 2) .. '+'
 	end
@@ -559,5 +405,25 @@ function drawTable (rows)
 	for _, row in ipairs(rows) do
 		print(getRowString(row, columnWidths, padding))
 		print(line)
+	end
+end
+
+---Get a function to lazily stagger over a table-generating function.
+---For example, `staggerRoutine(humans.getAll, 10, function (human) ... end)` will generate a function which might be used as a hook for doing some logic on humans in 10 groups.
+---@param listGenerator fun(): any[] A function which returns a table to stagger over.
+---@param numDivisions integer How many different divisions to cycle through. Every entry in a generated list will be handled every N calls to the returned function. Lower values will handle entries more frequently at the cost of performance.
+---@param handler fun(entry: any, ...) The function to be run for every covered entry during a call.
+---@return fun(...) routine The function which can be called to get the table and cycle one group. Arguments are passed to `handler`.
+function staggerRoutine (listGenerator, numDivisions, handler)
+	local counter = 1
+
+	return function (...)
+		local list = listGenerator()
+
+		for index = counter, #list, numDivisions do
+			handler(list[index], ...)
+		end
+
+		counter = (counter % numDivisions) + 1
 	end
 end

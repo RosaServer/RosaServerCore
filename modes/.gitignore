@@ -1,4 +1,4 @@
-*.lua
+*
 !/eliminator.lua
 !/round.lua
 !/versus.lua

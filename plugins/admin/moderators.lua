@@ -1,28 +1,25 @@
 ---@type Plugin
 local plugin = ...
-local module = {}
 
 local shared = plugin:require('shared')
 local persistence = plugin:require('persistence')
 
-local reminderDisplayEvery = 5 * 60 * server.TPS
+local DISPLAY_FREQUENCY_SECONDS = 5 * 60
+local STAGGER_DIVISIONS = 30
 
-local reminderDisplayTimer
 local visibleModerators
 local awaitConnected
 local hiddenPlayers
 
-function module.onEnable ()
-	reminderDisplayTimer = 0
+plugin:addEnableHandler(function ()
 	visibleModerators = {}
 	awaitConnected = {}
-end
+end)
 
-function module.onDisable ()
-	reminderDisplayTimer = nil
+plugin:addDisableHandler(function ()
 	visibleModerators = nil
 	awaitConnected = nil
-end
+end)
 
 ---Check if a player is a moderator.
 ---@param ply Player The player to check.
@@ -55,36 +52,46 @@ function plugin.hooks.PostPlayerDelete (ply)
 	visibleModerators[ply.index] = nil
 end
 
-local function displayReminders()
-	for _, ply in ipairs(players.getNonBots()) do
+local displayRoutine = staggerRoutine(
+	players.getNonBots,
+	STAGGER_DIVISIONS,
+	---@param ply Player
+	---@param now number
+	function (ply, now)
 		if isHiddenModerator(ply) then
+			local data = ply.data
+			if data.adminLastHiddenDisplayTime
+			and now - data.adminLastHiddenDisplayTime < DISPLAY_FREQUENCY_SECONDS then
+				return
+			end
+
+			data.adminLastHiddenDisplayTime = now
 			ply:sendMessage('Note: You are currently hidden from the UI. (/join, /leave)')
 		end
 	end
-end
+)
 
-function module.hookLogic ()
-	for index, _ in pairs(awaitConnected) do
-		local ply = players[index]
-		if ply.isBot then
-			awaitConnected[index] = nil
-		else
-			local con = ply.connection
-			if con then
+plugin:addHook(
+	'Logic',
+	function ()
+		for index, _ in pairs(awaitConnected) do
+			local ply = players[index]
+			if ply.isBot then
 				awaitConnected[index] = nil
-				if isModerator(ply) then
-					con.adminVisible = true
+			else
+				local con = ply.connection
+				if con then
+					awaitConnected[index] = nil
+					if isModerator(ply) then
+						con.adminVisible = true
+					end
 				end
 			end
 		end
-	end
 
-	reminderDisplayTimer = reminderDisplayTimer + 1
-	if reminderDisplayTimer == reminderDisplayEvery then
-		reminderDisplayTimer = 0
-		displayReminders()
+		displayRoutine(os.realClock())
 	end
-end
+)
 
 function plugin.hooks.WebUploadBody ()
 	hiddenPlayers = {}
@@ -263,5 +270,3 @@ plugin.commands['/join'] = {
 		end
 	end
 }
-
-return module

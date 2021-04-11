@@ -1,10 +1,27 @@
 math.randomseed(os.time())
 
-require('main.util')
-require('main.hook')
+require 'main.util'
+require 'main.hook'
+require 'main.gameUtil'
+require 'main.plugins'
+require 'main.http'
 
-local chatCooldowns = {}
-local chatCooldownSeconds = 0.5
+local yaml = require 'main.yaml'
+
+local hasConfigLoadedOnce = false
+
+---Load config from config.yml.
+---@param fileName? string The overloaded file path to load instead of the default file.
+function loadConfig (fileName)
+	local f = assert(io.open(fileName or 'config.yml', 'r'), 'Could not open config file')
+	local contents = f:read('*all')
+	f:close()
+
+	config = yaml.parse(contents)
+
+	hook.run('ConfigLoaded', hasConfigLoadedOnce)
+	hasConfigLoadedOnce = true
+end
 
 local function splitArguments (str)
 	local args = {}
@@ -57,6 +74,22 @@ local function attemptChatCommand (ply, message)
 		return hook.continue
 	end
 
+	if not ply.isAdmin and command.cooldownTime then
+		local now = os.realClock()
+
+		if not ply.data.commandCooldowns then
+			ply.data.commandCooldowns = {}
+		end
+		local cooldowns = ply.data.commandCooldowns
+
+		if cooldowns[command] and now - cooldowns[command] < command.cooldownTime then
+			ply:sendMessage(('Error: Please wait %.1fs'):format(command.cooldownTime - (now - cooldowns[command])))
+			return hook.override
+		end
+
+		cooldowns[command] = now
+	end
+
 	local success, result = pcall(hook.runCommand, commandName, command, ply, ply.human, args)
 	if not success then
 		handleChatCommandError(ply, commandName, command, result)
@@ -65,18 +98,38 @@ local function attemptChatCommand (ply, message)
 	return hook.override
 end
 
+local chatCooldownSeconds
+local consolePlayer = {
+	isConsole = true,
+	name = '',
+	data = {},
+	sendMessage = function (_, message)
+		print('\27[31;1m' .. message .. '\27[0m')
+	end
+}
+
+hook.add(
+	'ConfigLoaded', 'main',
+	function ()
+		chatCooldownSeconds = config.chatCooldownSeconds or 0.5
+		consolePlayer.name = config.consolePlayerName or 'Console'
+	end
+)
+
 hook.add(
 	'PlayerChat', 'main',
 	function (ply, message)
-		local now = os.clock()
-
 		-- Rate limit chat for non-admins
-		if not ply.isAdmin and chatCooldowns[ply.index] ~= nil
-		and chatCooldowns[ply.index] + chatCooldownSeconds > now then
-			return hook.override
-		end
+		if not ply.isAdmin then
+			local data = ply.data
+			local now = os.realClock()
 
-		chatCooldowns[ply.index] = now
+			if data.chatCooldown and now - data.chatCooldown < chatCooldownSeconds then
+				return hook.override
+			end
+
+			data.chatCooldown = now
+		end
 
 		-- Run Lua commands
 		if message:startsWith('/') then
@@ -84,15 +137,6 @@ hook.add(
 		end
 	end
 )
-
-local consolePlayer = {
-	isConsole = true,
-	name = 'Big Brother',
-	data = {},
-	sendMessage = function (_, message)
-		print('\27[31;1m' .. message .. '\27[0m')
-	end
-}
 
 hook.add(
 	'ConsoleInput', 'main',
@@ -159,8 +203,6 @@ hook.add(
 	end
 )
 
-require('main.plugins')
-
 hook.add(
 	'InterruptSignal', 'main',
 	function ()
@@ -169,3 +211,5 @@ hook.add(
 		end
 	end
 )
+
+loadConfig()

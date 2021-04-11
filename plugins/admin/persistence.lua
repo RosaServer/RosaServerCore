@@ -1,17 +1,17 @@
 ---@type Plugin
 local plugin = ...
-local module = {}
+local persistence = {}
 
 local json = require 'main.json'
 
 local persistentData
 local persistenceFile = 'admin-persistence.json'
 
-function module.get ()
+function persistence.get ()
 	return persistentData
 end
 
-function module.save ()
+function persistence.save ()
 	local f = io.open(persistenceFile, 'w')
 	if f then
 		f:write(json.encode(persistentData))
@@ -20,7 +20,7 @@ function module.save ()
 	end
 end
 
-function module.load ()
+function persistence.load ()
 	local f = io.open(persistenceFile, 'r')
 	if f then
 		local data = json.decode(f:read('*all'))
@@ -33,19 +33,19 @@ function module.load ()
 	end
 end
 
-function module.onEnable ()
+plugin:addEnableHandler(function ()
 	persistentData = {
 		moderators = {},
 		punishments = {},
 		warnings = {}
 	}
 
-	module.load()
-end
+	persistence.load()
+end)
 
-function module.onDisable ()
-	module.save()
+plugin:addDisableHandler(function ()
+	persistence.save()
 	persistentData = nil
-end
+end)
 
-return module
+return persistence

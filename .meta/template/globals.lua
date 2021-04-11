@@ -33,16 +33,71 @@ TYPE_COOP = 6
 ---Versus mode.
 TYPE_VERSUS = 7
 
+---File was accessed.
+FILE_WATCH_ACCESS = 0
+---Metadata changed.
+FILE_WATCH_ATTRIB = 0
+---Writable file was closed.
+FILE_WATCH_CLOSE_WRITE = 0
+---Unwritable file closed.
+FILE_WATCH_CLOSE_NOWRITE = 0
+---Subfile was created.
+FILE_WATCH_CREATE = 0
+---Subfile was deleted.
+FILE_WATCH_DELETE = 0
+---Self was deleted.
+FILE_WATCH_DELETE_SELF = 0
+---File was modified.
+FILE_WATCH_MODIFY = 0
+---Self was moved.
+FILE_WATCH_MOVE_SELF = 0
+---File was moved from X.
+FILE_WATCH_MOVED_FROM = 0
+---File was moved to Y.
+FILE_WATCH_MOVED_TO = 0
+---File was opened.
+FILE_WATCH_OPEN = 0
+---Moves.
+FILE_WATCH_MOVE = 0
+---Closes.
+FILE_WATCH_CLOSE = 0
+---Do not follow a sym link.
+FILE_WATCH_DONT_FOLLOW = 0
+---Exclude events on unlinked objects.
+FILE_WATCH_EXCL_UNLINK = 0
+---Add to the mask of an already existing watch.
+FILE_WATCH_MASK_ADD = 0
+---Only send event once.
+FILE_WATCH_ONESHOT = 0
+---Only watch the path if it is a directory.
+FILE_WATCH_ONLYDIR = 0
+---File was ignored.
+FILE_WATCH_IGNORED = 0
+---Event occurred against a directory.
+FILE_WATCH_ISDIR = 0
+---Event queue overflowed.
+FILE_WATCH_Q_OVERFLOW = 0
+---Backing fs was unmounted.
+FILE_WATCH_UNMOUNT = 0
+
 ---The hook library which hooked events will call upon.
 ---The hook.run function must be defined to use hooks.
 hook = {
 	persistentMode = ''
 }
 
----Append to the prefix of the next printed line.
----@param prefix string The string to add to the next prefix.
----@deprecated
-function printAppend(prefix) end
+---Enable a hook for use in Lua.
+---@param eventName string The name of the event to be enabled.
+---@return boolean exists Whether the event exists.
+function hook.enable(eventName) end
+
+---Disable a hook for use in Lua.
+---@param eventName string The name of the event to be disabled.
+---@return boolean exists Whether the event exists.
+function hook.disable(eventName) end
+
+---Disable every hook for use in Lua, until they are enabled again.
+function hook.clear() end
 
 ---Recreate the Lua state completely at the start of the next logic tick.
 ---Runs lua/main.lua again after reset.
@@ -50,10 +105,12 @@ function printAppend(prefix) end
 function flagStateForReset(mode) end
 
 ---Create a new Vector with 0 for every coordinate.
+---Available in worker threads.
 ---@return Vector vector The created vector.
 function Vector() end
 
 ---Create a new Vector with given coordinates.
+---Available in worker threads.
 ---@param x number
 ---@param y number
 ---@param z number
@@ -61,6 +118,7 @@ function Vector() end
 function Vector(x, y, z) end
 
 ---Create a new RotMatrix.
+---Available in worker threads.
 ---@param x1 number
 ---@param y1 number
 ---@param z1 number
@@ -85,21 +143,25 @@ http = {}
 ---@field body string The response body.
 ---@field headers table<string, string> The response headers.
 
----Send an HTTP(S) GET request asynchronously.
+---Send an HTTP(S) GET request synchronously.
+---Available in worker threads.
+---Not recommended to use this on the main thread.
 ---@param scheme string The hostname of the server to send the request to, with optional protocol and port. Ex. google.com, https://google.com, https://google.com:443
 ---@param path string The path to request from the server.
 ---@param headers table<string, string> The table of request headers.
----@param callback fun(response: HTTPResponse?) The function to be called when the response is received or there was an error.
-function http.get(scheme, path, headers, callback) end
+---@return HTTPResponse? response
+function http.getSync(scheme, path, headers) end
 
----Send an HTTP(S) POST request asynchronously.
+---Send an HTTP(S) POST request synchronously.
+---Available in worker threads.
+---Not recommended to use this on the main thread.
 ---@param scheme string The hostname of the server to send the request to, with optional protocol and port. Ex. google.com, https://google.com, https://google.com:443
 ---@param path string The path to request from the server.
 ---@param headers table<string, string> The table of request headers.
 ---@param body string The request body.
 ---@param contentType string The request body MIME type.
----@param callback fun(response: HTTPResponse?) The function to be called when the response is received or there was an error.
-function http.post(scheme, path, headers, body, contentType, callback) end
+---@return HTTPResponse? response
+function http.postSync(scheme, path, headers, body, contentType) end
 
 ---Library for creating networked events.
 event = {}
@@ -119,6 +181,13 @@ function event.sound(soundType, position) end
 ---Display a grenade explosion.
 ---@param position Vector The position to show the explosion at.
 function event.explosion(position) end
+
+---Display a bullet with a sound, tracer, and optionally a muzzle flash and casing.
+---@param bulletType integer The type of bullet.
+---@param position Vector The initial position the bullet.
+---@param velocity Vector The initial velocity of the bullet.
+---@param item? Item The item the bullet came from.
+function event.bullet(bulletType, position, velocity, item) end
 
 ---Indicate a bullet has hit a person or thing.
 ---@param hitType integer The type of hit. 0 = bullet hole (stays until round reset), 1 = human hit (blood), 2 = car hit (metal), 3 = blood drip (bleeding).
@@ -174,6 +243,19 @@ function physics.lineIntersectTriangle(outPosition, normal, posA, posB, triA, tr
 ---Remove all bullets that have no time remaining.
 ---May shift bullets in memory if any are removed.
 function physics.garbageCollectBullets() end
+
+---Create a collidable block in the level.
+---@param blockX integer
+---@param blockY integer
+---@param blockZ integer
+---@param flags integer
+function physics.createBlock(blockX, blockY, blockZ, flags) end
+
+---Delete a collidable block in the level.
+---@param blockX integer
+---@param blockY integer
+---@param blockZ integer
+function physics.deleteBlock(blockX, blockY, blockZ) end
 
 ---Library for sending chat messages.
 chat = {}
@@ -271,6 +353,11 @@ function itemTypes.getAll() end
 ---@return integer count How many ItemType objects there are.
 function itemTypes.getCount() end
 
+---Get an item type by its name.
+---@param name string The exact name of the item type to search for. Case sensitive.
+---@return ItemType? itemType The found item type, or nil.
+function itemTypes.getByName(name) end
+
 ---Library for managing Item objects.
 ---items[index: integer] -> Item
 items = {}
@@ -284,14 +371,14 @@ function items.getAll() end
 function items.getCount() end
 
 ---Create a new item.
----@param type integer The type of the item.
+---@param type ItemType The type of the item.
 ---@param position Vector The position of the item.
 ---@param rotation RotMatrix The rotation of the item.
 ---@return Item? item The created item, or nil on failure.
 function items.create(type, position, rotation) end
 
 ---Create a new item.
----@param type integer The type of the item.
+---@param type ItemType The type of the item.
 ---@param position Vector The position of the item.
 ---@param velocity Vector The initial velocity of the item.
 ---@param rotation RotMatrix The rotation of the item.
@@ -304,6 +391,23 @@ function items.create(type, position, velocity, rotation) end
 ---@return Item? item The created item, or nil on failure.
 ---@deprecated
 function items.createRope(position, rotation) end
+
+---Library for managing VehicleType objects.
+---vehicleTypes[index: integer] -> VehicleType
+vehicleTypes = {}
+
+---Get all vehicle types.
+---@return VehicleType[] vehicleTypes A list of all VehicleType objects.
+function vehicleTypes.getAll() end
+
+---Get the number of vehicle types.
+---@return integer count How many VehicleType objects there are.
+function vehicleTypes.getCount() end
+
+---Get a vehicle type by its name.
+---@param name string The exact name of the vehicle type to search for. Case sensitive.
+---@return VehicleType? vehicleType The found vehicle type, or nil.
+function vehicleTypes.getByName(name) end
 
 ---Library for managing Vehicle objects.
 ---vehicles[index: integer] -> Vehicle
@@ -318,7 +422,7 @@ function vehicles.getAll() end
 function vehicles.getCount() end
 
 ---Create a new vehicle.
----@param type integer The type of the vehicle.
+---@param type VehicleType The type of the vehicle.
 ---@param position Vector The position of the vehicle.
 ---@param rotation RotMatrix The rotation of the vehicle.
 ---@param color integer The color of the vehicle.
@@ -335,6 +439,14 @@ function bullets.getAll() end
 ---Get the number of bullets.
 ---@return integer count How many Bullet objects there are.
 function bullets.getCount() end
+
+---Create a bullet.
+---@param bulletType integer The type of bullet.
+---@param position Vector The initial position of the bullet.
+---@param velocity Vector The initial velocity of the bullet.
+---@param player? Player The player who fired this bullet.
+---@return Bullet? bullet The created bullet, or nil on failure.
+function bullets.create(bulletType, position, velocity, player) end
 
 ---Library for managing RigidBody objects.
 ---rigidBodies[index: integer] -> RigidBody
@@ -384,6 +496,141 @@ function intersections.getAll() end
 ---@return integer count How many StreetIntersection objects there are.
 function intersections.getCount() end
 
+---Library for managing Building objects.
+---buildings[index: integer] -> Building
+buildings = {}
+
+---Get all buildings.
+---@return Building[] buildings A list of all Building objects.
+function buildings.getAll() end
+
+---Get the number of buildings.
+---@return integer count How many Building objects there are.
+function buildings.getCount() end
+
+---Library for directly reading and writing any memory.
+memory = {}
+
+---Get the base address of the server executable.
+---@return integer address
+function memory.getBaseAddress() end
+
+---Get the address of a game object.
+---@param object Connection|Account|Player|Human|ItemType|Item|Vehicle|Bullet|Bone|RigidBody|Bond|Action|MenuButton|StreetLane|Street|StreetIntersection
+---@return integer address
+function memory.getAddress(object) end
+
+---Read a signed 1-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readByte(address) end
+
+---Read an unsigned 1-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readUByte(address) end
+
+---Read a signed 2-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readShort(address) end
+
+---Read an unsigned 2-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readUShort(address) end
+
+---Read a signed 4-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readInt(address) end
+
+---Read an unsigned 4-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readUInt(address) end
+
+---Read a signed 8-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readLong(address) end
+
+---Read an unsigned 8-byte integer from memory.
+---@param address integer
+---@return integer value
+function memory.readULong(address) end
+
+---Read a single-precision floating point number from memory.
+---@param address integer
+---@return number value
+function memory.readFloat(address) end
+
+---Read a double-precision floating point number from memory.
+---@param address integer
+---@return number value
+function memory.readDouble(address) end
+
+---Read many bytes from memory.
+---@param address integer
+---@param count integer The number of bytes to read.
+---@return string bytes
+function memory.readBytes(address, count) end
+
+---Write a signed 1-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeByte(address, value) end
+
+---Write an unsigned 1-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeUByte(address, value) end
+
+---Write a signed 2-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeShort(address, value) end
+
+---Write an unsigned 2-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeUShort(address, value) end
+
+---Write a signed 4-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeInt(address, value) end
+
+---Write an unsigned 4-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeUInt(address, value) end
+
+---Write a signed 8-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeLong(address, value) end
+
+---Write an unsigned 8-byte integer to memory.
+---@param address integer
+---@param value integer
+function memory.writeULong(address, value) end
+
+---Write a single-precision floating point number to memory.
+---@param address integer
+---@param value integer
+function memory.writeFloat(address, value) end
+
+---Write a double-precision floating point number to memory.
+---@param address integer
+---@param value integer
+function memory.writeDouble(address, value) end
+
+---Write many bytes to memory.
+---@param address integer
+---@param bytes string The bytes to write.
+function memory.writeBytes(address, bytes) end
+
 ---@class ListDirectoryEntry
 ---@field isDirectory boolean Whether the entry is a directory.
 ---@field name string The name of the file/directory. Ex. "asphalt2.png".
@@ -391,11 +638,18 @@ function intersections.getCount() end
 ---@field extension string The extension of the filename if this is a file. Ex. ".png".
 
 ---Get the contents of a directory.
+---Available in worker threads.
 ---@param path string The path to the directory to scan.
 ---@return ListDirectoryEntry[] entries A list of all entries in the directory.
 function os.listDirectory(path) end
 
 ---Create a directory if it does not already exist.
+---Available in worker threads.
 ---@param path string The path of the directory.
 ---@return boolean created Whether the directory was created.
 function os.createDirectory(path) end
+
+---Get an accurate clock value counting up in real seconds.
+---Available in worker threads.
+---@return number seconds The number of seconds elapsed, with millisecond precision.
+function os.realClock() end

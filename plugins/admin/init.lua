@@ -11,29 +11,14 @@ plugin.defaultConfig = {
 	webhookPath = '/api/webhooks/xxxxxx/xxxxxx'
 }
 
-local persistence = plugin:require('persistence')
-local manipulation = plugin:require('manipulation')
-local moderators = plugin:require('moderators')
-local warnings = plugin:require('warnings')
-
-plugin:require('utility')
-plugin:require('spawning')
+plugin:require('manipulation')
+plugin:require('moderators')
+plugin:require('persistence')
 plugin:require('punishment')
+plugin:require('spawning')
 plugin:require('teleportation')
-
-function plugin.onEnable ()
-	persistence.onEnable()
-	manipulation.onEnable()
-	moderators.onEnable()
-	warnings.onEnable()
-end
-
-function plugin.onDisable ()
-	warnings.onDisable()
-	moderators.onDisable()
-	manipulation.onDisable()
-	persistence.onDisable()
-end
+plugin:require('utility')
+plugin:require('warnings')
 
 ---Log an admin action and keep a permanent record of it.
 ---@param format string The string or string format to log.
@@ -48,11 +33,6 @@ function adminLog (format, ...)
 	local logFile = io.open('admin-log.txt', 'a')
 	logFile:write('[' .. os.date("!%c") .. '] ' .. str .. '\n')
 	logFile:close()
-end
-
-function plugin.hooks.Logic ()
-	moderators.hookLogic()
-	warnings.hookLogic()
 end
 
 plugin.commands['/resetlua'] = {

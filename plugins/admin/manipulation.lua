@@ -1,18 +1,17 @@
 ---@type Plugin
 local plugin = ...
-local module = {}
 
 local flyingMachines
 local disablePhys
 local disableBul
 
-function module.onEnable ()
+plugin:addEnableHandler(function ()
 	flyingMachines = {}
 	disablePhys = false
 	disableBul = false
-end
+end)
 
-function module.onDisable ()
+plugin:addDisableHandler(function ()
 	for id, vcl in pairs(flyingMachines) do
 		local man = humans[id]
 		if isActive(vcl) then
@@ -26,7 +25,7 @@ function module.onDisable ()
 	flyingMachines = nil
 	disablePhys = nil
 	disableBul = nil
-end
+end)
 
 function plugin.hooks.Physics ()
 	if disablePhys then
@@ -46,13 +45,13 @@ function plugin.hooks.Physics ()
 		else
 			local s = 0.1
 			local offset = Vector()
-			if bit.band(man.inputFlags, 16) ~= 0 then
+			if bit32.band(man.inputFlags, 16) ~= 0 then
 				s = 1.5
 			end
-			if bit.band(man.inputFlags, 4) ~= 0 then
+			if bit32.band(man.inputFlags, 4) ~= 0 then
 				offset:add(Vector(0, s, 0))
 			end
-			if bit.band(man.inputFlags, 8) ~= 0 then
+			if bit32.band(man.inputFlags, 8) ~= 0 then
 				offset:add(Vector(0, -s, 0))
 			end
 
@@ -93,11 +92,11 @@ plugin.commands['/fly'] = {
 
 		if flyingMachines[man.index] then error('Already flying') end
 
-		local vcl = vehicles.create(69, man.pos, orientations.n, 0)
+		local vcl = vehicles.create(vehicleTypes[13], man.pos, orientations.n, 0)
 		if vcl then
-			vcl.type = 5
+			vcl.type = vehicleTypes[5]
 			vcl:updateType()
-			vcl.type = 69
+			vcl.type = vehicleTypes[13]
 
 			flyingMachines[man.index] = vcl
 			vcl.rigidBody.isSettled = true
@@ -130,5 +129,3 @@ plugin.commands['/bullets'] = {
 		adminLog('%s turned bullets %s', ply.name, disableBul and 'off' or 'on')
 	end
 }
-
-return module

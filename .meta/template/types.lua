@@ -1,5 +1,3 @@
----@alias integer number
-
 do
 	---Represents the server; only one instance in the global variable `server`.
 	---@class Server
@@ -7,7 +5,26 @@ do
 	---@field TPS integer 🔒 How many ticks are in 1 second according to in-game timers (60).
 	---@field port integer 🔒
 	---@field name string Name shown on the server list, max length of 31.
+	---@field adminPassword string The admin password used in the /admin command.
 	---@field password string Empty string for no password, otherwise people will need to type this to join.
+	---@field maxPlayers integer
+	---@field maxBytesPerSecond integer
+	---@field worldTraffic integer How many traffic cars there should be in world mode.
+	---@field worldStartCash integer
+	---@field worldMinCash integer
+	---@field worldShowJoinExit boolean
+	---@field worldRespawnTeam boolean
+	---@field worldCrimeCivCiv integer
+	---@field worldCrimeCivTeam integer
+	---@field worldCrimeTeamCiv integer
+	---@field worldCrimeTeamTeam integer
+	---@field worldCrimeTeamTeamInBase integer
+	---@field worldCrimeNoSpawn integer
+	---@field roundRoundTime integer How long rounds are in round mode, in minutes.
+	---@field roundStartCash integer
+	---@field roundIsWeekly boolean
+	---@field roundHasBonusRatio boolean
+	---@field roundTeamDamage integer
 	---@field type integer Gamemode number.
 	---@field loadedLevel string 🔒 Name of the currently loaded map.
 	---@field levelToLoad string
@@ -36,6 +53,7 @@ end
 
 do
 	---Represents a 3D point in the level.
+	---Available in worker threads.
 	---@class Vector
 	---@field class string 🔒 "Vector"
 	---@field x number
@@ -69,10 +87,17 @@ do
 	---@param other Vector The vector to calculate distance to.
 	---@return number distanceSquared The distance in units, squared.
 	function Vector:distSquare(other) end
+
+	---Get the coordinates of the block the vector is in.
+	---@return integer blockX
+	---@return integer blockY
+	---@return integer blockZ
+	function Vector:getBlockPos() end
 end
 
 do
 	---Represents the rotation of an object as a 3x3 matrix.
+	---Available in worker threads.
 	---@class RotMatrix
 	---@field class string 🔒 "RotMatrix"
 	---@field x1 number
@@ -93,6 +118,18 @@ do
 	---Create a copy of self.
 	---@return RotMatrix clone The created copy.
 	function RotMatrix:clone() end
+
+	---Get a normal vector pointing in the rotation's +X direction.
+	---@return Vector forward The normal vector.
+	function RotMatrix:getForward() end
+
+	---Get a normal vector pointing in the rotation's +Y direction.
+	---@return Vector up The normal vector.
+	function RotMatrix:getUp() end
+
+	---Get a normal vector pointing in the rotation's +Z direction.
+	---@return Vector right The normal vector.
+	function RotMatrix:getRight() end
 end
 
 do
@@ -112,6 +149,8 @@ do
 	---@field stocks integer 💲 The amount of shares they own in their company.
 	---@field spawnTimer integer How long this person has to wait to spawn in, in seconds.
 	---@field menuTab integer What tab in the menu they are currently in.
+	---@field numActions integer
+	---@field lastNumActions integer
 	---@field gender integer 💾 0 = female, 1 = male.
 	---@field skinColor integer 💾 Starts at 0.
 	---@field hairColor integer 💾
@@ -186,6 +225,7 @@ do
 	---@field rightArmHP integer
 	---@field leftLegHP integer
 	---@field rightLegHP integer
+	---@field progressBar integer Progress bar displayed in the center of the screen, 0-255. 0 = disabled.
 	---@field gender integer See Player.gender.
 	---@field head integer See Player.head.
 	---@field skinColor integer See Player.skinColor.
@@ -196,20 +236,16 @@ do
 	---@field suitColor integer See Player.suitColor.
 	---@field tieColor integer See Player.tieColor.
 	---@field necklace integer See Player.necklace.
+	---@field lastUpdatedWantedGroup integer 0 = white, 1 = yellow, 2 = red. Change to a different value (ex. -1) to re-network appearance fields (model, gender, etc.)
 	---@field index integer 🔒 The index of the array in memory this is (0-255).
 	---@field isActive boolean Whether or not this exists, only change if you know what you are doing.
 	---@field isAlive boolean
 	---@field isImmortal boolean Whether they are immune to bullet and physics damage.
 	---@field isOnGround boolean 🔒
 	---@field isStanding boolean 🔒
-	---@field isBleeding boolean 
-	---@field player Player? 🔒 The player controlling this human.
+	---@field isBleeding boolean
+	---@field player Player? The player controlling this human.
 	---@field vehicle Vehicle? The vehicle they are inside.
-	---@field rightHandItem Item? 🔒
-	---@field leftHandItem Item? 🔒
-	---@field rightHandGrab Human? 🔒
-	---@field leftHandGrab Human? 🔒
-	---@field isAppearanceDirty boolean Whether the appearance fields (model, gender, etc.) are dirty and need to be networked.
 	local Human
 
 	---Remove self safely and fire a network event.
@@ -239,6 +275,11 @@ do
 	---@return RigidBody rigidBody The desired rigid body.
 	function Human:getRigidBody(index) end
 
+	---Get a specific inventory slot.
+	---@param index integer The index between 0 and 6.
+	---@return InventorySlot inventorySlot The desired inventory slot.
+	function Human:getInventorySlot(index) end
+
 	---Set the velocity of every rigid body.
 	---@param velocity Vector The velocity to set.
 	function Human:setVelocity(velocity) end
@@ -259,6 +300,41 @@ do
 	function Human:applyDamage(boneIndex, damage) end
 end
 
+do
+	---Represents a type of item that exists.
+	---@class ItemType
+	---@field class string 🔒 "ItemType"
+	---@field price integer How much money is taken when bought. Not networked.
+	---@field mass number In kilograms, kind of.
+	---@field fireRate integer How many ticks between two shots.
+	---@field magazineAmmo integer
+	---@field bulletType integer
+	---@field bulletVelocity number
+	---@field bulletSpread number
+	---@field numHands integer
+	---@field rightHandPos Vector
+	---@field leftHandPos Vector
+	---@field primaryGripStiffness number
+	---@field primaryGripRotation number In radians.
+	---@field secondaryGripStiffness number
+	---@field secondaryGripRotation number In radians.
+	---@field gunHoldingPos Vector The offset of where the item is held if it is a gun.
+	---@field boundsCenter Vector
+	---@field index integer 🔒 The index of the array in memory this is.
+	---@field name string Not networked.
+	---@field isGun boolean
+	local ItemType = {}
+
+	---Get whether this type can be mounted to another type.
+	---@param parent ItemType
+	---@return boolean canMount
+	function ItemType:getCanMountTo(parent) end
+
+	---Set whether this type can be mounted to another type.
+	---@param parent ItemType
+	---@param canMount boolean
+	function ItemType:setCanMountTo(parent, canMount) end
+end
 
 do
 	---Represents an item in the world or someone's inventory.
@@ -266,7 +342,7 @@ do
 	---@class Item
 	---@field class string 🔒 "Item"
 	---@field data table A Lua table which persists throughout the lifespan of this object.
-	---@field type integer 💾
+	---@field type ItemType 💾
 	---@field despawnTime integer Ticks remaining until removal.
 	---@field parentSlot integer The slot this item occupies if it has a parent.
 	---@field parentHuman Human? The human this item is mounted to, if any.
@@ -283,12 +359,11 @@ do
 	---@field hasPhysics boolean Whether this item is currently physically simulated.
 	---@field physicsSettled boolean Whether this item is settled by gravity.
 	---@field physicsSettledTimer integer How many ticks the item has been settling. Once it has reached 60, it will be settled.
+	---@field isStatic boolean Whether the item is immovable.
 	---@field rigidBody RigidBody The rigid body representing the physics of this item.
+	---@field vehicle Vehicle? The vehicle which this item is a key for.
 	---@field grenadePrimer Player? The player who primed this grenade.
 	local Item
-
-	---Fire a network event containing basic info.
-	function Item:update() end
 
 	---Remove self safely and fire a network event.
 	function Item:remove() end
@@ -330,6 +405,12 @@ do
 	---@param text string The text to set the line to. Max 63 characters.
 	function Item:computerSetLine(lineIndex, text) end
 
+	---Set the colors to display on a line. Does not immediately network.
+	---Only works if this item is a computer.
+	---@param lineIndex integer Which line to edit.
+	---@param colors string The colors to set the line to, where every character represents a color value from 0x00 to 0xFF. Max 63 characters.
+	function Item:computerSetLineColors(lineIndex, colors) end
+
 	---Set the color of a character on screen. Does not immediately network.
 	---Only works if this item is a computer.
 	---Uses the 16 CGA colors for foreground and background separately.
@@ -345,7 +426,8 @@ do
 	---@class Vehicle
 	---@field class string 🔒 "Vehicle"
 	---@field data table A Lua table which persists throughout the lifespan of this object.
-	---@field type integer 💾
+	---@field type VehicleType 💾
+	---@field isLocked boolean Whether or not this has a key and is locked.
 	---@field controllableState integer 0 = cannot be controlled, 1 = car, 2 = helicopter.
 	---@field health integer 0-100
 	---@field color integer 💾 0 = black, 1 = red, 2 = blue, 3 = silver, 4 = white, 5 = gold.
@@ -356,6 +438,7 @@ do
 	---@field gearY number Forward to back stick shift position, -1 to 1.
 	---@field steerControl number Left to right wheel position, -0.75 to 0.75.
 	---@field gasControl number Brakes to full gas, -1 to 1.
+	---@field engineRPM integer The RPM of the engine to be networked, 0 to 8191.
 	---@field index integer 🔒 The index of the array in memory this is (0-511).
 	---@field isActive boolean Whether or not this exists, only change if you know what you are doing.
 	---@field lastDriver Player? 🔒 The last person to drive the vehicle.
@@ -367,13 +450,23 @@ do
 
 	---Fire a network event to make a part appear to break.
 	---Also used to visually toggle train doors.
-	---@param kind integer The kind of part. 0 = window, 1 = tire, 2 = entire body.
+	---@param kind integer The kind of part. 0 = window, 1 = tire, 2 = entire body, 6 = repair window.
 	---@param position Vector The global position of the destruction.
 	---@param normal Vector The normal of the destruction.
 	function Vehicle:updateDestruction(kind, partIndex, position, normal) end
 
 	---Remove self safely and fire a network event.
 	function Vehicle:remove() end
+
+	---Get whether a specific window is broken.
+	---@param index integer The index between 0 and 7.
+	---@return boolean isWindowBroken
+	function Vehicle:getIsWindowBroken(index) end
+
+	---Set whether a specific window is broken.
+	---@param index integer The index between 0 and 7.
+	---@param isWindowBroken boolean
+	function Vehicle:setIsWindowBroken(index, isWindowBroken) end
 end
 
 do
@@ -386,6 +479,7 @@ do
 	---@field pos Vector Position.
 	---@field vel Vector Velocity.
 	---@field rot RotMatrix Rotation.
+	---@field rotVel RotMatrix Rotational velocity.
 	---@field index integer 🔒 The index of the array in memory this is (0-8191).
 	---@field isActive boolean Whether or not this exists, only change if you know what you are doing.
 	---@field isSettled boolean Whether this rigid body is settled by gravity.
@@ -432,17 +526,34 @@ do
 end
 
 do
+	---Represents a special building.
+	---@class Building
+	---@field class string 🔒 "Building"
+	---@field type integer The type of building. 1 = base, 3 = car shop, 4 = laboratory, 5 = cosmetics shop, 6 = bank, 8 = gun shop, 9 = burger shop.
+	---@field pos Vector The origin point of the building. May not be inside.
+	---@field spawnRot RotMatrix The rotation which this building spawns things (players in a base, cars in a car shop, etc.)
+	---@field interiorCuboidA Vector The first corner of a cuboid, where the interior of the building is contained inside.
+	---@field interiorCuboidB Vector The second corner of a cuboid, where the interior of the building is contained inside.
+	---@field numShopCars integer How many cars are for sale at this car shop.
+	---@field shopCarSales integer How many cars have been sold at this car shop.
+	---@field index integer 🔒 The index of the array in memory this is.
+	local Building = {}
+
+	---Get a car slot at this car shop.
+	---@param index integer The index between 0 and 15.
+	---@return ShopCar shopCar The desired shop car.
+	function Building:getShopCar(index) end
+end
+
+do
 	---Represents a worker thread.
 	---@class Worker
 	Worker = {}
 
-	---Create a new Worker.
-	---@return Worker worker The created Worker.
-	function Worker.new() end
-
-	---Start working using a given lua file path.
+	---Create a new Worker using a given lua file path.
 	---@param fileName string The path to a lua file to execute on the worker thread.
-	function Worker:start(fileName) end
+	---@return Worker worker The created Worker.
+	function Worker.new(fileName) end
 
 	---Indicate that the worker should stop what it's doing.
 	---The next time `sleep(ms: integer) -> boolean` is called in the worker thread, true will be returned.
@@ -516,6 +627,7 @@ end
 
 do
 	---Represents a raster image.
+	---Available in worker threads.
 	---@class Image
 	---@field width integer 🔒 The width in pixels.
 	---@field height integer 🔒 The height in pixels.
@@ -536,6 +648,12 @@ do
 	---@param filePath string The path to the image file to load.
 	function Image:loadFromFile(filePath) end
 
+	---Load a blank image with desired dimensions.
+	---@param width integer How wide the image should be.
+	---@param height integer How tall the image should be.
+	---@param numChannels integer How many channels the image should have (1-4).
+	function Image:loadBlank(width, height, numChannels) end
+
 	---Get the RGB pixel color at a given coordinate.
 	---Coordinate (0, 0) is the top left of the image.
 	---@param x integer The X pixel coordinate.
@@ -554,19 +672,79 @@ do
 	---@return integer blue The value of the blue channel (0-255).
 	---@return integer alpha The value of the alpha channel (0-255).
 	function Image:getRGBA(x, y) end
+
+	---Set the color of a pixel.
+	---@param x integer The X pixel coordinate.
+	---@param y integer The Y pixel coordinate.
+	---@param red integer The red channel value.
+	---@param green integer The green channel value.
+	---@param blue integer The blue channel value.
+	function Image:setPixel(x, y, red, green, blue) end
+	---@param x integer The X pixel coordinate.
+	---@param y integer The Y pixel coordinate.
+	---@param red integer The red channel value.
+	---@param green integer The green channel value.
+	---@param blue integer The blue channel value.
+	---@param alpha integer The alpha channel value.
+	function Image:setPixel(x, y, red, green, blue, alpha) end
+
+	---Get the PNG representation of an image.
+	---@return string png The buffer of a PNG file representing the image.
+	function Image:getPNG() end
 end
 
+do
+	---An object which can listen for file system events.
+	---Available in worker threads.
+	---@class FileWatcher
+	FileWatcher = {}
+
+	---Create a new FileWatcher.
+	---@return FileWatcher fileWatcher The created FileWatcher.
+	function FileWatcher.new() end
+
+	---Add a new directory/file to watch.
+	---@param path string The path to watch.
+	---@param mask integer The flags for the watch. See FILE_WATCH_* constants.
+	function FileWatcher:addWatch(path, mask) end
+
+	---Remove a watch if it exists.
+	---@param path string The path to remove.
+	---@return boolean success Whether the path was an existing watch.
+	function FileWatcher:removeWatch(path) end
+
+	---@class FileWatchEvent
+	---@field descriptor string The path of the watch the event was for.
+	---@field mask integer The flags for the event. See FILE_WATCH_* constants.
+	---@field name string The name of the directory/file where the event took place.
+
+	---Read the next event.
+	---@return FileWatchEvent? event The next event, or nil if there was no event.
+	function FileWatcher:receiveEvent() end
+end
+
+---Represents a real number used in hooks whose value can be changed before its parent is called.
+---@class HookFloat
+---@field value number The underlying float value.
+
+---Represents a 32-bit integer used in hooks whose value can be changed before its parent is called.
+---@class HookInteger
+---@field value integer The underlying int value.
+
 ---Represents an active client network connection.
+---Connections can be moved around in memory every tick, so don't hold onto references.
 ---@class Connection
 ---@field class string 🔒 "Connection"
 ---@field port integer
 ---@field timeoutTime integer How many ticks the connection has not responded, will be deleted after 30 seconds.
 ---@field address string 🔒 IPv4 address ("x.x.x.x")
 ---@field adminVisible boolean Whether this connection is sent admin only events (admin messages).
+---@field spectatingHuman Human? The human this connection is currently spectating, if any.
 
 ---Represents a persistent player account stored on the server.
 ---@class Account
 ---@field class string 🔒 "Account"
+---@field data table A Lua table which persists throughout the duration of the server.
 ---@field subRosaID integer Unique account index given by the master server, should not be used.
 ---@field phoneNumber integer Unique public ID tied to the account, ex. 2560001
 ---@field money integer
@@ -579,24 +757,18 @@ end
 ---@field name string 🔒 Last known player name.
 ---@field steamID string 🔒 SteamID64
 
----Represents a type of item that exists.
----@class ItemType
----@field class string 🔒 "ItemType"
----@field price integer How much money is taken when bought. Not networked.
----@field mass number In kilograms, kind of.
----@field fireRate integer How many ticks between two shots.
----@field bulletType integer
----@field bulletVelocity number
----@field bulletSpread number
----@field numHands integer
----@field rightHandPos Vector
----@field leftHandPos Vector
----@field boundsCenter Vector
+---Represents a type of vehicle that exists.
+---@class VehicleType
+---@field class string 🔒 "VehicleType"
+---@field usesExternalModel boolean
+---@field controllableState integer 0 = cannot be controlled, 1 = car, 2 = helicopter.
 ---@field index integer 🔒 The index of the array in memory this is.
 ---@field name string Not networked.
----@field isGun boolean
+---@field price integer How much money is taken when bought.
+---@field mass number In kilograms, kind of.
 
 ---Represents a bullet currently flying through the air.
+---Bullets can be moved around in memory every tick, so don't hold onto references.
 ---@class Bullet
 ---@field class string 🔒 "Bullet"
 ---@field type integer
@@ -611,6 +783,11 @@ end
 ---@field class string 🔒 "Bone"
 ---@field pos Vector Position.
 ---@field pos2 Vector Second position.
+
+---@class InventorySlot
+---@field class string 🔒 "InventorySlot"
+---@field primaryItem Item? 🔒 The first item in the slot, if any.
+---@field secondaryItem Item? 🔒 The second item in the slot, if any.
 
 ---Represents a bond between one or two rigid bodies.
 ---@class Bond
@@ -663,3 +840,10 @@ end
 ---@field streetSouth Street? 🔒 The street connected to the south, if any.
 ---@field streetWest Street? 🔒 The street connected to the west, if any.
 ---@field streetNorth Street? 🔒 The street connected to the north, if any.
+
+---Represents a car for sale at a car shop.
+---@class ShopCar
+---@field class string 🔒 "ShopCar"
+---@field price integer How much money is taken when bought. Note that if the key is sold, the price of the VehicleType is used for refunds.
+---@field color integer The color of the car.
+---@field type VehicleType The type of the car.
