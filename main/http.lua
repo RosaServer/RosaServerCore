@@ -8,7 +8,7 @@ local callbacks = {}
 local function createWorkers (count)
 	for i = 1, count do
 		workers[i] = {
-			pending = false,
+			pending = 0,
 			thread = Worker.new('main/http.worker.lua')
 		}
 	end
@@ -16,7 +16,7 @@ end
 
 local function getFreeWorker ()
 	for _, worker in ipairs(workers) do
-		if not worker.pending then
+		if worker.pending == 0 then
 			return worker
 		end
 	end
@@ -41,7 +41,7 @@ local function request (data, callback)
 
 	local worker = getFreeWorker()
 	worker.thread:sendMessage(json.encode(data))
-	worker.pending = true
+	worker.pending = worker.pending + 1
 end
 
 ---@param message string
@@ -97,7 +97,7 @@ hook.add(
 	'Logic', 'main.http',
 	function ()
 		for _, worker in ipairs(workers) do
-			if worker.pending then
+			if worker.pending ~= 0 then
 				while true do
 					local message = worker.thread:receiveMessage()
 					if not message then
@@ -105,7 +105,7 @@ hook.add(
 					end
 
 					handleMessage(message)
-					worker.pending = false
+					worker.pending = worker.pending - 1
 				end
 			end
 		end
