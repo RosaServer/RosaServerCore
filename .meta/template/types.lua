@@ -245,6 +245,7 @@ do
 	---@field isStanding boolean 🔒
 	---@field isBleeding boolean
 	---@field player Player? The player controlling this human.
+	---@field account Account? The disconnected account that owns this human.
 	---@field vehicle Vehicle? The vehicle they are inside.
 	local Human
 
