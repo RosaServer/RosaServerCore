@@ -27,7 +27,7 @@ while true do
 		handleMessage(message)
 	end
 
-	if sleep(32) then
+	if sleep(100) then
 		break
 	end
 end

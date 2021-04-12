@@ -88,7 +88,7 @@ hook.add(
 	---@param isReload boolean
 	function (isReload)
 		if not isReload then
-			createWorkers(config.httpThreadCount or 2)
+			createWorkers(config.httpThreadCount or 4)
 		end
 	end
 )
