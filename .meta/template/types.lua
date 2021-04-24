@@ -732,6 +732,10 @@ end
 ---@class HookInteger
 ---@field value integer The underlying int value.
 
+---Represents a 32-bit unsigned integer used in hooks whose value can be changed before its parent is called.
+---@class HookUnsignedInteger
+---@field value integer The underlying unsigned int value.
+
 ---Represents an active client network connection.
 ---Connections can be moved around in memory every tick, so don't hold onto references.
 ---@class Connection
