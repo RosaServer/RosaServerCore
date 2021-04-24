@@ -31,8 +31,18 @@ function isNumberWhitelisted (phoneNumber)
 		return false
 	end
 
-	return not not getWhitelistIndex(phoneNumber)
+	local data = {
+		whitelisted = getWhitelistIndex(phoneNumber) ~= nil
+	}
+
+	if hook.run('WhitelistCheck', phoneNumber, data) then
+		return false
+	end
+
+	return not not data.whitelisted
 end
+
+local isNumberWhitelisted = isNumberWhitelisted
 
 local function saveWhitelist ()
 	local f, errorMessage = io.open(whitelistPath, 'w')
@@ -58,7 +68,6 @@ function plugin.onEnable ()
 end
 
 function plugin.onDisable ()
-	saveWhitelist()
 	whitelistedPhoneNumbers = nil
 end
 
@@ -68,7 +77,7 @@ function plugin.hooks.AccountTicketFound (acc)
 
 	if playerCount >= maxPublicSlots then
 		if acc then
-			if getWhitelistIndex(acc.phoneNumber) then
+			if isNumberWhitelisted(acc.phoneNumber) then
 				-- Let it through
 				return
 			end
