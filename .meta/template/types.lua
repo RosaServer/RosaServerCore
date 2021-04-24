@@ -504,6 +504,15 @@ do
 	---@param globalPos Vector The global position in the level.
 	---@return Bond? bond The created bond, if successful.
 	function RigidBody:bondToLevel(localPos, globalPos) end
+
+	---Collide with the level for one tick.
+	---@param localPos Vector The local position relative to this body.
+	---@param normal Vector The normal of the collision.
+	---@param a number
+	---@param b number
+	---@param c number
+	---@param d number
+	function RigidBody:collideLevel(localPos, normal, a, b, c, d) end
 end
 
 do
