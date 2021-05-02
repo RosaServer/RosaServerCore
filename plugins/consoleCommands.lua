@@ -4,6 +4,10 @@ plugin.name = 'Console Commands'
 plugin.author = 'jdb'
 plugin.description = 'Adds some useful console commands.'
 
+plugin.defaultConfig = {
+	announceGameModeReload = false
+}
+
 plugin.commands['clear'] = {
 	info = 'Clear the terminal window.',
 	call = function ()
@@ -141,15 +145,21 @@ plugin.commands['reloadplugin'] = {
 
 		plugin:print(string.format('Reloading the %s plugin by %s', foundPlugin.name, foundPlugin.author))
 
-		if isActiveMode then
-			chat.announce('[!] Reloading the active game mode!')
+		local announceGameModeReload = plugin.config.announceGameModeReload
 
-			local startTime = os.realClock()
+		local startTime
+		if isActiveMode then
+			if announceGameModeReload then
+				chat.announce('[!] Reloading the active game mode!')
+				startTime = os.realClock()
+			end
 
 			foundPlugin:reload()
 
-			local elapsed = (os.realClock() - startTime) * 1000
-			chat.announce(('[!] OK (%ims)'):format(elapsed))
+			if announceGameModeReload then
+				local elapsed = (os.realClock() - startTime) * 1000
+				chat.announce(('[!] OK (%ims)'):format(elapsed))
+			end
 		else
 			foundPlugin:reload()
 		end
