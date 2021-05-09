@@ -722,7 +722,7 @@ do
 	---Execute an SQL query.
 	---@param sql string The SQL string to execute.
 	---@vararg nil|string|number|boolean The optional arguments if this is a parameterized query.
-	---@return table[]? rows The returned rows, if the query generates any, where each row is a table of columns. Values can be nil, strings, or numbers.
+	---@return integer|table[] result The number of changes or the returned rows, if the query generates any, where each row is a table of columns. Values can be `nil`, `string`, or `number`.
 	---@return string? err The error from preparing/running the query, if there was one.
 	function SQLite:query(sql, ...) end
 end
