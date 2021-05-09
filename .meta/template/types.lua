@@ -704,6 +704,30 @@ do
 end
 
 do
+	---A connection to an SQLite 3 database.
+	---Available in worker threads.
+	---@class SQLite
+	SQLite = {}
+
+	---Create a new SQLite using a given database file path.
+	---@param fileName string The path to a database file to connect to. If ':memory:', this will be a temporary in-memory database. If an empty string, this will be a temporary on-disk database.
+	---@return SQLite db The created SQLite.
+	function SQLite.new(fileName) end
+
+	---Close the database.
+	---This is automatically done whenever an SQLite is garbage collected,
+	---but it's still better to call it explicitly when you're done using it.
+	function SQLite:close() end
+
+	---Execute an SQL query.
+	---@param sql string The SQL string to execute.
+	---@vararg nil|string|number|boolean The optional arguments if this is a parameterized query.
+	---@return table[]? rows The returned rows, if the query generates any, where each row is a table of columns. Values can be nil, strings, or numbers.
+	---@return string? err The error from preparing/running the query, if there was one.
+	function SQLite:query(sql, ...) end
+end
+
+do
 	---An object which can listen for file system events.
 	---Available in worker threads.
 	---@class FileWatcher
