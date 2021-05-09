@@ -8,5 +8,6 @@
 /rosaserversatellite
 /*.obj
 /*.csv
+/*.db
 /config.yml
 /.vscode
