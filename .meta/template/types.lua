@@ -556,6 +556,24 @@ do
 end
 
 do
+	---Represents an active client network connection.
+	---Connections can be moved around in memory every tick, so don't hold onto references.
+	---@class Connection
+	---@field class string 🔒 "Connection"
+	---@field port integer
+	---@field timeoutTime integer How many ticks the connection has not responded, will be deleted after 30 seconds.
+	---@field address string 🔒 IPv4 address ("x.x.x.x")
+	---@field adminVisible boolean Whether this connection is sent admin only events (admin messages).
+	---@field spectatingHuman Human? The human this connection is currently spectating, if any.
+	local Connection = {}
+
+	---Get a specific voice earshot.
+	---@param index integer The index between 0 and 7.
+	---@return EarShot earShot The desired earshot.
+	function Connection:getEarShot(index) end
+end
+
+do
 	---Represents a worker thread.
 	---@class Worker
 	Worker = {}
@@ -769,16 +787,6 @@ end
 ---@class HookUnsignedInteger
 ---@field value integer The underlying unsigned int value.
 
----Represents an active client network connection.
----Connections can be moved around in memory every tick, so don't hold onto references.
----@class Connection
----@field class string 🔒 "Connection"
----@field port integer
----@field timeoutTime integer How many ticks the connection has not responded, will be deleted after 30 seconds.
----@field address string 🔒 IPv4 address ("x.x.x.x")
----@field adminVisible boolean Whether this connection is sent admin only events (admin messages).
----@field spectatingHuman Human? The human this connection is currently spectating, if any.
-
 ---Represents a persistent player account stored on the server.
 ---@class Account
 ---@field class string 🔒 "Account"
@@ -885,3 +893,14 @@ end
 ---@field price integer How much money is taken when bought. Note that if the key is sold, the price of the VehicleType is used for refunds.
 ---@field color integer The color of the car.
 ---@field type VehicleType The type of the car.
+
+---Represents a state of someone being able to hear another person's voice chat.
+---@class EarShot
+---@field class string 🔒 "EarShot"
+---@field isActive boolean Whether or not this exists.
+---@field player Player? The player that the voice is coming from.
+---@field human Human? The human that the voice appears to come from.
+---@field receivingItem Item? The item that the voice appears to come from.
+---@field transmittingItem Item? The item that the other person is using to transmit their voice.
+---@field distance number The distance of the voice.
+---@field volume number The estimated volume of the voice, 0 to 1.
