@@ -59,7 +59,7 @@ local function onResponse (res)
 	end
 end
 
-function plugin.hooks.PostSendPacket ()
+function plugin.hooks.PostServerSend ()
 	if not ready then return end
 
 	local now = os.realClock()

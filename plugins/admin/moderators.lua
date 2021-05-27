@@ -113,12 +113,12 @@ function plugin.hooks.PostWebUploadBody ()
 end
 
 do
-	local isInsideInPacket
+	local isInsideServerReceive
 	local shouldIgnoreMessage
 	local hidingAsBot
 
-	function plugin.hooks.InPacket ()
-		isInsideInPacket = true
+	function plugin.hooks.ServerReceive ()
+		isInsideServerReceive = true
 	end
 
 	function plugin.hooks.EventUpdatePlayer (ply)
@@ -134,7 +134,7 @@ do
 			ply.isBot = false
 		end
 
-		if isInsideInPacket and isHiddenModerator(ply) then
+		if isInsideServerReceive and isHiddenModerator(ply) then
 			shouldIgnoreMessage = true
 		end
 	end
@@ -147,8 +147,8 @@ do
 		end
 	end
 
-	function plugin.hooks.PostInPacket ()
-		isInsideInPacket = nil
+	function plugin.hooks.PostServerReceive ()
+		isInsideServerReceive = nil
 		shouldIgnoreMessage = nil
 	end
 end

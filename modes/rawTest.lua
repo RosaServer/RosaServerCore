@@ -38,7 +38,7 @@ function mode.hooks.PostResetGame ()
 	server.time = 600
 end
 
-function mode.hooks.SendPacket ()
+function mode.hooks.ServerSend ()
 	for _, ply in ipairs(players.getNonBots()) do
 		if not ply.human then
 			ply.menuTab = 1
@@ -48,7 +48,7 @@ function mode.hooks.SendPacket ()
 	end
 end
 
-function mode.hooks.PostSendPacket ()
+function mode.hooks.PostServerSend ()
 	for _, ply in ipairs(players.getNonBots()) do
 		ply.menuTab = 0
 	end
