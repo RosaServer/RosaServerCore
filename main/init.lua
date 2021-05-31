@@ -51,7 +51,7 @@ end
 local function handleChatCommandError (ply, commandName, command, result)
 	local errorString = tostring(result)
 	local _, endPos = errorString:find(': ')
-	local stripped = errorString:sub(endPos + 1)
+	local stripped = endPos and errorString:sub(endPos + 1) or errorString
 
 	if stripped == 'usage' then
 		local usage = command.usage or commandName
