@@ -44,7 +44,7 @@ local function onResponse (res)
 	if not plugin.isEnabled then return end
 
 	if not res then
-		plugin:print('Request failed')
+		plugin:warn('Request failed')
 		return
 	end
 
