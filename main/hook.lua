@@ -3,6 +3,9 @@ local _tempHooks = {}
 
 local _cache = {}
 
+local pairs = pairs
+local ipairs = ipairs
+
 local CONTINUE = 1
 local OVERRIDE = 2
 
@@ -20,33 +23,52 @@ function hook.resetCache ()
 	hook.clear()
 	_cache = {}
 
+	local enable = hook.enable
+
 	for event, funcs in pairs(_hooks) do
-		hook.enable(event)
+		enable(event)
 		_cache[event] = {}
 		for _, func in pairs(funcs) do
 			table.insert(_cache[event], func)
 		end
 	end
 
+	local sortingHooks = {}
+
 	for _, plugin in pairs(hook.plugins) do
 		if plugin.isEnabled then
 			for event, func in pairs(plugin.hooks) do
 				if _cache[event] == nil then
-					hook.enable(event)
+					enable(event)
 					_cache[event] = {}
 				end
 				table.insert(_cache[event], func)
 			end
 
-			for event, funcs in pairs(plugin.polyHooks) do
-				if _cache[event] == nil then
-					hook.enable(event)
-					_cache[event] = {}
+			for event, infos in pairs(plugin.polyHooks) do
+				if sortingHooks[event] == nil then
+					sortingHooks[event] = {}
 				end
-				for _, func in ipairs(funcs) do
-					table.insert(_cache[event], func)
+
+				for _, info in ipairs(infos) do
+					table.insert(sortingHooks[event], info)
 				end
 			end
+		end
+	end
+
+	for event, infos in pairs(sortingHooks) do
+		if _cache[event] == nil then
+			enable(event)
+			_cache[event] = {}
+		end
+
+		table.sort(infos, function (a, b)
+			return a.priority < b.priority
+		end)
+
+		for _, info in ipairs(infos) do
+			table.insert(_cache[event], info.func)
 		end
 	end
 end

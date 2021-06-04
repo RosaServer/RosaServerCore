@@ -165,15 +165,24 @@ function plugin:require (modName)
 	return self.requireCache[modName]
 end
 
+---@class PluginHookOptions
+---@field priority number? The priority of the hook, where lower priorities are executed first. Default 0.
+
 ---Add a hook, where multiple hooks can be for the same event.
 ---@param eventName string The name of the event to be hooked.
 ---@param func function The function to be called when the hook runs.
-function plugin:addHook (eventName, func)
+---@param options? PluginHookOptions The options for the hook.
+function plugin:addHook (eventName, func, options)
 	if not self.polyHooks[eventName] then
 		self.polyHooks[eventName] = {}
 	end
 
-	table.insert(self.polyHooks[eventName], func)
+	options = options or {}
+
+	table.insert(self.polyHooks[eventName], {
+		func = func,
+		priority = options.priority or 0
+	})
 end
 
 ---Add a callback for when the plugin is enabled.
