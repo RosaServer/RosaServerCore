@@ -133,6 +133,27 @@ do
 end
 
 do
+	---Represents a player's transmitting voice chat.
+	---@class Voice
+	---@field class string 🔒 "Voice"
+	---@field volumeLevel integer The volume of the voice. 0 = whisper, 1 = normal, 2 = yell.
+	---@field currentFrame integer The current frame being sent, 0-63.
+	---@field isSilenced boolean Whether the voice is not transmitting.
+	local Voice
+
+	---Get a specific encoded Opus frame.
+	---@param index integer The index between 0 and 63.
+	---@return string frame The encoded Opus frame.
+	function Voice:getFrame(index) end
+
+	---Set a specific encoded Opus frame.
+	---@param index integer The index between 0 and 63.
+	---@param frame frame The encoded Opus frame.
+	---@param volumeLevel integer The volume of the frame. 0 = whisper, 1 = normal, 2 = yell.
+	function Voice:setFrame(index, frame, volumeLevel) end
+end
+
+do
 	---Represents a connected player, who may or may not be spawned in.
 	---💾 = To network changed value to clients, the `update` method needs to be called.
 	---💲 = To network changed value to clients, the `updateFinance` method needs to be called.
@@ -171,6 +192,7 @@ do
 	---@field human Human? 💾 The human they currently control.
 	---@field connection Connection? 🔒 Their network connection.
 	---@field account Account Their account.
+	---@field voice Voice Their voice.
 	---@field botDestination Vector? The location this bot will walk towards.
 	local Player
 
@@ -324,7 +346,7 @@ do
 	---@field index integer 🔒 The index of the array in memory this is.
 	---@field name string Not networked.
 	---@field isGun boolean
-	local ItemType = {}
+	local ItemType
 
 	---Get whether this type can be mounted to another type.
 	---@param parent ItemType
@@ -527,7 +549,7 @@ do
 	---@field intersectionA StreetIntersection 🔒 The intersection that the street starts at.
 	---@field intersectionB StreetIntersection 🔒 The intersection that the street ends at.
 	---@field numLanes integer 🔒 How many lanes the street has.
-	local Street = {}
+	local Street
 
 	---Get a lane on the street.
 	---@param index integer The index between 0 and numLanes-1.
@@ -547,7 +569,7 @@ do
 	---@field numShopCars integer How many cars are for sale at this car shop.
 	---@field shopCarSales integer How many cars have been sold at this car shop.
 	---@field index integer 🔒 The index of the array in memory this is.
-	local Building = {}
+	local Building
 
 	---Get a car slot at this car shop.
 	---@param index integer The index between 0 and 15.
@@ -565,7 +587,7 @@ do
 	---@field address string 🔒 IPv4 address ("x.x.x.x")
 	---@field adminVisible boolean Whether this connection is sent admin only events (admin messages).
 	---@field spectatingHuman Human? The human this connection is currently spectating, if any.
-	local Connection = {}
+	local Connection
 
 	---Get a specific voice earshot.
 	---@param index integer The index between 0 and 7.
