@@ -689,7 +689,7 @@ do
 	function Image.new() end
 
 	---Free the image data.
-	---This is automatically done whenever an image is garbage collected,
+	---This is automatically done whenever an Image is garbage collected,
 	---but it's still better to call it explicitly when you're done reading.
 	function Image:free() end
 
@@ -795,6 +795,35 @@ do
 	---Read the next event.
 	---@return FileWatchEvent? event The next event, or nil if there was no event.
 	function FileWatcher:receiveEvent() end
+end
+
+do
+	---An Opus audio encoder.
+	---Available in worker threads.
+	---@class OpusEncoder
+	OpusEncoder = {}
+
+	---Create a new OpusEncoder.
+	---@return OpusEncoder encoder The created OpusEncoder.
+	function OpusEncoder.new() end
+
+	---Close the opened file, if there is any.
+	---This is automatically done whenever an OpusEncoder is garbage collected,
+	---but it's still better to call it explicitly when you're done encoding.
+	function OpusEncoder:close() end
+
+	---Open a file for encoding. Closes any previously opened file.
+	---Throws if the file cannot be opened.
+	---@param fileName string The path to a 48000Hz signed 16-bit raw PCM file to use for encoding.
+	function OpusEncoder:open(fileName) end
+
+	---Rewind the opened file to the beginning.
+	function OpusEncoder:rewind() end
+
+	---Encode a single 20ms Opus frame.
+	---Throws if the file is not opened, or there is a problem when reading or encoding.
+	---@return frame? string The next encoded frame, or nil if there is nothing left to read.
+	function OpusEncoder:encodeFrame() end
 end
 
 ---Represents a real number used in hooks whose value can be changed before its parent is called.
