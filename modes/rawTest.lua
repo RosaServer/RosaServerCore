@@ -82,7 +82,7 @@ end
 
 mode.commands['/map'] = {
 	info = 'Change the map.',
-	usage = '/map <name',
+	usage = '/map <name>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param args string[]
 	call = function (_, _, args)
