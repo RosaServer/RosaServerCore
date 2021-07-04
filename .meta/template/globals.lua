@@ -163,6 +163,22 @@ function http.getSync(scheme, path, headers) end
 ---@return HTTPResponse? response
 function http.postSync(scheme, path, headers, body, contentType) end
 
+---Library for zlib compression/decompression.
+zlib = {}
+
+---Compress a string of bytes.
+---Available in worker threads.
+---@param input string The data to compress.
+---@return string compressed The compressed data. This can be longer than the input if the input is very short.
+function zlib.compress(input) end
+
+---Decompress a compressed string of bytes.
+---Available in worker threads.
+---@param compressed string The compressed data.
+---@param uncompressedSize integer The maximum size of the uncompressed data. This should be the size of the original data before compression.
+---@return string uncompressed The uncompressed data.
+function zlib.uncompress(compressed, uncompressedSize) end
+
 ---Library for creating networked events.
 event = {}
 
