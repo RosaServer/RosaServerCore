@@ -266,10 +266,12 @@ end
 
 ---Indicate the plugin has been enabled.
 ---@param isReload boolean
+---@deprecated
 function plugin.onEnable (isReload) end
 
 ---Indicate the plugin has been disabled.
 ---@param isReload boolean
+---@deprecated
 function plugin.onDisable (isReload) end
 
 local function newPlugin (nameSpace, stem)
@@ -277,6 +279,7 @@ local function newPlugin (nameSpace, stem)
 		name = 'Unknown',
 		author = 'Unknown',
 		description = 'n/a',
+		---@deprecated
 		hooks = {},
 		polyHooks = {},
 		polyEnableHandlers = {},
