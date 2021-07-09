@@ -17,7 +17,7 @@ local distanceNames
 local cachedLines
 local cachedLinesTimer
 
-function plugin.onEnable ()
+plugin:addEnableHandler(function ()
 	if os.createDirectory('logs') then
 		plugin:print('Created logs directory')
 	end
@@ -29,13 +29,13 @@ function plugin.onEnable ()
 	}
 	cachedLines = {}
 	cachedLinesTimer = 0
-end
+end)
 
-plugin.onDisable = function ()
+plugin:addDisableHandler(function ()
 	distanceNames = nil
 	cachedLines = nil
 	cachedLinesTimer = nil
-end
+end)
 
 ---Log an event and keep a permanent record of it.
 ---@param format string The string or string format to log.
@@ -63,80 +63,98 @@ end
 do
 	local awaitConnected = {}
 
-	function plugin.hooks.PostPlayerCreate (ply)
-		awaitConnected[ply.index] = true
-	end
-
-	function plugin.hooks.PostPlayerDelete (ply)
-		awaitConnected[ply.index] = nil
-		if not ply.isBot then
-			log('[Exit] %s (%s)', ply.name, dashPhoneNumber(ply.phoneNumber))
+	plugin:addHook(
+		'PostPlayerCreate',
+		---@param ply Player
+		function (ply)
+			awaitConnected[ply.index] = true
 		end
-	end
+	)
 
-	function plugin.hooks.Logic ()
-		for index, _ in pairs(awaitConnected) do
-			local ply = players[index]
-			if ply.isBot then
-				awaitConnected[index] = nil
-			else
-				local con = ply.connection
-				if con then
+	plugin:addHook(
+		'PostPlayerDelete',
+		---@param ply Player
+		function (ply)
+			awaitConnected[ply.index] = nil
+			if not ply.isBot then
+				log('[Exit] %s (%s)', ply.name, dashPhoneNumber(ply.phoneNumber))
+			end
+		end
+	)
+
+	plugin:addHook(
+		'Logic',
+		function ()
+			for index, _ in pairs(awaitConnected) do
+				local ply = players[index]
+				if ply.isBot then
 					awaitConnected[index] = nil
-					log('[Join] %s (%s) (%s) from %s', ply.name, dashPhoneNumber(ply.phoneNumber), ply.account.steamID, con.address)
-				end
-			end
-		end
-
-		cachedLinesTimer = cachedLinesTimer + 1
-		if #cachedLines > 0 and cachedLinesTimer > 10 * server.TPS then
-			cachedLinesTimer = 0
-
-			local str = ''
-			while #cachedLines > 0 do
-				local line = cachedLines[1] .. '\n'
-				line = line:gsub('```', '\\`\\`\\`')
-
-				local newStr = str .. line
-				if string.len(newStr) > 1800 then
-					if #cachedLines == 1 then
-						table.remove(cachedLines, 1)
+				else
+					local con = ply.connection
+					if con then
+						awaitConnected[index] = nil
+						log('[Join] %s (%s) (%s) from %s', ply.name, dashPhoneNumber(ply.phoneNumber), ply.account.steamID, con.address)
 					end
-					break
+				end
+			end
+
+			cachedLinesTimer = cachedLinesTimer + 1
+			if #cachedLines > 0 and cachedLinesTimer > 10 * server.TPS then
+				cachedLinesTimer = 0
+
+				local str = ''
+				while #cachedLines > 0 do
+					local line = cachedLines[1] .. '\n'
+					line = line:gsub('```', '\\`\\`\\`')
+
+					local newStr = str .. line
+					if string.len(newStr) > 1800 then
+						if #cachedLines == 1 then
+							table.remove(cachedLines, 1)
+						end
+						break
+					end
+
+					str = newStr
+					table.remove(cachedLines, 1)
 				end
 
-				str = newStr
-				table.remove(cachedLines, 1)
-			end
-
-			if str ~= '' and plugin.config.webhookEnabled then
-				http.post(plugin.config.webhookHost, plugin.config.webhookPath, {}, json.encode({
-					content = '```accesslog\n' .. str .. '```',
-					username = server.name
-				}), 'application/json', onResponse)
+				if str ~= '' and plugin.config.webhookEnabled then
+					http.post(plugin.config.webhookHost, plugin.config.webhookPath, {}, json.encode({
+						content = '```accesslog\n' .. str .. '```',
+						username = server.name
+					}), 'application/json', onResponse)
+				end
 			end
 		end
-	end
+	)
 
-	function plugin.hooks.EventMessage (type, message, speakerID, distance)
-		if speakerID == -1 then return end
-		local ply, man
+	plugin:addHook(
+		'EventMessage',
+		---@param type integer
+		---@param message string
+		---@param speakerId integer
+		---@param distance integer
+		function (type, message, speakerId, distance)
+			if speakerId == -1 then return end
+			local ply, man
 
-		if type == 0 then
-			ply = players[speakerID]
-		elseif type == 1 then
-			man = humans[speakerID]
-			ply = man.player
-		else
-			return
+			if type == 0 then
+				ply = players[speakerId]
+			elseif type == 1 then
+				man = humans[speakerId]
+				ply = man.player
+			else
+				return
+			end
+
+			if not ply then return end
+
+			if type == 1 then
+				log('[Chat][%s] %s (%s): %s', distanceNames[distance], ply.name, dashPhoneNumber(ply.phoneNumber), message)
+			else
+				log('[Chat][X] %s (%s): %s', ply.name, dashPhoneNumber(ply.phoneNumber), message)
+			end
 		end
-
-		if not ply then return end
-
-		if type == 1 then
-			log('[Chat][%s] %s (%s): %s', distanceNames[distance], ply.name, dashPhoneNumber(ply.phoneNumber), message)
-		else
-			log('[Chat][X] %s (%s): %s', ply.name, dashPhoneNumber(ply.phoneNumber), message)
-		end
-	end
+	)
 end

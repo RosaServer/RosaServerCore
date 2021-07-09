@@ -55,7 +55,7 @@ local function saveWhitelist ()
 	end
 end
 
-function plugin.onEnable ()
+plugin:addEnableHandler(function ()
 	local f, errorMessage = io.open(whitelistPath, 'r')
 	if f then
 		whitelistedPhoneNumbers = json.decode(f:read('*all'))
@@ -65,38 +65,42 @@ function plugin.onEnable ()
 		whitelistedPhoneNumbers = {}
 		plugin:warn('Could not load phone numbers: ' .. errorMessage)
 	end
-end
+end)
 
-function plugin.onDisable ()
+plugin:addDisableHandler(function ()
 	whitelistedPhoneNumbers = nil
-end
+end)
 
-function plugin.hooks.AccountTicketFound (acc)
-	local maxPublicSlots = plugin.config.maxPublicSlots
-	local playerCount = #players.getNonBots()
+plugin:addHook(
+	'AccountTicketFound',
+	---@param acc Account
+	function (acc)
+		local maxPublicSlots = plugin.config.maxPublicSlots
+		local playerCount = #players.getNonBots()
 
-	if playerCount >= maxPublicSlots then
-		if acc then
-			if isNumberWhitelisted(acc.phoneNumber) then
-				-- Let it through
-				return
+		if playerCount >= maxPublicSlots then
+			if acc then
+				if isNumberWhitelisted(acc.phoneNumber) then
+					-- Let it through
+					return
+				end
+
+				hook.once(
+					'SendConnectResponse',
+					function (_, _, data)
+						if maxPublicSlots == 0 then
+							data.message = 'Whitelisted accounts only'
+						else
+							data.message = string.format('All public slots are taken (%i // %i)', playerCount, maxPublicSlots)
+						end
+					end
+				)
 			end
 
-			hook.once(
-				'SendConnectResponse',
-				function (_, _, data)
-					if maxPublicSlots == 0 then
-						data.message = 'Whitelisted accounts only'
-					else
-						data.message = string.format('All public slots are taken (%i // %i)', playerCount, maxPublicSlots)
-					end
-				end
-			)
+			return hook.override
 		end
-
-		return hook.override
 	end
-end
+)
 
 plugin.commands['listwhitelist'] = {
 	info = 'List all whitelisted players.',

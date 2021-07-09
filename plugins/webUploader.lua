@@ -19,26 +19,28 @@ local lastCheckTime
 local lastPostTime
 local lastPostString
 
----@param isReload boolean
-function plugin.onEnable (isReload)
+plugin:addEnableHandler(function (isReload)
 	mute400 = false
 	ready = isReload
 	lastCheckTime = 0
 	lastPostTime = 0
 	lastPostString = ''
-end
+end)
 
-function plugin.onDisable ()
+plugin:addDisableHandler(function ()
 	mute400 = nil
 	ready = nil
 	lastCheckTime = nil
 	lastPostTime = nil
 	lastPostString = nil
-end
+end)
 
-function plugin.hooks.PostResetGame ()
-	ready = true
-end
+plugin:addHook(
+	'PostResetGame',
+	function ()
+		ready = true
+	end
+)
 
 local function onResponse (res)
 	if not plugin.isEnabled then return end
@@ -59,46 +61,49 @@ local function onResponse (res)
 	end
 end
 
-function plugin.hooks.PostServerSend ()
-	if not ready then return end
+plugin:addHook(
+	'PostServerSend',
+	function ()
+		if not ready then return end
 
-	local now = os.realClock()
+		local now = os.realClock()
 
-	if now - lastCheckTime <= 6 then return end
-	lastCheckTime = now
+		if now - lastCheckTime <= 6 then return end
+		lastCheckTime = now
 
-	hook.run('WebUploadBody')
+		hook.run('WebUploadBody')
 
-	local body = {
-		port = server.port,
-		gameType = server.type,
-		players = {}
-	}
+		local body = {
+			port = server.port,
+			gameType = server.type,
+			players = {}
+		}
 
-	for _, ply in pairs(players.getNonBots()) do
-		table.insert(body.players, {
-			name = ply.name,
-			team = ply.team,
-			phoneNumber = ply.phoneNumber,
-			gender = ply.gender,
-			head = ply.head,
-			skinColor = ply.skinColor,
-			hairColor = ply.hairColor,
-			hair = ply.hair,
-			eyeColor = ply.eyeColor
-		})
+		for _, ply in pairs(players.getNonBots()) do
+			table.insert(body.players, {
+				name = ply.name,
+				team = ply.team,
+				phoneNumber = ply.phoneNumber,
+				gender = ply.gender,
+				head = ply.head,
+				skinColor = ply.skinColor,
+				hairColor = ply.hairColor,
+				hair = ply.hair,
+				eyeColor = ply.eyeColor
+			})
+		end
+
+		hook.run('PostWebUploadBody', body)
+
+		local cfg = plugin.config
+		local postString = json.encode(body)
+
+		if postString == lastPostString and now - lastPostTime < cfg.maximumWaitTime then return end
+		lastPostTime = now
+		lastPostString = postString
+
+		plugin:print('Ping!')
+
+		http.post(cfg.host, cfg.path, {}, postString, 'application/json', onResponse)
 	end
-
-	hook.run('PostWebUploadBody', body)
-
-	local cfg = plugin.config
-	local postString = json.encode(body)
-
-	if postString == lastPostString and now - lastPostTime < cfg.maximumWaitTime then return end
-	lastPostTime = now
-	lastPostString = postString
-
-	plugin:print('Ping!')
-
-	http.post(cfg.host, cfg.path, {}, postString, 'application/json', onResponse)
-end
+)

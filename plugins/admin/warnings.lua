@@ -46,11 +46,14 @@ local displayRoutine = staggerRoutine(
 	end
 )
 
-plugin:addHook('Logic', function ()
-	local persistentData = persistence.get()
-	local now = os.realClock()
-	displayRoutine(persistentData, now)
-end)
+plugin:addHook(
+	'Logic',
+	function ()
+		local persistentData = persistence.get()
+		local now = os.realClock()
+		displayRoutine(persistentData, now)
+	end
+)
 
 plugin.commands['/warn'] = {
 	info = 'Warn a player.',

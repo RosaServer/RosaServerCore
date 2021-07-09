@@ -42,15 +42,23 @@ function isHiddenModerator (ply)
 	return isModerator(ply) and not visibleModerators[ply.index]
 end
 
-function plugin.hooks.PostPlayerCreate (ply)
-	awaitConnected[ply.index] = true
-	visibleModerators[ply.index] = nil
-end
+plugin:addHook(
+	'PostPlayerCreate',
+	---@param ply Player
+	function (ply)
+		awaitConnected[ply.index] = true
+		visibleModerators[ply.index] = nil
+	end
+)
 
-function plugin.hooks.PostPlayerDelete (ply)
-	awaitConnected[ply.index] = nil
-	visibleModerators[ply.index] = nil
-end
+plugin:addHook(
+	'PostPlayerDelete',
+	---@param ply Player
+	function (ply)
+		awaitConnected[ply.index] = nil
+		visibleModerators[ply.index] = nil
+	end
+)
 
 local displayRoutine = staggerRoutine(
 	players.getNonBots,
@@ -93,64 +101,88 @@ plugin:addHook(
 	end
 )
 
-function plugin.hooks.WebUploadBody ()
-	hiddenPlayers = {}
+plugin:addHook(
+	'WebUploadBody',
+	function ()
+		hiddenPlayers = {}
 
-	for _, ply in pairs(players.getNonBots()) do
-		if isHiddenModerator(ply) then
-			table.insert(hiddenPlayers, ply)
-			ply.isBot = true
+		for _, ply in pairs(players.getNonBots()) do
+			if isHiddenModerator(ply) then
+				table.insert(hiddenPlayers, ply)
+				ply.isBot = true
+			end
 		end
 	end
-end
+)
 
-function plugin.hooks.PostWebUploadBody ()
-	for _, ply in pairs(hiddenPlayers) do
-		ply.isBot = false
+plugin:addHook(
+	'PostWebUploadBody',
+	function ()
+		for _, ply in pairs(hiddenPlayers) do
+			ply.isBot = false
+		end
+
+		hiddenPlayers = nil
 	end
-
-	hiddenPlayers = nil
-end
+)
 
 do
 	local isInsideServerReceive
 	local shouldIgnoreMessage
 	local hidingAsBot
 
-	function plugin.hooks.ServerReceive ()
-		isInsideServerReceive = true
-	end
-
-	function plugin.hooks.EventUpdatePlayer (ply)
-		if not ply.isBot and isHiddenModerator(ply) then
-			hidingAsBot = true
-			ply.isBot = true
+	plugin:addHook(
+		'ServerReceive',
+		function ()
+			isInsideServerReceive = true
 		end
-	end
+	)
 
-	function plugin.hooks.PostEventUpdatePlayer (ply)
-		if hidingAsBot then
-			hidingAsBot = nil
-			ply.isBot = false
+	plugin:addHook(
+		'EventUpdatePlayer',
+		---@param ply Player
+		function (ply)
+			if not ply.isBot and isHiddenModerator(ply) then
+				hidingAsBot = true
+				ply.isBot = true
+			end
 		end
+	)
 
-		if isInsideServerReceive and isHiddenModerator(ply) then
-			shouldIgnoreMessage = true
+	plugin:addHook(
+		'PostEventUpdatePlayer',
+		---@param ply Player
+		function (ply)
+			if hidingAsBot then
+				hidingAsBot = nil
+				ply.isBot = false
+			end
+
+			if isInsideServerReceive and isHiddenModerator(ply) then
+				shouldIgnoreMessage = true
+			end
 		end
-	end
+	)
 
-	function plugin.hooks.EventMessage (_, message)
-		if shouldIgnoreMessage then
+	plugin:addHook(
+		'EventMessage',
+		---@param message string
+		function (_, message)
+			if shouldIgnoreMessage then
+				shouldIgnoreMessage = nil
+				plugin:print('Silencing moderator status message: ' .. message)
+				return hook.override
+			end
+		end
+	)
+
+	plugin:addHook(
+		'PostServerReceive',
+		function ()
+			isInsideServerReceive = nil
 			shouldIgnoreMessage = nil
-			plugin:print('Silencing moderator status message: ' .. message)
-			return hook.override
 		end
-	end
-
-	function plugin.hooks.PostServerReceive ()
-		isInsideServerReceive = nil
-		shouldIgnoreMessage = nil
-	end
+	)
 end
 
 plugin.commands['/mod'] = {

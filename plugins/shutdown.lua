@@ -8,17 +8,17 @@ local shuttingDown
 local ticksRemaining
 local reason
 
-function plugin.onEnable ()
+plugin:addEnableHandler(function ()
 	shuttingDown = false
 	ticksRemaining = 0
 	reason = nil
-end
+end)
 
-function plugin.onDisable ()
+plugin:addDisableHandler(function ()
 	shuttingDown = nil
 	ticksRemaining = nil
 	reason = nil
-end
+end)
 
 local function shutdown ()
 	accounts.save()
@@ -81,47 +81,50 @@ plugin.commands['/shutdown'] = {
 	end
 }
 
-function plugin.hooks.Logic ()
-	if shuttingDown then
-		if ticksRemaining <= 0 then
-			shutdown()
-			return
-		end
+plugin:addHook(
+	'Logic',
+	function ()
+		if shuttingDown then
+			if ticksRemaining <= 0 then
+				shutdown()
+				return
+			end
 
-		local secondsRemaining = ticksRemaining / server.TPS
-		local messageFrequency = 60
-		local doMinutes = true
+			local secondsRemaining = ticksRemaining / server.TPS
+			local messageFrequency = 60
+			local doMinutes = true
 
-		if secondsRemaining < 60 then
-			messageFrequency = 30
-			doMinutes = false
+			if secondsRemaining < 60 then
+				messageFrequency = 30
+				doMinutes = false
 
-			if secondsRemaining < 30 then
-				messageFrequency = 10
+				if secondsRemaining < 30 then
+					messageFrequency = 10
 
-				if secondsRemaining <= 5 then
-					messageFrequency = 1
+					if secondsRemaining <= 5 then
+						messageFrequency = 1
+					end
 				end
 			end
-		end
 
-		if ticksRemaining % (messageFrequency * server.TPS) == 0 then
-			local timeString
+			if ticksRemaining % (messageFrequency * server.TPS) == 0 then
+				local timeString
 
-			if doMinutes then
-				timeString = (secondsRemaining / 60) .. 'm'
-			else
-				timeString = secondsRemaining .. 's'
+				if doMinutes then
+					timeString = (secondsRemaining / 60) .. 'm'
+				else
+					timeString = secondsRemaining .. 's'
+				end
+
+				if reason then
+					timeString = timeString .. ' (' .. reason .. ')'
+				end
+
+				chat.announceWrap('[!] Server shutting down in ' .. timeString)
+				plugin:print('Shutting down in ' .. timeString)
 			end
 
-			if reason then
-				timeString = timeString .. ' (' .. reason .. ')'
-			end
-
-			chat.announceWrap('[!] Server shutting down in ' .. timeString)
-			plugin:print('Shutting down in ' .. timeString)
+			ticksRemaining = ticksRemaining - 1
 		end
-
-		ticksRemaining = ticksRemaining - 1
 	end
-end
+)

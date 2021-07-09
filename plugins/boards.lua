@@ -52,4 +52,4 @@ function postBoards ()
 	http.post(cfg.host, cfg.path, {}, postString, 'application/json', onResponse)
 end
 
-plugin.hooks.PostResetGame = postBoards
+plugin:addHook('PostResetGame', postBoards)

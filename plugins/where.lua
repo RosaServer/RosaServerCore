@@ -120,7 +120,7 @@ plugin.commands['/where'] = {
 			else
 				local closestIntersection, squareDistance = getClosestIntersection(victimMan.pos)
 				assert(closestIntersection, 'There are no street intersections to refer to')
-		
+
 				context = handleNearIntersection(closestIntersection, math.sqrt(squareDistance))
 			end
 		end

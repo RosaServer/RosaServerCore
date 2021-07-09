@@ -25,7 +25,7 @@ local recentFifteen
 local infoInterval
 local infoCounter
 
-function plugin.onEnable ()
+plugin:addEnableHandler(function ()
 	sampleCounter = 0
 	lastSampleTime = os.realClock()
 	recentFiveSec = 62.5
@@ -35,9 +35,9 @@ function plugin.onEnable ()
 
 	infoInterval = plugin.config.updateSeconds * server.TPS
 	infoCounter = 0
-end
+end)
 
-function plugin.onDisable ()
+plugin:addDisableHandler(function ()
 	sampleCounter = nil
 	lastSampleTime = nil
 	recentFiveSec = nil
@@ -47,41 +47,44 @@ function plugin.onDisable ()
 
 	infoInterval = nil
 	infoCounter = nil
-end
+end)
 
 local function calcTPS (avg, exp, tps)
 	return (avg * exp) + (tps * (1 - exp))
 end
 
-function plugin.hooks.Logic ()
-	sampleCounter = sampleCounter + 1
-	if sampleCounter == sampleInterval then
-		sampleCounter = 0
+plugin:addHook(
+	'Logic',
+	function ()
+		sampleCounter = sampleCounter + 1
+		if sampleCounter == sampleInterval then
+			sampleCounter = 0
 
-		local now = os.realClock()
-		local tps = 1 / (now - lastSampleTime) * sampleInterval
+			local now = os.realClock()
+			local tps = 1 / (now - lastSampleTime) * sampleInterval
 
-		recentFiveSec = calcTPS(recentFiveSec, expFiveSec, tps)
-		recentOne = calcTPS(recentOne, expOne, tps)
-		recentFive = calcTPS(recentFive, expFive, tps)
-		recentFifteen = calcTPS(recentFifteen, expFifteen, tps)
+			recentFiveSec = calcTPS(recentFiveSec, expFiveSec, tps)
+			recentOne = calcTPS(recentOne, expOne, tps)
+			recentFive = calcTPS(recentFive, expFive, tps)
+			recentFifteen = calcTPS(recentFifteen, expFifteen, tps)
 
-		lastSampleTime = now
-	end
+			lastSampleTime = now
+		end
 
-	infoCounter = infoCounter + 1
-	if infoCounter == infoInterval then
-		infoCounter = 0
+		infoCounter = infoCounter + 1
+		if infoCounter == infoInterval then
+			infoCounter = 0
 
-		local numPlayers = #players.getNonBots()
-		server:setConsoleTitle(string.format('%s | %i player%s | %.2f TPS (%.2f%%)', server.name, numPlayers, numPlayers == 1 and '' or 's', recentOne, recentOne / 62.5 * 100))
+			local numPlayers = #players.getNonBots()
+			server:setConsoleTitle(string.format('%s | %i player%s | %.2f TPS (%.2f%%)', server.name, numPlayers, numPlayers == 1 and '' or 's', recentOne, recentOne / 62.5 * 100))
 
-		if recentFiveSec < 50 then
-			plugin:warn('Tickrate dipped to ' .. recentFiveSec)
-			hook.run('TPSDipped', recentFiveSec)
+			if recentFiveSec < 50 then
+				plugin:warn('Tickrate dipped to ' .. recentFiveSec)
+				hook.run('TPSDipped', recentFiveSec)
+			end
 		end
 	end
-end
+)
 
 plugin.commands['/tps'] = {
 	info = "Check the server's TPS.",

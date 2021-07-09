@@ -27,60 +27,66 @@ plugin:addDisableHandler(function ()
 	disableBul = nil
 end)
 
-function plugin.hooks.Physics ()
-	if disablePhys then
-		return hook.override
-	end
+plugin:addHook(
+	'Physics',
+	function ()
+		if disablePhys then
+			return hook.override
+		end
 
-	for id, vcl in pairs(flyingMachines) do
-		local man = humans[id]
-		if not isActive(man) or not isActive(man.player) or not isActive(vcl) or not man.vehicle then
-			if isActive(vcl) then
-				vcl:remove()
-				if isActive(man) then
-					man.vehicle = nil
+		for id, vcl in pairs(flyingMachines) do
+			local man = humans[id]
+			if not isActive(man) or not isActive(man.player) or not isActive(vcl) or not man.vehicle then
+				if isActive(vcl) then
+					vcl:remove()
+					if isActive(man) then
+						man.vehicle = nil
+					end
 				end
-			end
-			flyingMachines[id] = nil
-		else
-			local s = 0.1
-			local offset = Vector()
-			if bit32.band(man.inputFlags, 16) ~= 0 then
-				s = 1.5
-			end
-			if bit32.band(man.inputFlags, 4) ~= 0 then
-				offset:add(Vector(0, s, 0))
-			end
-			if bit32.band(man.inputFlags, 8) ~= 0 then
-				offset:add(Vector(0, -s, 0))
-			end
+				flyingMachines[id] = nil
+			else
+				local s = 0.1
+				local offset = Vector()
+				if bit32.band(man.inputFlags, 16) ~= 0 then
+					s = 1.5
+				end
+				if bit32.band(man.inputFlags, 4) ~= 0 then
+					offset:add(Vector(0, s, 0))
+				end
+				if bit32.band(man.inputFlags, 8) ~= 0 then
+					offset:add(Vector(0, -s, 0))
+				end
 
-			if man.strafeInput ~= 0 then
-				offset:add(Vector(s * man.strafeInput, 0, 0))
+				if man.strafeInput ~= 0 then
+					offset:add(Vector(s * man.strafeInput, 0, 0))
+				end
+				if man.walkInput ~= 0 then
+					offset:add(Vector(0, 0, s * -man.walkInput))
+				end
+				vcl.rigidBody.pos:add(offset)
 			end
-			if man.walkInput ~= 0 then
-				offset:add(Vector(0, 0, s * -man.walkInput))
-			end
-			vcl.rigidBody.pos:add(offset)
 		end
 	end
-end
+)
 
-function plugin.hooks.PhysicsBullets ()
-	if not disableBul then return end
+plugin:addHook(
+	'PhysicsBullets',
+	function ()
+		if not disableBul then return end
 
-	local doGC = false
-	for _, bul in pairs(bullets.getAll()) do
-		bul.time = -1
-		doGC = true
+		local doGC = false
+		for _, bul in pairs(bullets.getAll()) do
+			bul.time = -1
+			doGC = true
+		end
+
+		if doGC then
+			physics.garbageCollectBullets()
+		end
+
+		return hook.override
 	end
-
-	if doGC then
-		physics.garbageCollectBullets()
-	end
-
-	return hook.override
-end
+)
 
 plugin.commands['/fly'] = {
 	info = 'Enter a noclip vehicle.',
