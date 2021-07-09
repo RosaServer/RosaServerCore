@@ -3,9 +3,9 @@ local mode = ...
 mode.name = 'Eliminator'
 mode.author = 'Cryptic Sea'
 
-function mode.onEnable (isReload)
+mode:addEnableHandler(function (isReload)
 	server.type = TYPE_TERMINATOR
 	if not isReload then
 		server:reset()
 	end
-end
+end)

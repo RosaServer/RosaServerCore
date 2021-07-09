@@ -17,42 +17,54 @@ mode.defaultConfig = {
 
 local mapName
 
-function mode.onEnable (isReload)
+mode:addEnableHandler(function (isReload)
 	mapName = mode.config.startingMap
 	if not isReload then
 		server:reset()
 	end
-end
+end)
 
-function mode.onDisable ()
+mode:addDisableHandler(function (isReload)
 	mapName = nil
-end
+end)
 
-function mode.hooks.ResetGame ()
-	server.type = 20
-	server.levelToLoad = mapName
-end
+mode:addHook(
+	'ResetGame',
+	function ()
+		server.type = 20
+		server.levelToLoad = mapName
+	end
+)
 
-function mode.hooks.PostResetGame ()
-	server.state = STATE_GAME
-	server.time = 600
-end
+mode:addHook(
+	'PostResetGame',
+	function ()
+		server.state = STATE_GAME
+		server.time = 600
+	end
+)
 
-function mode.hooks.ServerSend ()
-	for _, ply in ipairs(players.getNonBots()) do
-		if not ply.human then
-			ply.menuTab = 1
-		else
+mode:addHook(
+	'ServerSend',
+	function ()
+		for _, ply in ipairs(players.getNonBots()) do
+			if not ply.human then
+				ply.menuTab = 1
+			else
+				ply.menuTab = 0
+			end
+		end
+	end
+)
+
+mode:addHook(
+	'PostServerSend',
+	function ()
+		for _, ply in ipairs(players.getNonBots()) do
 			ply.menuTab = 0
 		end
 	end
-end
-
-function mode.hooks.PostServerSend ()
-	for _, ply in ipairs(players.getNonBots()) do
-		ply.menuTab = 0
-	end
-end
+)
 
 local function clickedEnterCity (ply)
 	if not ply.human then
@@ -67,18 +79,22 @@ local function clickedEnterCity (ply)
 	end
 end
 
-function mode.hooks.PlayerActions (ply)
-	if not ply.human and mode.config.autoSpawn then
-		clickedEnterCity(ply)
-	elseif ply.numActions ~= ply.lastNumActions then
-		local action = ply:getAction(ply.lastNumActions)
-
-		if action.type == 0 and action.a == 1 and action.b == 1 then
+mode:addHook(
+	'PlayerActions',
+	---@param ply Player
+	function (ply)
+		if not ply.human and mode.config.autoSpawn then
 			clickedEnterCity(ply)
-			ply.lastNumActions = ply.numActions
+		elseif ply.numActions ~= ply.lastNumActions then
+			local action = ply:getAction(ply.lastNumActions)
+
+			if action.type == 0 and action.a == 1 and action.b == 1 then
+				clickedEnterCity(ply)
+				ply.lastNumActions = ply.numActions
+			end
 		end
 	end
-end
+)
 
 mode.commands['/map'] = {
 	info = 'Change the map.',

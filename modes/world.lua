@@ -3,9 +3,9 @@ local mode = ...
 mode.name = 'World'
 mode.author = 'Cryptic Sea'
 
-function mode.onEnable (isReload)
+mode:addEnableHandler(function (isReload)
 	server.type = TYPE_WORLD
 	if not isReload then
 		server:reset()
 	end
-end
+end)
