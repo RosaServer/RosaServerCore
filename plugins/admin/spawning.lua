@@ -314,7 +314,7 @@ plugin.commands['/del'] = {
 				ray.obj:remove()
 				adminLog('%s deleted a %s', ply.name, ray.type)
 			end
-			event.bulletHit(2, ray.pos, ray.normal)
+			events.createBulletHit(2, ray.pos, ray.normal)
 		end
 	end
 }
