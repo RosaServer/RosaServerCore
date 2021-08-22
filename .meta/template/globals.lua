@@ -179,38 +179,6 @@ function zlib.compress(input) end
 ---@return string uncompressed The uncompressed data.
 function zlib.uncompress(compressed, uncompressedSize) end
 
----Library for creating networked events.
-event = {}
-
----Play a sound.
----@param soundType integer The type of the sound.
----@param position Vector The position of the sound.
----@param volume number The volume of the sound, where 1.0 is standard.
----@param pitch number The pitch of the sound, where 1.0 is standard.
-function event.sound(soundType, position, volume, pitch) end
-
----Play a sound.
----@param soundType integer The type of the sound.
----@param position Vector The position of the sound.
-function event.sound(soundType, position) end
-
----Display a grenade explosion.
----@param position Vector The position to show the explosion at.
-function event.explosion(position) end
-
----Display a bullet with a sound, tracer, and optionally a muzzle flash and casing.
----@param bulletType integer The type of bullet.
----@param position Vector The initial position the bullet.
----@param velocity Vector The initial velocity of the bullet.
----@param item? Item The item the bullet came from.
-function event.bullet(bulletType, position, velocity, item) end
-
----Indicate a bullet has hit a person or thing.
----@param hitType integer The type of hit. 0 = bullet hole (stays until round reset), 1 = human hit (blood), 2 = car hit (metal), 3 = blood drip (bleeding).
----@param position Vector The position the bullet hit.
----@param normal Vector The normal of the surface the bullet hit.
-function event.bulletHit(hitType, position, normal) end
-
 ---Library for using generic physics functions of the engine.
 physics = {}
 
@@ -278,20 +246,14 @@ chat = {}
 
 ---Display a message in the chat box to everybody.
 ---@param message string The message to send. Max length 63.
+---@return Event event The created event.
 function chat.announce(message) end
 
 ---Display a message in the chat box only to admins.
 ---More specifically, all players whose connection has `adminVisible` set to true.
 ---@param message string The message to send. Max length 63.
+---@return Event event The created event.
 function chat.tellAdmins(message) end
-
----Add a message to chat using the engine's expected values.
----@param speakerType integer The type of message. 0 = dead chat, 1 = human speaking, 2 = item speaking, 3 = MOTD, 4 = to admins, 5 = billboard, 6 = to player.
----@param message string The message to send. Max length 63.
----@param speakerIndex integer The index of the speaker object of the corresponding type, if applicable, or -1.
----@param volumeLevel integer The volume to speak at. 0 = whisper, 1 = normal, 2 = yell.
----@deprecated
-function chat.addRaw(speakerType, message, speakerIndex, volumeLevel) end
 
 ---Library for managing Account objects.
 ---accounts[index: integer] -> Account
@@ -512,6 +474,22 @@ function intersections.getAll() end
 ---@return integer count How many StreetIntersection objects there are.
 function intersections.getCount() end
 
+---Library for managing TrafficCar objects.
+---trafficCars[index: integer] -> TrafficCar
+trafficCars = {}
+
+---Get all traffic cars.
+---@return TrafficCar[] cars A list of all TrafficCar objects.
+function trafficCars.getAll() end
+
+---Get the number of traffic cars.
+---@return integer count How many TrafficCar objects there are.
+function trafficCars.getCount() end
+
+---Randomly create some traffic cars.
+---@param amount integer The number of cars to create.
+function trafficCars.createMany(amount) end
+
 ---Library for managing Building objects.
 ---buildings[index: integer] -> Building
 buildings = {}
@@ -523,6 +501,60 @@ function buildings.getAll() end
 ---Get the number of buildings.
 ---@return integer count How many Building objects there are.
 function buildings.getCount() end
+
+---Library for managing Event objects.
+---events[index: integer] -> Event
+events = {}
+
+---Get all events.
+---@return Event[] events A list of all Event objects.
+function events.getAll() end
+
+---Get the number of events.
+---@return integer count How many Event objects there are.
+function events.getCount() end
+
+---Display a bullet with a sound, tracer, and optionally a muzzle flash and casing.
+---@param bulletType integer The type of bullet.
+---@param position Vector The initial position the bullet.
+---@param velocity Vector The initial velocity of the bullet.
+---@param item? Item The item the bullet came from.
+---@return Event event The created event.
+function events.createBullet(bulletType, position, velocity, item) end
+
+---Indicate a bullet has hit a person or thing.
+---@param hitType integer The type of hit. 0 = bullet hole (stays until round reset), 1 = human hit (blood), 2 = car hit (metal), 3 = blood drip (bleeding).
+---@param position Vector The position the bullet hit.
+---@param normal Vector The normal of the surface the bullet hit.
+---@return Event event The created event.
+function events.createBulletHit(hitType, position, normal) end
+
+---Show a chat message.
+---@param speakerType integer The type of message. 0 = dead chat, 1 = human speaking, 2 = item speaking, 3 = MOTD, 4 = to admins, 5 = billboard, 6 = to player.
+---@param message string The message to send. Max length 63.
+---@param speakerIndex integer The index of the speaker object of the corresponding type, if applicable, or -1.
+---@param volumeLevel integer The volume to speak at. 0 = whisper, 1 = normal, 2 = yell.
+---@return Event event The created event.
+function events.createMessage(speakerType, message, speakerIndex, volumeLevel) end
+
+---Play a sound.
+---@param soundType integer The type of the sound.
+---@param position Vector The position of the sound.
+---@param volume number The volume of the sound, where 1.0 is standard.
+---@param pitch number The pitch of the sound, where 1.0 is standard.
+---@return Event event The created event.
+function events.createSound(soundType, position, volume, pitch) end
+
+---Play a sound.
+---@param soundType integer The type of the sound.
+---@param position Vector The position of the sound.
+---@return Event event The created event.
+function events.createSound(soundType, position) end
+
+---Display a grenade explosion.
+---@param position Vector The position to show the explosion at.
+---@return Event event The created event.
+function events.createExplosion(position) end
 
 ---Library for directly reading and writing any memory.
 memory = {}
@@ -664,6 +696,12 @@ function os.listDirectory(path) end
 ---@param path string The path of the directory.
 ---@return boolean created Whether the directory was created.
 function os.createDirectory(path) end
+
+---Get the time that a file was last modified.
+---Available in worker threads.
+---@param path string The path of the file to check.
+---@return number lastWriteTime The time that the file was last modified as a precise fractional Unix timestamp in seconds.
+function os.getLastWriteTime(path) end
 
 ---Get an accurate clock value counting up in real seconds.
 ---Available in worker threads.

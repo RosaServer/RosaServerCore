@@ -37,7 +37,6 @@ do
 	---@field version string 🔒 Game build, ex. "36a"
 	---@field versionMajor integer 🔒 Major version number, ex. 36
 	---@field versionMinor integer 🔒 Minor version number, ex. 1
-	---@field numEvents integer 🔒 How many networked events there currently are, resets to 0 when the server resets.
 	local Server
 
 	---Reset the game with reason RESET_REASON_LUACALL.
@@ -79,20 +78,37 @@ do
 
 	---Calculate the distance between self and other.
 	---@param other Vector The vector to calculate distance to.
-	---@return number distance The distance in units.
+	---@return number distance The distance between self and other.
 	function Vector:dist(other) end
 
 	---Calculate the distance between self and other, squared.
 	---Much faster as it does not square root the value.
 	---@param other Vector The vector to calculate distance to.
-	---@return number distanceSquared The distance in units, squared.
+	---@return number distanceSquared The distance, squared.
 	function Vector:distSquare(other) end
 
-	---Get the coordinates of the block the vector is in.
+	---Calculate the length of the vector.
+	---@return number length The length of the vector.
+	function Vector:length() end
+
+	---Calculate the length of the vector, squared.
+	---Much faster as it does not square root the value.
+	---@return number length The length of the vector, squared.
+	function Vector:lengthSquare() end
+
+	---Calculate the dot product of self and other.
+	---@param other Vector The vector to calculate the dot product with.
+	---@return number dotProduct The dot product of self and other.
+	function Vector:dot(other) end
+
+	---Get the coordinates of the level block the vector is in.
 	---@return integer blockX
 	---@return integer blockY
 	---@return integer blockZ
 	function Vector:getBlockPos() end
+
+	---Normalize the vector's values so that it has a length of 1.
+	function Vector:normalize() end
 end
 
 do
@@ -207,9 +223,11 @@ do
 	function Player:getMenuButton(index) end
 
 	---Fire a network event containing basic info.
+	---@return Event event The created event.
 	function Player:update() end
 
 	---Fire a network event containing financial info.
+	---@return Event event The created event.
 	function Player:updateFinance() end
 
 	---Remove self safely and fire a network event.
@@ -462,6 +480,7 @@ do
 	---@field steerControl number Left to right wheel position, -0.75 to 0.75.
 	---@field gasControl number Brakes to full gas, -1 to 1.
 	---@field engineRPM integer The RPM of the engine to be networked, 0 to 8191.
+	---@field numSeats integer The number of accessible seats.
 	---@field index integer 🔒 The index of the array in memory this is (0-511).
 	---@field isActive boolean Whether or not this exists, only change if you know what you are doing.
 	---@field lastDriver Player? 🔒 The last person to drive the vehicle.
@@ -469,6 +488,7 @@ do
 	local Vehicle
 
 	---Fire a network event containing basic info.
+	---@return Event event The created event.
 	function Vehicle:updateType() end
 
 	---Fire a network event to make a part appear to break.
@@ -476,6 +496,7 @@ do
 	---@param kind integer The kind of part. 0 = window, 1 = tire, 2 = entire body, 6 = repair window.
 	---@param position Vector The global position of the destruction.
 	---@param normal Vector The normal of the destruction.
+	---@return Event event The created event.
 	function Vehicle:updateDestruction(kind, partIndex, position, normal) end
 
 	---Remove self safely and fire a network event.
@@ -586,6 +607,7 @@ do
 	---@field timeoutTime integer How many ticks the connection has not responded, will be deleted after 30 seconds.
 	---@field address string 🔒 IPv4 address ("x.x.x.x")
 	---@field adminVisible boolean Whether this connection is sent admin only events (admin messages).
+	---@field player Player? The connected player.
 	---@field spectatingHuman Human? The human this connection is currently spectating, if any.
 	local Connection
 
@@ -593,6 +615,11 @@ do
 	---@param index integer The index between 0 and 7.
 	---@return EarShot earShot The desired earshot.
 	function Connection:getEarShot(index) end
+
+	---Check whether or not the connection has received an event, at which point the event won't be transmitted to them anymore.
+	---@param event Event The event to compare.
+	---@return boolean
+	function Connection:hasReceivedEvent(event) end
 end
 
 do
@@ -824,6 +851,12 @@ do
 	---Throws if the file is not opened, or there is a problem when reading or encoding.
 	---@return frame? string The next encoded frame, or nil if there is nothing left to read.
 	function OpusEncoder:encodeFrame() end
+
+	---Encode a single 20ms Opus frame.
+	---Throws if input is the wrong length, or there is a problem when encoding.
+	---@param input string The raw PCM bytes, which contains 960 32-bit floats.
+	---@return frame string The encoded frame.
+	function OpusEncoder:encodeFrame(input) end
 end
 
 ---Represents a real number used in hooks whose value can be changed before its parent is called.
@@ -938,6 +971,18 @@ end
 ---@field streetWest Street? 🔒 The street connected to the west, if any.
 ---@field streetNorth Street? 🔒 The street connected to the north, if any.
 
+---@class TrafficCar
+---@field class string 🔒 "TrafficCar"
+---@field index integer 🔒 The index of the array in memory this is.
+---@field type VehicleType The type of the car.
+---@field human Human? The human driving the car.
+---@field vehicle Vehicle? The real vehicle used by the car.
+---@field pos Vector Position.
+---@field vel Vector Velocity.
+---@field yaw number Radians.
+---@field rot RotMatrix Rotation.
+---@field color integer The color of the car.
+
 ---Represents a car for sale at a car shop.
 ---@class ShopCar
 ---@field class string 🔒 "ShopCar"
@@ -955,3 +1000,19 @@ end
 ---@field transmittingItem Item? The item that the other person is using to transmit their voice.
 ---@field distance number The distance of the voice.
 ---@field volume number The estimated volume of the voice, 0 to 1.
+
+---Represents an occurrence that is synchronized to all connections.
+---@class Event
+---@field class string 🔒 "Event"
+---@field index integer 🔒 The index of the array in memory this is.
+---@field type integer The type of the event. Different types use different data fields.
+---@field tickCreated integer The number of ticks since the last game reset at which the event was created.
+---@field vectorA Vector
+---@field vectorB Vector
+---@field a integer
+---@field b integer
+---@field c integer
+---@field d integer
+---@field floatA number
+---@field floatB number
+---@field message string Max length of 63.
