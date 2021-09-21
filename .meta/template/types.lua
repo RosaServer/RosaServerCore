@@ -207,7 +207,7 @@ do
 	---@field isZombie boolean 💾
 	---@field human Human? 💾 The human they currently control.
 	---@field connection Connection? 🔒 Their network connection.
-	---@field account Account Their account.
+	---@field account Account? Their account.
 	---@field voice Voice Their voice.
 	---@field botDestination Vector? The location this bot will walk towards.
 	local Player
