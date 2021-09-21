@@ -205,11 +205,11 @@ do
 	---@field isReady boolean
 	---@field isBot boolean 💾
 	---@field isZombie boolean 💾
-	---@field human Human? 💾 The human they currently control.
-	---@field connection Connection? 🔒 Their network connection.
-	---@field account Account? Their account.
+	---@field human? Human 💾 The human they currently control.
+	---@field connection? Connection 🔒 Their network connection.
+	---@field account? Account Their account.
 	---@field voice Voice Their voice.
-	---@field botDestination Vector? The location this bot will walk towards.
+	---@field botDestination? Vector The location this bot will walk towards.
 	local Player
 
 	---Get a specific action.
@@ -284,9 +284,9 @@ do
 	---@field isOnGround boolean 🔒
 	---@field isStanding boolean 🔒
 	---@field isBleeding boolean
-	---@field player Player? The player controlling this human.
-	---@field account Account? The disconnected account that owns this human.
-	---@field vehicle Vehicle? The vehicle they are inside.
+	---@field player? Player The player controlling this human.
+	---@field account? Account The disconnected account that owns this human.
+	---@field vehicle? Vehicle The vehicle they are inside.
 	local Human
 
 	---Remove self safely and fire a network event.
@@ -386,8 +386,8 @@ do
 	---@field type ItemType 💾
 	---@field despawnTime integer Ticks remaining until removal.
 	---@field parentSlot integer The slot this item occupies if it has a parent.
-	---@field parentHuman Human? The human this item is mounted to, if any.
-	---@field parentItem Item? The item this item is mounted to, if any.
+	---@field parentHuman? Human The human this item is mounted to, if any.
+	---@field parentItem? Item The item this item is mounted to, if any.
 	---@field pos Vector Position.
 	---@field vel Vector Velocity.
 	---@field rot RotMatrix Rotation.
@@ -402,8 +402,8 @@ do
 	---@field physicsSettledTimer integer How many ticks the item has been settling. Once it has reached 60, it will be settled.
 	---@field isStatic boolean Whether the item is immovable.
 	---@field rigidBody RigidBody The rigid body representing the physics of this item.
-	---@field vehicle Vehicle? The vehicle which this item is a key for.
-	---@field grenadePrimer Player? The player who primed this grenade.
+	---@field vehicle? Vehicle The vehicle which this item is a key for.
+	---@field grenadePrimer? Player The player who primed this grenade.
 	local Item
 
 	---Remove self safely and fire a network event.
@@ -483,7 +483,7 @@ do
 	---@field numSeats integer The number of accessible seats.
 	---@field index integer 🔒 The index of the array in memory this is (0-511).
 	---@field isActive boolean Whether or not this exists, only change if you know what you are doing.
-	---@field lastDriver Player? 🔒 The last person to drive the vehicle.
+	---@field lastDriver? Player 🔒 The last person to drive the vehicle.
 	---@field rigidBody RigidBody 🔒 The rigid body representing the physics of this vehicle.
 	local Vehicle
 
@@ -607,8 +607,8 @@ do
 	---@field timeoutTime integer How many ticks the connection has not responded, will be deleted after 30 seconds.
 	---@field address string 🔒 IPv4 address ("x.x.x.x")
 	---@field adminVisible boolean Whether this connection is sent admin only events (admin messages).
-	---@field player Player? The connected player.
-	---@field spectatingHuman Human? The human this connection is currently spectating, if any.
+	---@field player? Player The connected player.
+	---@field spectatingHuman? Human The human this connection is currently spectating, if any.
 	local Connection
 
 	---Get a specific voice earshot.
@@ -906,7 +906,7 @@ end
 ---@field lastPos Vector Where the bullet was last tick.
 ---@field pos Vector Position.
 ---@field vel Vector Velocity.
----@field player Player? Who shot this bullet.
+---@field player? Player Who shot this bullet.
 
 ---Represents a bone in a human.
 ---@class Bone
@@ -916,8 +916,8 @@ end
 
 ---@class InventorySlot
 ---@field class string 🔒 "InventorySlot"
----@field primaryItem Item? 🔒 The first item in the slot, if any.
----@field secondaryItem Item? 🔒 The second item in the slot, if any.
+---@field primaryItem? Item 🔒 The first item in the slot, if any.
+---@field secondaryItem? Item 🔒 The second item in the slot, if any.
 
 ---Represents a bond between one or two rigid bodies.
 ---@class Bond
@@ -966,17 +966,17 @@ end
 ---@field lightWest integer The colour of the west light. 0 = red, 1 = yellow, 2 = green.
 ---@field lightNorth integer The colour of the north light. 0 = red, 1 = yellow, 2 = green.
 ---@field index integer 🔒 The index of the array in memory this is.
----@field streetEast Street? 🔒 The street connected to the east, if any.
----@field streetSouth Street? 🔒 The street connected to the south, if any.
----@field streetWest Street? 🔒 The street connected to the west, if any.
----@field streetNorth Street? 🔒 The street connected to the north, if any.
+---@field streetEast? Street 🔒 The street connected to the east, if any.
+---@field streetSouth? Street 🔒 The street connected to the south, if any.
+---@field streetWest? Street 🔒 The street connected to the west, if any.
+---@field streetNorth? Street 🔒 The street connected to the north, if any.
 
 ---@class TrafficCar
 ---@field class string 🔒 "TrafficCar"
 ---@field index integer 🔒 The index of the array in memory this is.
 ---@field type VehicleType The type of the car.
----@field human Human? The human driving the car.
----@field vehicle Vehicle? The real vehicle used by the car.
+---@field human? Human The human driving the car.
+---@field vehicle? Vehicle The real vehicle used by the car.
 ---@field pos Vector Position.
 ---@field vel Vector Velocity.
 ---@field yaw number Radians.
@@ -994,10 +994,10 @@ end
 ---@class EarShot
 ---@field class string 🔒 "EarShot"
 ---@field isActive boolean Whether or not this exists.
----@field player Player? The player that the voice is coming from.
----@field human Human? The human that the voice appears to come from.
----@field receivingItem Item? The item that the voice appears to come from.
----@field transmittingItem Item? The item that the other person is using to transmit their voice.
+---@field player? Player The player that the voice is coming from.
+---@field human? Human The human that the voice appears to come from.
+---@field receivingItem? Item The item that the voice appears to come from.
+---@field transmittingItem? Item The item that the other person is using to transmit their voice.
 ---@field distance number The distance of the voice.
 ---@field volume number The estimated volume of the voice, 0 to 1.
 
