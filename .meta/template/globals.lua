@@ -211,6 +211,37 @@ function physics.lineIntersectHuman(human, posA, posB) end
 ---@return LineIntersectResult result The result of the intersection.
 function physics.lineIntersectVehicle(vehicle, posA, posB) end
 
+---Cast a quick ray in the level and find how far along the ray it went.
+---@param posA Vector The start point of the ray.
+---@param posB Vector The end point of the ray.
+---@param state?
+---@return number? fraction The fraction of the intersection.
+function physics.lineIntersectLevelQuick(posA, posB, state) end
+
+---Cast a quick ray on a single human.
+---@param human Human The human to cast the ray on.
+---@param posA Vector The start point of the ray.
+---@param posB Vector The end point of the ray.
+---@param state?
+---@return number? fraction The fraction of the intersection.
+function physics.lineIntersectHumanQuick(human, posA, posB, state) end
+
+---Cast a quick ray on a single vehicle.
+---@param vehicle Vehicle The vehicle to cast the ray on.
+---@param posA Vector The start point of the ray.
+---@param posB Vector The end point of the ray.
+---@param state?
+---@return number? fraction The fraction of the intersection.
+function physics.lineIntersectVehicleQuick(vehicle, posA, posB, state) end
+
+---Cast a quick ray on any human or vehicle.
+---@param posA Vector The start point of the ray.
+---@param posB Vector The end point of the ray.
+---@param ignoreHuman? Human The human to ignore during raycast.
+---@param state?
+---@return object? Object The nearest human or vehicle that the ray hit.
+function physics.lineIntersectAnyQuick(posA, posB, ignoreHuman, state) end
+
 ---Cast a ray on an arbitrary triangle.
 ---The vertices of the triangle must be clockwise relative to the normal.
 ---The vector passed to outPosition will be modified by the function.
@@ -223,33 +254,6 @@ function physics.lineIntersectVehicle(vehicle, posA, posB) end
 ---@param triC Vector The third vertex of the triangle.
 ---@return number? fraction How far along the ray hit was (0.0 - 1.0). Nil if it did not hit.
 function physics.lineIntersectTriangle(outPosition, normal, posA, posB, triA, triB, triC) end
-
----Cast a quick ray in the level and find how far along the ray it went.
----@param posA Vector The start point of the ray.
----@param posB Vector The end point of the ray.
----@return number? fraction The fraction of the intersection.
-function physics.lineIntersectLevelQuick(posA, posB) end
-
----Cast a quick ray on a single human.
----@param human Human The human to cast the ray on.
----@param posA Vector The start point of the ray.
----@param posB Vector The end point of the ray.
----@return number? fraction The fraction of the intersection.
-function physics.lineIntersectHumanQuick(human, posA, posB) end
-
----Cast a quick ray on a single vehicle.
----@param vehicle Vehicle The vehicle to cast the ray on.
----@param posA Vector The start point of the ray.
----@param posB Vector The end point of the ray.
----@return number? fraction The fraction of the intersection.
-function physics.lineIntersectVehicleQuick(vehicle, posA, posB) end
-
----Cast a quick ray on any human or vehicle.
----@param posA Vector The start point of the ray.
----@param posB Vector The end point of the ray.
----@param ignoreHuman? Human The human to ignore during raycast.
----@return object? Object The nearest human or vehicle that the ray hit.
-function physics.lineIntersectAnyQuick(posA, posB, ignoreHuman) end
 
 ---Remove all bullets that have no time remaining.
 ---May shift bullets in memory if any are removed.
