@@ -235,7 +235,7 @@ function physics.lineIntersectVehicleQuick(vehicle, posA, posB) end
 ---@param posA Vector The start point of the ray.
 ---@param posB Vector The end point of the ray.
 ---@param ignoreHuman? Human The human to ignore during raycast.
----@return object? Object The nearest human or vehicle that the ray hit.
+---@return object? Human|Vehicle The nearest human or vehicle that the ray hit.
 function physics.lineIntersectAnyQuick(posA, posB, ignoreHuman) end
 
 ---Cast a ray on an arbitrary triangle.
