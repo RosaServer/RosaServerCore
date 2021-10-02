@@ -204,7 +204,7 @@ do
 	---@field isAdmin boolean
 	---@field isReady boolean
 	---@field isBot boolean 💾
-	---@field isZombie boolean 💾
+	---@field isZombie boolean 💾 Whether the bot player should always run towards it's target.
 	---@field human? Human 💾 The human they currently control.
 	---@field connection? Connection 🔒 Their network connection.
 	---@field account? Account Their account.
@@ -266,6 +266,13 @@ do
 	---@field leftLegHP integer
 	---@field rightLegHP integer
 	---@field progressBar integer Progress bar displayed in the center of the screen, 0-255. 0 = disabled.
+	---@field inventoryAnimationFlags integer 
+	---@field inventoryAnimationProgress integer 
+	---@field inventoryAnimationDuration number 
+	---@field inventoryAnimationHand integer 
+	---@field inventoryAnimationSlot integer 
+	---@field inventoryAnimationCounter integer 
+	---@field inventoryAnimationCounterFinished integer 
 	---@field gender integer See Player.gender.
 	---@field head integer See Player.head.
 	---@field skinColor integer See Player.skinColor.
@@ -404,6 +411,11 @@ do
 	---@field rigidBody RigidBody The rigid body representing the physics of this item.
 	---@field vehicle? Vehicle The vehicle which this item is a key for.
 	---@field grenadePrimer? Player The player who primed this grenade.
+	---@field phoneTexture integer 💾 The phone's texture ID. 0 for white, 1 for black.
+	---@field phoneNumber integer The number used to call this phone.
+	---@field displayPhoneNumber integer 💾 The number currently displayed on the phone.
+	---@field enteredPhoneNumber integer The number that has been entered on the phone. Will reset upon reaching 4 digits.
+	---@field connectedPhone? Item The phone that this phone is connected to.
 	local Item
 
 	---Remove self safely and fire a network event.
@@ -459,6 +471,10 @@ do
 	---@param columnIndex integer Which column to edit.
 	---@param color integer The color to set, between 0x00 and 0xFF.
 	function Item:computerSetColor(lineIndex, columnIndex, color) end
+	
+	---Increment the current line of a computer.
+	---Only works if this item is a computer.
+	function Item:computerIncrementLine() end
 end
 
 do
