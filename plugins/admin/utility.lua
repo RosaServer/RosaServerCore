@@ -3,7 +3,7 @@ local plugin = ...
 
 plugin.commands['/message'] = {
 	info = 'Announce a message.',
-	usage = '/message <message>',
+	usage = '<message>',
 	alias = {'/msg'},
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
@@ -20,7 +20,7 @@ plugin.commands['/message'] = {
 
 plugin.commands['/say'] = {
 	info = 'Announce a message prepended by (Moderator).',
-	usage = '/say <message>',
+	usage = '<message>',
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
 	---@param ply Player
 	---@param args string[]
@@ -36,7 +36,7 @@ plugin.commands['/say'] = {
 
 plugin.commands['/name'] = {
 	info = 'Set the server name.',
-	usage = '/name <name>',
+	usage = '<name>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
 	---@param args string[]
@@ -52,7 +52,7 @@ plugin.commands['/name'] = {
 
 plugin.commands['/time'] = {
 	info = 'Set the solar time.',
-	usage = '/time <hour/hour:minute>',
+	usage = '<hour/hour:minute>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
 	---@param args string[]
@@ -141,7 +141,7 @@ plugin.commands['/skip'] = {
 
 plugin.commands['/who'] = {
 	info = 'Search players by name.',
-	usage = '/who <name>',
+	usage = '<name>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
 	---@param args string[]

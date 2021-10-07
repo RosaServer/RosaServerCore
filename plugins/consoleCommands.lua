@@ -17,7 +17,7 @@ plugin.commands['clear'] = {
 
 plugin.commands['eval'] = {
 	info = 'Evaluate a Lua string.',
-	usage = 'eval <code>',
+	usage = '[code]',
 	---@param args string[]
 	call = function (args)
 		local str = table.concat(args, ' ')
@@ -97,7 +97,7 @@ end
 
 plugin.commands['enableplugin'] = {
 	info = 'Enable a plugin.',
-	usage = 'enableplugin <plugin>',
+	usage = '<plugin>',
 	autoComplete = autoCompletePluginArg,
 	---@param args string[]
 	call = function (args)
@@ -114,7 +114,7 @@ plugin.commands['enableplugin'] = {
 
 plugin.commands['disableplugin'] = {
 	info = 'Disable a plugin.',
-	usage = 'disableplugin <plugin>',
+	usage = '<plugin>',
 	autoComplete = autoCompletePluginArg,
 	---@param args string[]
 	call = function (args)
@@ -132,7 +132,7 @@ plugin.commands['disableplugin'] = {
 
 plugin.commands['reloadplugin'] = {
 	info = 'Reload a plugin.',
-	usage = 'reloadplugin <plugin>',
+	usage = '<plugin>',
 	autoComplete = autoCompletePluginOrModeArg,
 	---@param args string[]
 	call = function (args)
@@ -168,7 +168,7 @@ plugin.commands['reloadplugin'] = {
 
 plugin.commands['watchplugin'] = {
 	info = "Toggle auto-reloading for a plugin when it's modified.",
-	usage = 'watchplugin <plugin>',
+	usage = '<plugin>',
 	autoComplete = autoCompletePluginOrModeArg,
 	---@param args string[]
 	call = function (args)

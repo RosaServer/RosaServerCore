@@ -23,7 +23,7 @@ end
 
 plugin.commands['/find'] = {
 	info = 'Teleport to a player.',
-	usage = '/find <phoneNumber/name>',
+	usage = '<phoneNumber/name>',
 	canCall = function (ply) return ply.isAdmin end,
 	---@param ply Player
 	---@param man Human?
@@ -53,7 +53,7 @@ plugin.commands['/find'] = {
 
 plugin.commands['/fetch'] = {
 	info = 'Teleport a player to you.',
-	usage = '/fetch <phoneNumber/name>',
+	usage = '<phoneNumber/name>',
 	canCall = function (ply) return ply.isAdmin end,
 	---@param ply Player
 	---@param man Human?

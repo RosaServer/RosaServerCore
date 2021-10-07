@@ -41,7 +41,7 @@ end
 
 plugin.commands['/item'] = {
 	info = 'Spawn an item.',
-	usage = '/item <name/id>',
+	usage = '<name/id>',
 	alias = {'/i'},
 	canCall = function (ply) return ply.isAdmin end,
 	---@param ply Player
@@ -68,7 +68,7 @@ plugin.commands['/item'] = {
 
 plugin.commands['/delitem'] = {
 	info = 'Delete items around you of a certain type.',
-	usage = '/delitem <name/id>',
+	usage = '<name/id>',
 	alias = {'/di'},
 	canCall = function (ply) return ply.isAdmin end,
 	---@param ply Player
@@ -102,7 +102,7 @@ plugin.commands['/delitem'] = {
 
 plugin.commands['/car'] = {
 	info = 'Spawn a vehicle.',
-	usage = '/car [name/id] [color]',
+	usage = '[name/id] [color]',
 	canCall = function (ply) return ply.isAdmin end,
 	---@param ply Player
 	---@param man Human?
@@ -133,7 +133,7 @@ plugin.commands['/car'] = {
 
 plugin.commands['/heli'] = {
 	info = 'Spawn a helicopter.',
-	usage = '/heli [color]',
+	usage = '[color]',
 	canCall = function (ply) return ply.isAdmin end,
 	---@param ply Player
 	---@param man Human?
@@ -145,7 +145,7 @@ plugin.commands['/heli'] = {
 
 plugin.commands['/bot'] = {
 	info = 'Spawn a Megacorp bot.',
-	usage = '/bot [team]',
+	usage = '[team]',
 	canCall = function (ply) return ply.isAdmin end,
 	---@param ply Player
 	---@param man Human?
@@ -188,7 +188,7 @@ plugin.commands['/bot'] = {
 
 plugin.commands['/cash'] = {
 	info = 'Give yourself money.',
-	usage = '/cash [amount]',
+	usage = '[amount]',
 	canCall = function (ply) return ply.isAdmin end,
 	---@param ply Player
 	---@param args string[]
@@ -203,7 +203,7 @@ plugin.commands['/cash'] = {
 
 plugin.commands['/give'] = {
 	info = 'Give a player money.',
-	usage = '/give <phoneNumber> <amount>',
+	usage = '<phoneNumber> <amount>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
@@ -234,7 +234,7 @@ plugin.commands['/give'] = {
 
 plugin.commands['/botply'] = {
 	info = 'Create bot players. Does nothing in default gamemodes.',
-	usage = '/botply [amount] [team]',
+	usage = '[amount] [team]',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
 	---@param args string[]

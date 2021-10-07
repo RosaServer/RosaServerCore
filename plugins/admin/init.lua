@@ -47,7 +47,7 @@ plugin.commands['/resetlua'] = {
 
 plugin.commands['/mode'] = {
 	info = 'Change the enabled mode.',
-	usage = '/mode <mode>',
+	usage = '<mode>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param args string[]
 	autoComplete = function (args)

@@ -91,7 +91,7 @@ end
 
 plugin.commands['/where'] = {
 	info = 'Locate a player.',
-	usage = '/where <phoneNumber/name>',
+	usage = '<phoneNumber/name>',
 	---@param ply Player
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param args string[]

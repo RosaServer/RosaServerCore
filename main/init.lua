@@ -54,7 +54,7 @@ local function handleChatCommandError (ply, commandName, command, result)
 	local stripped = endPos and errorString:sub(endPos + 1) or errorString
 
 	if stripped == 'usage' then
-		local usage = command.usage or commandName
+		local usage = commandName .. (command.usage and (' ' .. command.usage) or '')
 		messagePlayerWrap(ply, 'Usage: ' .. usage)
 	else
 		if not ply.isAdmin then

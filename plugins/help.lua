@@ -6,7 +6,7 @@ plugin.description = 'Adds the /help command.'
 
 plugin.commands['/help'] = {
 	info = 'Get some help.',
-	usage = '/help [page]',
+	usage = '[page]',
 	---@param ply Player
 	---@param args string[]
 	call = function (ply, _, args)
@@ -48,7 +48,7 @@ plugin.commands['/help'] = {
 
 			if type(command) == 'table' then
 				if command.usage then
-					str = command.usage
+					str = str .. ' ' .. command.usage
 				end
 				if command.info then
 					str = str .. ' - ' .. command.info

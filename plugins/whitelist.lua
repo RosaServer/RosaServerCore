@@ -111,7 +111,7 @@ plugin.commands['listwhitelist'] = {
 
 plugin.commands['/whitelist'] = {
 	info = 'Add a player to the whitelist.',
-	usage = '/whitelist <phoneNumber>',
+	usage = '<phoneNumber>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
 	---@param args string[]
@@ -136,7 +136,7 @@ plugin.commands['/whitelist'] = {
 
 plugin.commands['/unwhitelist'] = {
 	info = 'Remove a player from the whitelist.',
-	usage = '/unwhitelist <phoneNumber>',
+	usage = '<phoneNumber>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	---@param ply Player
 	---@param args string[]

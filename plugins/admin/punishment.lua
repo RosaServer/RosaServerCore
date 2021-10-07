@@ -34,7 +34,7 @@ end
 
 plugin.commands['/kick'] = {
 	info = 'Kick a player.',
-	usage = '/kick <phoneNumber/name> [reason]',
+	usage = '<phoneNumber/name> [reason]',
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
 	autoComplete = shared.autoCompletePlayerFirstArg,
 	---@param ply Player
@@ -67,7 +67,7 @@ plugin.commands['/kick'] = {
 
 plugin.commands['/punish'] = {
 	info = 'Ban an account based on previous bans.',
-	usage = '/punish <phoneNumber/name> [reason] [count]',
+	usage = '<phoneNumber/name> [reason] [count]',
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
@@ -137,7 +137,7 @@ plugin.commands['/punish'] = {
 
 plugin.commands['/unpunish'] = {
 	info = 'Remove punishments from an account.',
-	usage = '/unpunish <phoneNumber/name> [reason] [count]',
+	usage = '<phoneNumber/name> [reason] [count]',
 	canCall = function (ply) return ply.isConsole or isModeratorOrAdmin(ply) end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
@@ -199,7 +199,7 @@ plugin.commands['/unpunish'] = {
 
 plugin.commands['/ban'] = {
 	info = 'Ban an account.',
-	usage = '/ban <phoneNumber/name> <minutes> [reason]',
+	usage = '<phoneNumber/name> <minutes> [reason]',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
@@ -240,7 +240,7 @@ plugin.commands['/ban'] = {
 
 plugin.commands['/unban'] = {
 	info = 'Unban an account.',
-	usage = '/unban <phoneNumber/name> [reason]',
+	usage = '<phoneNumber/name> [reason]',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	autoComplete = shared.autoCompleteAccountFirstArg,
 	---@param ply Player
@@ -272,7 +272,7 @@ plugin.commands['/unban'] = {
 
 plugin.commands['/kill'] = {
 	info = 'Kill a player.',
-	usage = '/kill <phoneNumber/name>',
+	usage = '<phoneNumber/name>',
 	canCall = function (ply) return ply.isConsole or ply.isAdmin end,
 	autoComplete = shared.autoCompletePlayerFirstArg,
 	---@param ply Player
