@@ -279,14 +279,14 @@ plugin.commands['/del'] = {
 
 		local hitRays = {}
 
-		local ray = physics.lineIntersectLevel(pos, pos2)
+		local ray = physics.lineIntersectLevel(pos, pos2, false)
 		if ray.hit then
 			table.insert(hitRays, ray)
 		end
 
 		for _, human in pairs(humans.getAll()) do
 			if human.index ~= man.index then
-				ray = physics.lineIntersectHuman(human, pos, pos2)
+				ray = physics.lineIntersectHuman(human, pos, pos2, 0.0)
 				if ray.hit then
 					ray.obj = human
 					ray.type = 'human'
@@ -296,7 +296,7 @@ plugin.commands['/del'] = {
 		end
 
 		for _, vcl in pairs(vehicles.getAll()) do
-			ray = physics.lineIntersectVehicle(vcl, pos, pos2)
+			ray = physics.lineIntersectVehicle(vcl, pos, pos2, false)
 			if ray.hit then
 				ray.obj = vcl
 				ray.type = 'vehicle'
