@@ -179,6 +179,19 @@ function zlib.compress(input) end
 ---@return string uncompressed The uncompressed data.
 function zlib.uncompress(compressed, uncompressedSize) end
 
+---Library for crpytographic functions.
+crypto = {}
+
+---Get the MD5 hash of a string of bytes.
+---@param input string The data to hash.
+---@return string md5 The hashed data.
+function crypto.md5(input) end
+
+---Get the SHA-256 hash of a string of bytes.
+---@param input string The data to hash.
+---@return string sha256 The hashed data.
+function crypto.sha256(input) end
+
 ---Library for using generic physics functions of the engine.
 physics = {}
 
@@ -194,49 +207,58 @@ physics = {}
 ---Cast a ray in the level and find where it hits.
 ---@param posA Vector The start point of the ray.
 ---@param posB Vector The end point of the ray.
+---@param onlyCity boolean Whether to only include the city (not landscape, tracks, etc).
 ---@return LineIntersectResult result The result of the intersection.
-function physics.lineIntersectLevel(posA, posB) end
+function physics.lineIntersectLevel(posA, posB, onlyCity) end
 
 ---Cast a ray on a single human.
 ---@param human Human The human to cast the ray on.
 ---@param posA Vector The start point of the ray.
 ---@param posB Vector The end point of the ray.
+---@param padding number The extra padding.
 ---@return LineIntersectResult result The result of the intersection.
-function physics.lineIntersectHuman(human, posA, posB) end
+function physics.lineIntersectHuman(human, posA, posB, padding) end
 
 ---Cast a ray on a single vehicle.
 ---@param vehicle Vehicle The vehicle to cast the ray on.
 ---@param posA Vector The start point of the ray.
 ---@param posB Vector The end point of the ray.
+---@param includeWheels boolean Whether to include wheels.
 ---@return LineIntersectResult result The result of the intersection.
-function physics.lineIntersectVehicle(vehicle, posA, posB) end
+function physics.lineIntersectVehicle(vehicle, posA, posB, includeWheels) end
 
 ---Cast a quick ray in the level and find how far along the ray it went.
 ---@param posA Vector The start point of the ray.
 ---@param posB Vector The end point of the ray.
+---@param onlyCity boolean Whether to only include the city (not landscape, tracks, etc).
 ---@return number? fraction The fraction of the intersection.
-function physics.lineIntersectLevelQuick(posA, posB) end
+function physics.lineIntersectLevelQuick(posA, posB, onlyCity) end
 
 ---Cast a quick ray on a single human.
 ---@param human Human The human to cast the ray on.
 ---@param posA Vector The start point of the ray.
 ---@param posB Vector The end point of the ray.
+---@param padding number The extra padding.
 ---@return number? fraction The fraction of the intersection.
-function physics.lineIntersectHumanQuick(human, posA, posB) end
+function physics.lineIntersectHumanQuick(human, posA, posB, padding) end
 
 ---Cast a quick ray on a single vehicle.
 ---@param vehicle Vehicle The vehicle to cast the ray on.
 ---@param posA Vector The start point of the ray.
 ---@param posB Vector The end point of the ray.
+---@param includeWheels boolean Whether to include wheels.
 ---@return number? fraction The fraction of the intersection.
-function physics.lineIntersectVehicleQuick(vehicle, posA, posB) end
+function physics.lineIntersectVehicleQuick(vehicle, posA, posB, includeWheels) end
 
 ---Cast a quick ray on any human or vehicle.
 ---@param posA Vector The start point of the ray.
 ---@param posB Vector The end point of the ray.
----@param ignoreHuman? Human The human to ignore during raycast.
----@return object? Human|Vehicle The nearest human or vehicle that the ray hit.
-function physics.lineIntersectAnyQuick(posA, posB, ignoreHuman) end
+---@param ignoreHuman Human|nil The human to ignore during raycast.
+---@param humanPadding number The extra padding applied to humans.
+---@param includeWheels boolean Whether to include vehicles' wheels.
+---@return object? Human|Vehicle The nearest human or vehicle that the ray hit, or nil if it hit the level or nothing.
+---@return fraction? number The fraction of the intersection.
+function physics.lineIntersectAnyQuick(posA, posB, ignoreHuman, humanPadding, includeWheels) end
 
 ---Cast a ray on an arbitrary triangle.
 ---The vertices of the triangle must be clockwise relative to the normal.

@@ -179,12 +179,26 @@ do
 	---@field subRosaID integer See Account.subRosaID
 	---@field phoneNumber integer 💲 See Account.phoneNumber
 	---@field money integer 💲
+	---@field teamMoney integer The value of their team's balance in world mode.
+	---@field budget integer The value of their team's budget in world mode.
 	---@field corporateRating integer
 	---@field criminalRating integer
 	---@field team integer 💾
 	---@field teamSwitchTimer integer Ticks remaining until they can switch teams again.
 	---@field stocks integer 💲 The amount of shares they own in their company.
 	---@field spawnTimer integer How long this person has to wait to spawn in, in seconds.
+	---@field gearX number Left to right stick shift position, 0 to 2.
+	---@field leftRightInput number Left to right movement input, -1 to 1.
+	---@field gearY number Forward to back stick shift position, -1 to 1.
+	---@field forwardBackInput number Backward to forward movement input, -1 to 1.
+	---@field viewPitch number Radians.
+	---@field pointYaw number Radians.
+	---@field pointPitch number Radians.
+	---@field viewYaw number Radians.
+	---@field inputFlags integer Bitflags of current buttons being pressed.
+	---@field lastInputFlags integer Input flags from the last tick.
+	---@field zoomLevel integer 0 = run, 1 = walk, 2 = aim.
+	---@field inputType integer What the input fields are used for. 0 = none, 1 = human, 2 = car, 3 = helicopter. Defaults to 0.
 	---@field menuTab integer What tab in the menu they are currently in.
 	---@field numActions integer
 	---@field lastNumActions integer
@@ -255,7 +269,7 @@ do
 	---@field viewPitch number Radians.
 	---@field strafeInput number Left to right movement input, -1 to 1.
 	---@field walkInput number Backward to forward movement input, -1 to 1.
-	---@field inputFlags integer Bitflag of current buttons being pressed.
+	---@field inputFlags integer Bitflags of current buttons being pressed.
 	---@field lastInputFlags integer Input flags from the last tick.
 	---@field health integer Dynamic health, 0-100.
 	---@field bloodLevel integer How much blood they have, 0-100. <50 and they will collapse.
@@ -399,6 +413,10 @@ do
 	---@field vel Vector Velocity.
 	---@field rot RotMatrix Rotation.
 	---@field bullets integer How many bullets are inside this item.
+	---@field cooldown integer
+	---@field cashSpread integer
+	---@field cashAmount integer
+	---@field cashPureValue integer
 	---@field computerCurrentLine integer
 	---@field computerTopLine integer Which line is at the top of the screen.
 	---@field computerCursor integer The location of the cursor, -1 for no cursor.
@@ -452,6 +470,10 @@ do
 	---@param lineIndex integer Which line to transmit.
 	function Item:computerTransmitLine(lineIndex) end
 
+	---Increment the current line of a computer.
+	---Only works if this item is a computer.
+	function Item:computerIncrementLine() end
+
 	---Set the text to display on a line. Does not immediately network.
 	---Only works if this item is a computer.
 	---@param lineIndex integer Which line to edit.
@@ -471,10 +493,22 @@ do
 	---@param columnIndex integer Which column to edit.
 	---@param color integer The color to set, between 0x00 and 0xFF.
 	function Item:computerSetColor(lineIndex, columnIndex, color) end
-	
-	---Increment the current line of a computer.
-	---Only works if this item is a computer.
-	function Item:computerIncrementLine() end
+
+	---Add a bank bill to the stack of cash.
+	---Only works if this item is a stack of cash.
+	---@param position integer The relative position on the stack to add the bill, in no particular range.
+	---@param value integer The denomination type of the bill (0-7).
+	function Item:cashAddBill(position, value) end
+
+	---Remove a bank bill from the stack of cash.
+	---Only works if this item is a stack of cash.
+	---@param position integer The relative position on the stack to find the bill to remove, in no particular range.
+	function Item:cashRemoveBill(position) end
+
+	---Get the total value of the stack of cash.
+	---Only works if this item is a stack of cash.
+	---@return integer value The total value in dollars.
+	function Item:cashGetBillValue() end
 end
 
 do
@@ -501,6 +535,7 @@ do
 	---@field isActive boolean Whether or not this exists, only change if you know what you are doing.
 	---@field lastDriver? Player 🔒 The last person to drive the vehicle.
 	---@field rigidBody RigidBody 🔒 The rigid body representing the physics of this vehicle.
+	---@field trafficCar? TrafficCar The traffic car the vehicle belongs to.
 	local Vehicle
 
 	---Fire a network event containing basic info.
@@ -844,6 +879,7 @@ do
 	---An Opus audio encoder.
 	---Available in worker threads.
 	---@class OpusEncoder
+	---@field bitRate integer The bit rate used when encoding audio, in bits/second.
 	OpusEncoder = {}
 
 	---Create a new OpusEncoder.
@@ -870,9 +906,54 @@ do
 
 	---Encode a single 20ms Opus frame.
 	---Throws if input is the wrong length, or there is a problem when encoding.
-	---@param input string The raw PCM bytes, which contains 960 32-bit floats.
+	---@param input string The raw PCM bytes, which contains either 960 32-bit floats or 960 16-bit signed integers.
 	---@return frame string The encoded frame.
 	function OpusEncoder:encodeFrame(input) end
+end
+
+do
+	---A graph of nodes representing points in space.
+	---Available in worker threads.
+	---@class PointGraph
+	PointGraph = {}
+
+	---Get the number of nodes in the graph.
+	---@return integer size The number of nodes in the graph.
+	function PointGraph:getSize() end
+
+	---Add a node.
+	---@param x integer The x coordinate of the node in space used when finding paths.
+	---@param y integer The y coordinate of the node in space used when finding paths.
+	---@param z integer The z coordinate of the node in space used when finding paths.
+	function PointGraph:addNode(x, y, z) end
+
+	---Get the coordinates of a node by its index.
+	---@param index integer The index of the node.
+	---@return integer x
+	---@return integer y
+	---@return integer z
+	function PointGraph:getNodePoint(index) end
+
+	---Add a unidirected link from one node to another.
+	---@param fromIndex integer The index of the start node.
+	---@param toIndex integer The index of the end node.
+	---@param cost integer The cost of the link used when finding paths, typically corresponding to distance.
+	function PointGraph:addLink(fromIndex, toIndex, cost) end
+
+	---Get the index of a node by its coordinates.
+	---Runs in O(1) time.
+	---@param x integer
+	---@param y integer
+	---@param z integer
+	---@return integer? index The index of the node, or nil if there isn't one at those coordinates.
+	function PointGraph:getNodeByPoint(x, y, z) end
+
+	---Find the shortest path from a start node to an end node.
+	---Uses the A* algorithm.
+	---@param startIndex integer The index of the starting node.
+	---@param endIndex integer The index of the end/goal node.
+	---@return integer[]? path The list of node indices of the shortest path, or nil if no path was found.
+	function PointGraph:findShortestPath(startIndex, endIndex) end
 end
 
 ---Represents a real number used in hooks whose value can be changed before its parent is called.
@@ -992,12 +1073,15 @@ end
 ---@field index integer 🔒 The index of the array in memory this is.
 ---@field type VehicleType The type of the car.
 ---@field human? Human The human driving the car.
+---@field isBot boolean
+---@field isAggressive boolean
 ---@field vehicle? Vehicle The real vehicle used by the car.
 ---@field pos Vector Position.
 ---@field vel Vector Velocity.
 ---@field yaw number Radians.
 ---@field rot RotMatrix Rotation.
 ---@field color integer The color of the car.
+---@field state integer
 
 ---Represents a car for sale at a car shop.
 ---@class ShopCar
