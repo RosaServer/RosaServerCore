@@ -918,8 +918,9 @@ do
 	PointGraph = {}
 
 	---Create a new PointGraph.
+	---@param squareRootCacheSize integer The number of integers to cache the square root of for use in findShortestPath. If the square of the Euclidean distance between two node positions is >= this number, the square root will have to be calculated on the fly, leading to much longer processing time.
 	---@return PointGraph pointGraph The created PointGraph.
-	function PointGraph.new() end
+	function PointGraph.new(squareRootCacheSize) end
 
 	---Get the number of nodes in the graph.
 	---@return integer size The number of nodes in the graph.
