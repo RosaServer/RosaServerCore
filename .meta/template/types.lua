@@ -917,6 +917,10 @@ do
 	---@class PointGraph
 	PointGraph = {}
 
+	---Create a new PointGraph.
+	---@return PointGraph pointGraph The created PointGraph.
+	function PointGraph.new() end
+
 	---Get the number of nodes in the graph.
 	---@return integer size The number of nodes in the graph.
 	function PointGraph:getSize() end
