@@ -256,8 +256,8 @@ function physics.lineIntersectVehicleQuick(vehicle, posA, posB, includeWheels) e
 ---@param ignoreHuman Human|nil The human to ignore during raycast.
 ---@param humanPadding number The extra padding applied to humans.
 ---@param includeWheels boolean Whether to include vehicles' wheels.
----@return object? Human|Vehicle The nearest human or vehicle that the ray hit, or nil if it hit the level or nothing.
----@return fraction? number The fraction of the intersection.
+---@return Human|Vehicle? object The nearest human or vehicle that the ray hit, or nil if it hit the level or nothing.
+---@return number? fraction The fraction of the intersection.
 function physics.lineIntersectAnyQuick(posA, posB, ignoreHuman, humanPadding, includeWheels) end
 
 ---Cast a ray on an arbitrary triangle.

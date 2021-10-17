@@ -164,7 +164,7 @@ do
 
 	---Set a specific encoded Opus frame.
 	---@param index integer The index between 0 and 63.
-	---@param frame frame The encoded Opus frame.
+	---@param frame string The encoded Opus frame.
 	---@param volumeLevel integer The volume of the frame. 0 = whisper, 1 = normal, 2 = yell.
 	function Voice:setFrame(index, frame, volumeLevel) end
 end
@@ -901,13 +901,13 @@ do
 
 	---Encode a single 20ms Opus frame.
 	---Throws if the file is not opened, or there is a problem when reading or encoding.
-	---@return frame? string The next encoded frame, or nil if there is nothing left to read.
+	---@return string? frame The next encoded frame, or nil if there is nothing left to read.
 	function OpusEncoder:encodeFrame() end
 
 	---Encode a single 20ms Opus frame.
 	---Throws if input is the wrong length, or there is a problem when encoding.
 	---@param input string The raw PCM bytes, which contains either 960 32-bit floats or 960 16-bit signed integers.
-	---@return frame string The encoded frame.
+	---@return string frame The encoded frame.
 	function OpusEncoder:encodeFrame(input) end
 end
 
