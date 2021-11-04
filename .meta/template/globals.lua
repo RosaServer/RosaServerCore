@@ -345,6 +345,10 @@ function players.getByPhone(phoneNumber) end
 ---@return Player[] players A list of all Player objects, excluding bots.
 function players.getNonBots() end
 
+---Get all players that are bots.
+---@return Player[] bots A list of all Player objects that are bots.
+function players.getBots() end
+
 ---Create a new bot player.
 ---@return Player? bot The created bot player, or nil on failure.
 function players.createBot() end

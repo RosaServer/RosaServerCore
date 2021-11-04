@@ -191,7 +191,10 @@ do
 	---@field leftRightInput number Left to right movement input, -1 to 1.
 	---@field gearY number Forward to back stick shift position, -1 to 1.
 	---@field forwardBackInput number Backward to forward movement input, -1 to 1.
+	---@field viewYawDelta number Radians.
 	---@field viewPitch number Radians.
+	---@field freeLookYaw number Radians.
+	---@field freeLookPitch number Radians.
 	---@field pointYaw number Radians.
 	---@field pointPitch number Radians.
 	---@field viewYaw number Radians.
@@ -267,8 +270,10 @@ do
 	---@field pos Vector Position.
 	---@field viewYaw number Radians.
 	---@field viewPitch number Radians.
+	---@field viewYaw2 number Radians.
 	---@field strafeInput number Left to right movement input, -1 to 1.
 	---@field walkInput number Backward to forward movement input, -1 to 1.
+	---@field viewPitch2 number Radians.
 	---@field inputFlags integer Bitflags of current buttons being pressed.
 	---@field lastInputFlags integer Input flags from the last tick.
 	---@field health integer Dynamic health, 0-100.
@@ -1015,6 +1020,8 @@ end
 ---@field class string 🔒 "Bone"
 ---@field pos Vector Position.
 ---@field pos2 Vector Second position.
+---@field vel Vector Velocity.
+---@field rot RotMatrix Rotation.
 
 ---@class InventorySlot
 ---@field class string 🔒 "InventorySlot"
