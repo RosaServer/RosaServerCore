@@ -760,3 +760,22 @@ function os.getLastWriteTime(path) end
 ---Available in worker threads.
 ---@return number seconds The number of seconds elapsed, with millisecond precision.
 function os.realClock() end
+
+---Send a message to the main thread.
+---Only available in worker threads.
+---Adds to a queue such that when receiveMessage is called on the worker object in the main thread, this message can be returned.
+---@param message string The message to send to the main thread.
+---@see Worker#receiveMessage
+function sendMessage(message) end
+
+---Pop a message from the queue of messages received from the main thread.
+---Only available in worker threads.
+---@return string? message The oldest remaining message received from the main thread, or nil if none are left.
+---@see Worker#sendMessage
+function receiveMessage() end
+
+---Suspend this thread for a number of milliseconds.
+---Only available in worker threads.
+---@param ms integer The number of milliseconds to sleep for.
+---@return boolean isDestroyed Whether the main thread has destroyed the Worker object responsible for this thread while it was sleeping. If true, execution of this thread has to finish.
+function sleep(ms) end

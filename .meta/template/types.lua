@@ -689,17 +689,19 @@ do
 	function Worker.new(fileName) end
 
 	---Indicate that the worker should stop what it's doing.
-	---The next time `sleep(ms: integer) -> boolean` is called in the worker thread, true will be returned.
-	---It's the code in the worker thread's responsibility to finish all of its procedures.
+	---This is automatically done whenever a Worker is garbage collected.
+	---@see sleep
 	function Worker:stop() end
 
 	---Send a message to the worker thread.
-	---Adds to a queue such that when `receiveMessage() -> string?` is called in the worker thread, this message can be returned.
+	---Adds to a queue such that when receiveMessage is called in the worker thread, this message can be returned.
 	---@param message string The message to send to the worker thread.
+	---@see receiveMessage
 	function Worker:sendMessage(message) end
 
 	---Pop a message from the queue of messages received from the worker thread.
 	---@return string? message The oldest remaining message received from the worker thread, or nil if none are left.
+	---@see sendMessage
 	function Worker:receiveMessage() end
 end
 
