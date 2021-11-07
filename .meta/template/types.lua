@@ -285,13 +285,13 @@ do
 	---@field leftLegHP integer
 	---@field rightLegHP integer
 	---@field progressBar integer Progress bar displayed in the center of the screen, 0-255. 0 = disabled.
-	---@field inventoryAnimationFlags integer 
-	---@field inventoryAnimationProgress integer 
-	---@field inventoryAnimationDuration number 
-	---@field inventoryAnimationHand integer 
-	---@field inventoryAnimationSlot integer 
-	---@field inventoryAnimationCounter integer 
-	---@field inventoryAnimationCounterFinished integer 
+	---@field inventoryAnimationFlags integer
+	---@field inventoryAnimationProgress integer
+	---@field inventoryAnimationDuration number
+	---@field inventoryAnimationHand integer
+	---@field inventoryAnimationSlot integer
+	---@field inventoryAnimationCounter integer
+	---@field inventoryAnimationCounterFinished integer
 	---@field gender integer See Player.gender.
 	---@field head integer See Player.head.
 	---@field skinColor integer See Player.skinColor.
