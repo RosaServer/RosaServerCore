@@ -195,8 +195,6 @@ do
 	---@field viewPitch number Radians.
 	---@field freeLookYaw number Radians.
 	---@field freeLookPitch number Radians.
-	---@field pointYaw number Radians.
-	---@field pointPitch number Radians.
 	---@field viewYaw number Radians.
 	---@field inputFlags integer Bitflags of current buttons being pressed.
 	---@field lastInputFlags integer Input flags from the last tick.
